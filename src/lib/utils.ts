@@ -29,7 +29,7 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
   const { duration, numberOfChannels, sampleRate } = audioBuffer;
   const channelData = audioBuffer.getChannelData(0);
 
-  const skipInterval = (channelData.length / duration) * 10;
+  const skipInterval = (channelData.length / duration) * 2;
   const intervalPeaks: number[] = [];
   for (let i = 0; i < channelData.length; i += skipInterval) {
     intervalPeaks.push(channelData[i]);
