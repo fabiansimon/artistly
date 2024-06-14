@@ -20,3 +20,11 @@ export enum OperationSystem {
   ANDROID,
   MISC,
 }
+
+export type AudioFile = {
+  duration: number;
+  channels: number;
+  sampleRate: number;
+  intervalPeaks: number[];
+  name: string;
+};

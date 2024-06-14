@@ -115,7 +115,7 @@ function Toast(): JSX.Element {
         <p className="text-white prose-sm font-medium">
           {info?.title || defaultMessage}
         </p>
-        <p className="-mt-6 prose-sm text-white/70">{info?.description}</p>
+        <p className="-mt-5 prose-sm text-white/70">{info?.description}</p>
       </article>
     </motion.div>
   );
