@@ -28,3 +28,25 @@ export type AudioFile = {
   intervalPeaks: number[];
   name: string;
 };
+
+export enum InputType {
+  TITLE,
+  DESCRIPTION,
+  EMAIL,
+  ADD_EMAIL,
+}
+
+export interface InputData {
+  title: string;
+  description: string;
+  email: string;
+  emailList: Set<string>;
+}
+
+export function inputDataEmpty(inputData: InputData): boolean {
+  return (
+    inputData.description.trim() === '' &&
+    inputData.email.trim() === '' &&
+    inputData.emailList.size === 0
+  );
+}
