@@ -1,5 +1,5 @@
 import Toast from '@/components/Toast';
-import UploadPage from './views/UploadPage';
+import UploadPage from '../../pages/UploadPage';
 
 export default function Home() {
   return (

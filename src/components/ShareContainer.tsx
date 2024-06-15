@@ -80,7 +80,7 @@ export default function ShareContainer({
       }
     });
   };
-  const { intervalPeaks } = audioFile;
+
   return (
     <div className="w-[80%] flex flex-col items-center">
       <article className="prose mb-4">
