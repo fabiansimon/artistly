@@ -1,22 +1,23 @@
 import { AudioFile, InputData, inputDataEmpty, InputType } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
-import WaveContainer from './WaveContainer';
 import {
   Cancel01Icon,
   Mail01Icon,
-  PencilEdit01Icon,
+  MehIcon,
   PencilEdit02Icon,
 } from 'hugeicons-react';
 import { LocalStorage } from '@/lib/localStorage';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import AudioPlayer from './AudioPlayer';
+import { uploadTrack } from '@/lib/api';
 
 export default function ShareContainer({
   audioFile,
 }: {
   audioFile?: AudioFile;
 }) {
+  const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<InputData>({
     title: audioFile?.name || '',
     description: '',
@@ -25,8 +26,10 @@ export default function ShareContainer({
   });
 
   const inputValid = useMemo(() => {
+    const { title, emailList } = inputData;
+    if (title.trim().length === 0 || emailList.size === 0) return false;
     return true;
-  }, []);
+  }, [inputData]);
 
   useEffect(() => {
     const cachedInput = LocalStorage.fetchInputData();
@@ -41,6 +44,25 @@ export default function ShareContainer({
   if (audioFile === undefined)
     return <span className="loading loading-ring loading-sm"></span>;
 
+  const handleSubmit = async () => {
+    if (!inputValid) return;
+    setLoading(true);
+
+    const { title, description, emailList } = inputData;
+
+    const form = new FormData();
+    form.append('title', title);
+    form.append('description', description);
+    form.append('collaborators', JSON.stringify(Array.from(emailList)));
+
+    try {
+      const result = await uploadTrack(form);
+      console.log(result);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleError = (title: string, description?: string) => {
     ToastController.showErrorToast(title, description);
   };
@@ -49,10 +71,13 @@ export default function ShareContainer({
     setInputData((prev) => {
       const list = prev.emailList;
       list.delete(email);
-      return {
+      const newInput = {
         ...prev,
         emailList: list,
       };
+
+      LocalStorage.saveInputData(newInput);
+      return newInput;
     });
   };
 
@@ -103,6 +128,11 @@ export default function ShareContainer({
           />
         </label>
 
+        <textarea
+          className="textarea textarea-bordered bg-transparent w-full"
+          placeholder="Add some feedback notes (optional)"
+        ></textarea>
+
         <AudioPlayer
           className="py-4"
           audioFile={audioFile}
@@ -112,15 +142,27 @@ export default function ShareContainer({
           <article className="prose text-left">
             <p>{'Share with'}</p>
           </article>
-          <div className="flex flex-wrap gap-2">
-            {Array.from(inputData.emailList).map((email, index) => (
-              <CollaboratorContainer
-                key={index}
-                email={email}
-                onDelete={() => removeEmail(email)}
+          {inputData.emailList.size > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {Array.from(inputData.emailList).map((email, index) => (
+                <CollaboratorContainer
+                  key={index}
+                  email={email}
+                  onDelete={() => removeEmail(email)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center space-x-[5.5px]">
+              <MehIcon
+                size={16}
+                className="text-white/40"
               />
-            ))}
-          </div>
+              <article>
+                <p className="prose-sm text-white/40 ">no one added yet</p>
+              </article>
+            </div>
+          )}
         </div>
 
         <div className="flex space-x-4 w-full">
@@ -145,12 +187,19 @@ export default function ShareContainer({
           </button>
         </div>
       </div>
+
       <button
         disabled={!inputValid}
-        onClick={() => console.log('called')}
+        onClick={handleSubmit}
         className="btn btn-active btn-primary text-white mt-4 w-full"
       >
-        {'Share'}
+        {loading ? (
+          <span className="loading loading-spinner"></span>
+        ) : (
+          <article className="prose">
+            <p>{'Share'}</p>
+          </article>
+        )}
       </button>
     </div>
   );
