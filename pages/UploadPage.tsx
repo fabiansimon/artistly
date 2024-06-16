@@ -67,7 +67,7 @@ export default function UploadPage() {
     <>
       <div
         className={
-          'flex items-center justify-center flex-grow h-full w-full flex-col'
+          'flex items-center justify-center flex-grow h-full w-full max-w-screen-xl flex-col'
         }
       >
         {!file && !audioFile ? (
