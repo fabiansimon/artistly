@@ -63,17 +63,14 @@ export default function ShareContainer({
     const { title, description, emailList, file } = inputData;
 
     const form = new FormData();
-    form.append('title', title); // string
-    form.append('feedbackNotes', description); // string
-    form.append('emailList', JSON.stringify(Array.from(emailList))); // stringified array
-    console.log(file);
-    form.append('trackBlob', file!); // type == File
+    form.append('title', title);
+    form.append('feedbackNotes', description);
+    form.append('emailList', JSON.stringify(Array.from(emailList)));
+    form.append('tracks', file!);
 
     try {
       const result = await uploadTrack(form);
       console.log('Result:', result);
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multiparty from 'multiparty';
 import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
 
 export const config = {
@@ -31,11 +32,12 @@ export default async function handler(
     console.log('Fields:', fields);
     console.log('Files:', files);
 
-    const file = files['trackBlob'][0];
+    const file = files['tracks'][0];
     const filePath = file.path;
     const fileName = file.originalFilename;
     const fileContent = fs.readFileSync(filePath);
     const mimeType = mime.lookup(fileName);
+    const fileId = uuidv4();
 
     // Check if mimeType is valid
     if (!mimeType) {
@@ -45,11 +47,13 @@ export default async function handler(
     // Upload the file to Supabase Storage
     const { data, error } = await supabase.storage
       .from(bucket!)
-      .upload(`uploads/${fileName}`, fileContent, {
+      .upload(`uploads/${fileId}`, fileContent, {
         cacheControl: '3600',
         upsert: false,
         contentType: mimeType,
       });
+
+    console.log(data);
 
     if (error) {
       console.error('Error uploading file:', error);
