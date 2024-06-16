@@ -1,4 +1,10 @@
 import ToastController from '@/controllers/ToastController';
+import axios from 'axios';
+
+const _axios = axios.create({
+  baseURL: '/api',
+  headers: { 'Access-Control-Allow-Origin': '*' },
+});
 
 const FALLBACK_ERROR_MESSAGE = {
   title: 'Sorry, something went wrong',
@@ -26,18 +32,15 @@ function handleError({
 
 export async function uploadTrack(data: FormData) {
   try {
-    const res = await fetch('/api/uploadTrack', {
-      method: 'POST',
-      body: data,
+    const res = await _axios.post('/uploadTrack', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
+    console.log('res', res);
 
-    if (!res.ok) {
-      throw new Error('Failed to upload track');
-    }
-
-    return await res.json();
+    return res.data;
   } catch (error) {
-    console.error('Error uploading track:', error);
     handleError({ error, callName: 'uploadTrack' });
     throw error;
   }

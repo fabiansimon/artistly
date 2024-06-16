@@ -1,4 +1,5 @@
 import { AudioFile, InputData } from '@/types';
+import { dataURLToBlob, fileToBase64 } from './utils';
 
 const KEYS = {
   audioFile: 'audioFile',
@@ -6,15 +7,29 @@ const KEYS = {
 };
 
 export class LocalStorage {
-  static saveAudioData(audio: AudioFile) {
-    localStorage.setItem(KEYS.audioFile, JSON.stringify(audio));
+  static async saveAudioFile(data: AudioFile) {
+    const audioBase64 = await fileToBase64(data.file);
+    const serialized = {
+      ...data,
+      file: audioBase64,
+    };
+
+    localStorage.setItem(KEYS.audioFile, JSON.stringify(serialized));
   }
 
-  static fetchAudioData(): AudioFile | undefined {
+  static fetchAudioFile(): AudioFile | undefined {
     const res = localStorage.getItem(KEYS.audioFile);
     if (!res) return;
 
-    return JSON.parse(res);
+    const parsed = JSON.parse(res);
+    const blob = dataURLToBlob(parsed.file);
+
+    const file = new File([blob], parsed.name, { type: blob.type });
+
+    return {
+      ...parsed,
+      file,
+    };
   }
 
   static saveInputData(input: InputData) {

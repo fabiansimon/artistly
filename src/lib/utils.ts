@@ -51,7 +51,28 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
     sampleRate: sampleRate,
     intervalPeaks,
     name: file.name,
+    file,
   };
 
   return audioData;
+}
+
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+export function dataURLToBlob(dataURL: string): Blob {
+  const byteString = atob(dataURL.split(',')[1]);
+  const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+
+  return new Blob([ab], { type: mimeString });
 }
