@@ -6,8 +6,10 @@ import { cn } from '@/lib/utils';
 
 export default function AudioPlayer({
   audioFile,
+  onPlay,
   className,
 }: {
+  onPlay?: () => void;
   audioFile: AudioFile;
   className?: string;
 }) {
@@ -15,6 +17,7 @@ export default function AudioPlayer({
   const { intervalPeaks } = audioFile;
 
   const togglePlaying = () => {
+    onPlay();
     setPlaying((prev) => !prev);
   };
 

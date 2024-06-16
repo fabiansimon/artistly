@@ -1,4 +1,4 @@
-import { AudioFile, InputData, inputDataEmpty, InputType } from '@/types';
+import { AudioFile, InputData, InputType } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Cancel01Icon,
@@ -11,6 +11,7 @@ import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
+import { inputDataEmpty } from '@/types/typeFunc';
 
 export default function ShareContainer({
   audioFile,
@@ -19,6 +20,7 @@ export default function ShareContainer({
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<InputData>({
+    file: audioFile?.file,
     title: audioFile?.name || '',
     description: '',
     emailList: new Set<string>(),
@@ -27,13 +29,23 @@ export default function ShareContainer({
 
   const inputValid = useMemo(() => {
     const { title, emailList } = inputData;
-    if (title.trim().length === 0 || emailList.size === 0) return false;
-    return true;
+    return !(
+      !inputData?.file ||
+      title.trim().length === 0 ||
+      emailList.size === 0
+    );
   }, [inputData]);
 
   useEffect(() => {
+    if (!audioFile) return;
+    const { name: title, file } = audioFile;
+    setInputData((prev) => ({ ...prev, file, title }));
+  }, [audioFile]);
+
+  useEffect(() => {
     const cachedInput = LocalStorage.fetchInputData();
-    if (cachedInput) setInputData(cachedInput);
+    if (cachedInput)
+      setInputData((prev) => ({ ...cachedInput, file: prev.file }));
   }, []);
 
   useEffect(() => {
@@ -48,16 +60,20 @@ export default function ShareContainer({
     if (!inputValid) return;
     setLoading(true);
 
-    const { title, description, emailList } = inputData;
+    const { title, description, emailList, file } = inputData;
 
     const form = new FormData();
-    form.append('title', title);
-    form.append('description', description);
-    form.append('collaborators', JSON.stringify(Array.from(emailList)));
+    form.append('title', title); // string
+    form.append('feedbackNotes', description); // string
+    form.append('emailList', JSON.stringify(Array.from(emailList))); // stringified array
+    console.log(file);
+    form.append('trackBlob', file!); // type == File
 
     try {
       const result = await uploadTrack(form);
-      console.log(result);
+      console.log('Result:', result);
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -134,6 +150,7 @@ export default function ShareContainer({
         ></textarea>
 
         <AudioPlayer
+          onPlay={() => console.log(inputData.file)}
           className="py-4"
           audioFile={audioFile}
         />

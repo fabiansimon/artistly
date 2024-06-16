@@ -22,6 +22,7 @@ export enum OperationSystem {
 }
 
 export type AudioFile = {
+  file: File;
   duration: number;
   channels: number;
   sampleRate: number;
@@ -37,16 +38,9 @@ export enum InputType {
 }
 
 export interface InputData {
+  file: File | undefined;
   title: string;
   description: string;
   email: string;
   emailList: Set<string>;
-}
-
-export function inputDataEmpty(inputData: InputData): boolean {
-  return (
-    inputData.description.trim() === '' &&
-    inputData.email.trim() === '' &&
-    inputData.emailList.size === 0
-  );
 }

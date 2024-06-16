@@ -21,7 +21,12 @@ export default function UploadPage() {
   const [audioFile, setAudioFile] = useState<AudioFile | undefined>();
 
   useEffect(() => {
-    const cachedAudio = LocalStorage.fetchAudioData();
+    console.log('audioFile', audioFile);
+  }, [audioFile]);
+
+  useEffect(() => {
+    if (audioFile) return;
+    const cachedAudio = LocalStorage.fetchAudioFile();
     setAudioFile(cachedAudio);
   }, []);
 
@@ -29,7 +34,7 @@ export default function UploadPage() {
     if (!file) return;
     (async () => {
       const data = await analyzeAudio(file);
-      LocalStorage.saveAudioData(data);
+      LocalStorage.saveAudioFile(data);
       setAudioFile(data);
     })();
   }, [file]);
@@ -81,7 +86,7 @@ export default function UploadPage() {
         animate={dragging ? 'visible' : 'hidden'}
         variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 } }}
         className={cn(
-          'absolute pointer-events-auto flex flex-grow h-full w-full bg-secondary items-center justify-center',
+          'absolute flex flex-grow h-full w-full bg-secondary items-center justify-center',
           audioFile && 'pointer-events-none'
         )}
       >
