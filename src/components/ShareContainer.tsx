@@ -98,7 +98,7 @@ export default function ShareContainer({
     setInputData((prev) => {
       switch (type) {
         case InputType.ADD_EMAIL:
-          const input = prev.email;
+          const input = prev.email.trim();
           if (!REGEX.email.test(input)) {
             handleError('Not a valid email', 'Try again with a valid email.');
             return prev;
@@ -142,6 +142,10 @@ export default function ShareContainer({
         </label>
 
         <textarea
+          value={inputData.description}
+          onInput={({ currentTarget: { value } }) =>
+            handleInput(InputType.DESCRIPTION, value)
+          }
           className="textarea textarea-bordered bg-transparent w-full"
           placeholder="Add some feedback notes (optional)"
         ></textarea>
