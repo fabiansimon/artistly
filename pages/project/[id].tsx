@@ -1,15 +1,33 @@
-import { useEffect, useState } from 'react';
+'use client';
+
+import { act, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Project } from '@/types';
-import { fetchProjectById } from '../controllers/projectController';
+import { AudioFile, Project, Version } from '@/types';
 import ToastController from '@/controllers/ToastController';
 import { fetchProject } from '@/lib/api';
+import { LocalStorage } from '@/lib/localStorage';
+import AudioEditor from '@/components/AudioEditor';
+import { cn } from '@/lib/utils';
 
 function ProjectPage() {
   const router = useRouter();
   const { id } = router.query;
   const [project, setProject] = useState<Project | null>(null);
+  const [currVersionId, setCurrVersionId] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [audioFile, setAudioFile] = useState<AudioFile | undefined>();
+
+  const version = useMemo(() => {
+    if (!project) return;
+    const { versions } = project;
+    return versions.find((v) => v.id === currVersionId) || versions[0];
+  }, [currVersionId, project]);
+
+  useEffect(() => {
+    if (audioFile) return;
+    const cachedAudio = LocalStorage.fetchAudioFile();
+    setAudioFile(cachedAudio);
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -17,13 +35,12 @@ function ProjectPage() {
     (async () => {
       try {
         const res = await fetchProject(id as string);
+        setProject(res);
+        setCurrVersionId(res.versions[0].id);
         console.log(res);
       } catch (error: any) {
-        console.log(error.message);
-        ToastController.showErrorToast(
-          'Something went wrong',
-          'Please try again later.'
-        );
+        console.error(error.message);
+        ToastController.showErrorToast('Something went wrong', error.message);
       }
     })();
   }, [id]);
@@ -33,15 +50,71 @@ function ProjectPage() {
   }
 
   if (!project) {
-    return <div>Loading...</div>;
+    return <div>Loadingss...</div>;
   }
 
+  const { title, versions } = project;
+
   return (
-    <div className="flex items-center justify-center flex-grow h-full w-full max-w-screen-xl flex-col">
-      <h1>{project.title}</h1>
-      <p>Created at: {new Date(project.created_at).toLocaleString()}</p>
-      <h2>Versions</h2>
-      <h2>Collaborators</h2>
+    <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
+      <article className="prose text-center">
+        <h3>{title}</h3>
+        <p className="-mt-4">Version {version?.title}</p>
+      </article>
+      <div className="flex w-full space-x-6 px-10 mt-4">
+        <VersionControl
+          versions={project.versions}
+          currVersionId={currVersionId}
+          onClick={setCurrVersionId}
+        />
+        {audioFile && <AudioEditor audioFile={audioFile} />}
+      </div>
+    </div>
+  );
+}
+
+function VersionControl({
+  versions,
+  onClick,
+  currVersionId,
+}: {
+  versions: Version[];
+  currVersionId: string;
+  onClick: (id: string) => void;
+}) {
+  return (
+    <div className="relative mt-4">
+      <article className="prose absolute -top-8">
+        <p className="font-medium text-sm">{'Versions'}</p>
+      </article>
+
+      <div className="flex border rounded-md border-neutral-800 max-w-20 overflow-hidden flex-col overflow-y-scroll scrollbar-hide max-h-20">
+        {versions.map((v, i) => {
+          const { title, id } = v;
+          const isLast = i === versions.length - 1;
+          const active = currVersionId === id;
+          return (
+            <div
+              onClick={() => onClick(id)}
+              className={cn(
+                'bg-white/40 cursor-pointer min-h-8 flex items-center justify-center px-4',
+                active && 'bg-white',
+                !isLast && 'border-b border-neutral/40'
+              )}
+              key={id}
+            >
+              <p
+                className={cn(
+                  'prose-sm text-black/40 truncate font-bold',
+                  active && 'text-black'
+                )}
+              >
+                {title}
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
