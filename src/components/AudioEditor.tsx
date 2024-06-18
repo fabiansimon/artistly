@@ -3,19 +3,19 @@ import { AudioFile } from '@/types';
 import { useState } from 'react';
 import WaveContainer from './WaveContainer';
 import {
-  ArrowHorizontalIcon,
   ArrowReloadHorizontalIcon,
-  ArrowReloadVerticalIcon,
   PauseIcon,
   PlayIcon,
 } from 'hugeicons-react';
 
 export default function AudioEditor({
   audioFile,
+  comments,
   onPlay,
   className,
 }: {
   onPlay?: () => void;
+  comments?: Comment;
   audioFile: AudioFile;
   className?: string;
 }) {
@@ -32,15 +32,19 @@ export default function AudioEditor({
   };
 
   const { intervalPeaks, duration } = audioFile;
-
   return (
     <div
       className={cn('flex flex-grow w-full space-x-3 items-center', className)}
     >
-      <WaveContainer
-        amplifyBy={200}
-        intervals={intervalPeaks}
-      />
+      <div className="flex relative flex-col w-full">
+        <WaveContainer
+          onTap={(time) => console.log(time)}
+          amplifyBy={200}
+          duration={duration}
+          intervals={intervalPeaks}
+        />
+      </div>
+
       <div className="flex flex-col w-32 pl-4">
         <div className="flex w-full">
           <button
