@@ -61,7 +61,7 @@ function ProjectPage() {
         <h3>{title}</h3>
         <p className="-mt-4">Version {version?.title}</p>
       </article>
-      <div className="flex w-full space-x-6 px-10 mt-4">
+      <div className="flex w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl
           versions={project.versions}
           currVersionId={currVersionId}
