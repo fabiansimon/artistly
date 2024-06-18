@@ -1,17 +1,14 @@
-import { supabase } from '@/lib/supabaseClient';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multiparty from 'multiparty';
-import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
-import mime from 'mime-types';
+import { createProject } from '../controllers/projectController';
+import { storeFile } from '../controllers/fileController';
+import { createVersion } from '../controllers/versionController';
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-const bucket = process.env.NEXT_PUBLIC_BUCKET_NAME;
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,84 +22,43 @@ export default async function handler(
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
+      console.error('Error parsing form data:', err);
       return res.status(500).json({ error: 'Error parsing form data' });
     }
 
-    // Log the parsed form data
-    const { title, feedbackNotes, emailList } = fields;
+    try {
+      const {
+        title: [title],
+        feedbackNotes: [feedbackNotes],
+        emailList: [emailList],
+      } = fields;
+      const emails = JSON.parse(emailList);
 
-    const emails = JSON.parse(emailList[0]);
+      const {
+        tracks: [file],
+      } = files;
 
-    for (const email of emails) console.log(email);
+      /*
+        send emails to emails
+      */
 
-    const file = files['tracks'][0];
-    const filePath = file.path;
-    const fileName = file.originalFilename;
-    const fileContent = fs.readFileSync(filePath);
-    const mimeType = mime.lookup(fileName);
-    const fileId = uuidv4();
-
-    const creatorId = uuidv4();
-
-    // Check if mimeType is valid
-    if (!mimeType) {
-      return res.status(400).json({ error: 'Invalid file type' });
-    }
-
-    // Create a new project
-    const { data: projectData, error: projectError } = await supabase
-      .from('projects')
-      .insert([{ title: title[0], creator_id: creatorId }])
-      .select()
-      .single();
-
-    if (projectError) {
-      console.error('Error creating project:', projectError);
-      return res.status(500).json({ error: 'Error creating project' });
-    }
-
-    // Upload the file to Supabase Storage
-    const { data: storageData, error: storageError } = await supabase.storage
-      .from(bucket!)
-      .upload(`uploads/${fileId}`, fileContent, {
-        cacheControl: '3600',
-        upsert: false,
-        contentType: mimeType,
+      const { fileUrl } = await storeFile({ file });
+      const project = await createProject({ title });
+      const version = await createVersion({
+        title,
+        fileUrl,
+        feedbackNotes,
+        projectId: project.id,
       });
 
-    if (storageError) {
-      console.error('Error uploading file:', storageError);
-      return res
-        .status(500)
-        .json({ error: 'Error uploading file to Supabase' });
+      return res.status(200).json({
+        message: 'File uploaded and version created successfully',
+        project,
+        version,
+      });
+    } catch (error) {
+      console.error('Error handling upload:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket!).getPublicUrl(`uploads/${fileId}`);
-
-    // Step 3: Create a new version associated with the project
-    const { data: versionData, error: versionError } = await supabase
-      .from('versions')
-      .insert([
-        {
-          title: title[0],
-          file_url: publicUrl,
-          notes: feedbackNotes[0],
-          project_id: projectData.id,
-        },
-      ])
-      .single();
-
-    if (versionError) {
-      console.error('Error creating version:', versionError);
-      return res.status(500).json({ error: 'Error creating version' });
-    }
-
-    return res.status(200).json({
-      message: 'File uploaded and version created successfully',
-      project: projectData,
-      version: versionData,
-    });
   });
 }

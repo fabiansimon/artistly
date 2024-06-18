@@ -44,3 +44,10 @@ export interface InputData {
   email: string;
   emailList: Set<string>;
 }
+
+export interface Version {
+  title: string;
+  fileUrl: string;
+  feedbackNotes: string;
+  projectId: string;
+}
