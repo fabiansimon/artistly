@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { DragEvent, useCallback, useState, useEffect } from 'react';
 import ShareContainer from '@/components/ShareContainer';
+import { useRouter } from 'next/router';
 
 const transition = {
   duration: 500,
@@ -19,10 +20,6 @@ export default function UploadPage() {
   const [dragging, setDragging] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<AudioFile | undefined>();
-
-  useEffect(() => {
-    console.log('audioFile', audioFile);
-  }, [audioFile]);
 
   useEffect(() => {
     if (audioFile) return;

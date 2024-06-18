@@ -18,7 +18,6 @@ import {
 import ToastController from '@/controllers/ToastController';
 import { motion } from 'framer-motion';
 import { ToastType } from '@/types';
-import useIsSmall from '@/hooks/useIsSmall';
 import { cn } from '@/lib/utils';
 
 interface ModalInfo {
@@ -39,8 +38,6 @@ function Toast(): JSX.Element {
   const [info, setInfo] = useState<ModalInfo | null>(null);
 
   const ref = useRef<ToastMethods>();
-
-  const isSmall = useIsSmall();
 
   const animationStates = {
     visible: { opacity: 1, x: 0 },
@@ -106,7 +103,8 @@ function Toast(): JSX.Element {
       }}
       className={cn(
         'fixed p-4 right-10 rounded-md flex items-center space-x-3 z-10',
-        !isSmall ? 'bottom-10' : 'top-10 left-10',
+        'bottom-10',
+        // !isSmall ? 'bottom-10' : 'top-10 left-10',
         backgroundColor
       )}
     >

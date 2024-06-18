@@ -16,3 +16,17 @@ export async function createProject({ title }: { title: string }) {
 
   return data;
 }
+
+export async function fetchProjectById(id: string) {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching project: ${error.message}`);
+  }
+
+  return data;
+}
