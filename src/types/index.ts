@@ -45,9 +45,41 @@ export interface InputData {
   emailList: Set<string>;
 }
 
-export interface Version {
+export interface VersionUpload {
   title: string;
   fileUrl: string;
   feedbackNotes: string;
   projectId: string;
+}
+
+export interface Version {
+  id: string;
+  created_at: Date;
+  title: string;
+  file_url: string;
+  notes: string;
+  feedback: Comment[];
+}
+
+export interface User {
+  id: string;
+  email: string;
+  created_at: Date;
+  first_name?: string;
+  last_name?: string;
+}
+
+export interface Comment {
+  id: string;
+  timestamp: number;
+  text: string;
+}
+
+export interface Project {
+  id: string;
+  created_at: Date;
+  creator_id: string;
+  title: string;
+  versions: Version[];
+  collaborators: User[];
 }

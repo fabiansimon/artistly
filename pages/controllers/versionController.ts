@@ -1,10 +1,9 @@
 import { supabase } from '@/lib/supabaseClient';
-import { Version } from '@/types';
+import { Version, VersionUpload } from '@/types';
 
-export async function createVersion(version: Version) {
+export async function createVersion(version: VersionUpload) {
   const { title, fileUrl, feedbackNotes, projectId } = version;
 
-  console.log('feedbackNotes', feedbackNotes);
   const { data, error } = await supabase
     .from('versions')
     .insert([
@@ -22,4 +21,41 @@ export async function createVersion(version: Version) {
   }
 
   return data;
+}
+
+export async function fetchVersionsByProjectId(projectId: string) {
+  const { data, error } = await supabase
+    .from('versions')
+    .select('id, created_at, title, file_url, notes')
+    .eq('project_id', projectId);
+
+  if (error) {
+    throw new Error(`Error fetching versions: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function fetchVersionWithFeedbackByProjectId(projectId: string) {
+  const versions = await fetchVersionsByProjectId(projectId);
+
+  return await Promise.all(
+    versions.map(async (version) => {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('id, timestamp, text, creator_id')
+        .eq('version_id', version.id);
+
+      if (error) {
+        throw new Error(
+          `Error fetching feedback for version ${version.id}: ${error.message}`
+        );
+      }
+
+      return {
+        ...version,
+        feedback: data,
+      };
+    })
+  );
 }

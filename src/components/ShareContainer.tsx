@@ -12,6 +12,7 @@ import ToastController from '@/controllers/ToastController';
 import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
+import { useRouter } from 'next/navigation';
 
 export default function ShareContainer({
   audioFile,
@@ -26,6 +27,8 @@ export default function ShareContainer({
     emailList: new Set<string>(),
     email: '',
   });
+
+  const router = useRouter();
 
   const inputValid = useMemo(() => {
     const { title, emailList } = inputData;
@@ -57,6 +60,8 @@ export default function ShareContainer({
     return <span className="loading loading-ring loading-sm"></span>;
 
   const handleSubmit = async () => {
+    router.push('/project/0b27fc24-94ea-4776-b1ba-a48d1e77f099');
+    return;
     if (!inputValid) return;
     setLoading(true);
 
@@ -70,7 +75,7 @@ export default function ShareContainer({
 
     try {
       const result = await uploadTrack(form);
-      console.log('Result:', result);
+      console.warn('Result:', result);
     } finally {
       setLoading(false);
     }
