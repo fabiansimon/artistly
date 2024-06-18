@@ -2,7 +2,7 @@ import { AudioFile } from '@/types';
 import WaveContainer from './WaveContainer';
 import { PauseIcon, PlayIcon } from 'hugeicons-react';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, formatSeconds } from '@/lib/utils';
 
 export default function AudioPlayer({
   audioFile,
@@ -14,10 +14,10 @@ export default function AudioPlayer({
   className?: string;
 }) {
   const [playing, setPlaying] = useState<boolean>(false);
-  const { intervalPeaks } = audioFile;
+  const { intervalPeaks, duration } = audioFile;
 
   const togglePlaying = () => {
-    onPlay();
+    if (onPlay) onPlay();
     setPlaying((prev) => !prev);
   };
 
@@ -43,7 +43,7 @@ export default function AudioPlayer({
       </label>
       <WaveContainer intervals={intervalPeaks} />
       <article className="prose">
-        <p className="prose-sm">4:22</p>
+        <p className="prose-sm">{formatSeconds(duration)}</p>
       </article>
     </div>
   );

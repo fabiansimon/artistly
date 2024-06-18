@@ -31,3 +31,20 @@ body {
     text-wrap: balance;
   }
 }
+
+/* styles/globals.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@layer components {
+  .btn-sm {
+    @apply h-10 text-xs; /* Customize padding and font size */
+    /* Add any additional custom styles here */
+  }
+}
