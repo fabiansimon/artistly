@@ -8,6 +8,7 @@ import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import AudioEditor from '@/components/AudioEditor';
 import { cn } from '@/lib/utils';
+import FeedbackContainer from '@/components/FeedbackContainer';
 
 function ProjectPage() {
   const router = useRouter();
@@ -35,6 +36,7 @@ function ProjectPage() {
   useEffect(() => {
     if (audioFile) return;
     const cachedAudio = LocalStorage.fetchAudioFile();
+    console.log('cachedAudio', audioFile);
     setAudioFile(cachedAudio);
   }, []);
 
@@ -46,7 +48,6 @@ function ProjectPage() {
         const res = await fetchProject(id as string);
         setProject(res);
         setCurrVersionId(res.versions[0].id);
-        console.log(res);
       } catch (error: any) {
         console.error(error.message);
         ToastController.showErrorToast('Something went wrong', error.message);
@@ -83,6 +84,14 @@ function ProjectPage() {
           />
         )}
       </div>
+      {audioFile && (
+        <FeedbackContainer
+          onAddFeedback={(text, seconds) => console.log(text, seconds)}
+          duration={audioFile.duration}
+          generalComments={generalComments}
+          timestampComments={timestampComments}
+        />
+      )}
     </div>
   );
 }
@@ -99,7 +108,7 @@ function VersionControl({
   return (
     <div className="relative mt-4">
       <article className="prose absolute -top-8">
-        <p className="font-medium text-sm">{'Versions'}</p>
+        <p className="font-medium text-sm text-white/70">{'Versions'}</p>
       </article>
 
       <div className="flex border rounded-md border-neutral-800 max-w-20 overflow-hidden flex-col overflow-y-scroll scrollbar-hide max-h-20">

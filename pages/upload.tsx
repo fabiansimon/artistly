@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { DragEvent, useCallback, useState, useEffect } from 'react';
 import ShareContainer from '@/components/ShareContainer';
-import { useRouter } from 'next/router';
 
 const transition = {
   duration: 500,
@@ -108,9 +107,15 @@ function InitContainer() {
         alt="Music Icon"
       />
       <article className="prose text-center">
-        <h3>{'Drag and Drop your Masterpiece'}</h3>
-        <p className="-mt-2">{"We will handle it with care, don't worry"}</p>
+        <h3 className="text-white">{'Import your Masterpiece'}</h3>
+        <p className="-mt-3 text-white/70">
+          {"We will handle it with care, don't worry"}
+        </p>
       </article>
+      <input
+        type="file"
+        className="file-input file-input-bordered file-input-md w-full max-w-xs mt-4"
+      />
     </>
   );
 }

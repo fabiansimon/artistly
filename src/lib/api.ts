@@ -49,8 +49,6 @@ export async function uploadTrack(data: FormData) {
 export async function fetchProject(projectId: string) {
   try {
     const res = await axios.get<Project>(`/api/project/${projectId}`);
-    console.log(`/project/${projectId}`);
-    console.log(res);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadTrack' });
