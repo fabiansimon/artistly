@@ -1,6 +1,7 @@
 import { cn, formatSeconds } from '@/lib/utils';
 import { Clock01Icon, PlusSignIcon } from 'hugeicons-react';
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface Offset {
   percentage: number;
@@ -24,8 +25,9 @@ export default function WaveContainer({
   onTap,
   onAdd,
 }: WaveContainerProps) {
+  const [cursorVisible, setCursorVisible] = useState<boolean>(false);
   const [offset, setOffset] = useState<Offset>({
-    percentage: 0,
+    percentage: 100,
     offsetX: 0,
     time: 0,
   });
@@ -55,6 +57,8 @@ export default function WaveContainer({
   return (
     <div>
       <div
+        onMouseEnter={() => setCursorVisible(true)}
+        onMouseLeave={() => setCursorVisible(false)}
         onClick={handleClick}
         className={cn('relative w-full', className)}
       >
@@ -79,12 +83,14 @@ export default function WaveContainer({
             />
           ))}
         </div>
+        <CursorLine
+          cursorVisible={cursorVisible}
+          onAdd={onAdd}
+          offsetX={offset.offsetX}
+          time={offset.time}
+        />
       </div>
-      <CursorLine
-        onClick={onAdd}
-        offsetX={offset.offsetX}
-        time={offset.time}
-      />
+      <div className="bg-black/10 mt-4 flex w-full h-7 rounded-md"></div>
     </div>
   );
 }
@@ -92,39 +98,51 @@ export default function WaveContainer({
 function CursorLine({
   time,
   offsetX,
-  onClick,
+  onAdd,
   className,
+  cursorVisible,
 }: {
   time: number;
   offsetX: number;
-  onClick: (seconds: number) => void;
+  onAdd?: (seconds: number) => void;
+  cursorVisible: boolean;
   className?: string;
 }) {
+  const handleOnAdd = () => {
+    if (onAdd) onAdd(time);
+  };
   return (
     <div
       style={{ left: offsetX }}
-      className={cn('bg-white flex h-full w-[1px] absolute top-3', className)}
+      className={cn(
+        'bg-white flex h-full w-[1px] absolute top-4 -mt-4',
+        className
+      )}
     >
-      <div className="h-9 w-32 bg-white absolute -bottom-9 rounded-md rounded-tl-none flex items-center py-[0.5px]">
-        <div className="rounded-md rounded-tl-none mx-[0.5px] px-1 bg-neutral items-center flex flex-grow w-full h-full justify-center space-x-2">
-          <Clock01Icon
-            className="text-slate-200"
-            size={16}
-          />
+      <motion.div
+        initial={'hidden'}
+        animate={cursorVisible ? 'visible' : 'hidden'}
+        variants={{
+          visible: { width: 'auto', opacity: 1 },
+          hidden: { width: 0, opacity: 0 },
+        }}
+        className="h-9 w-32 shadow-xl shadow-black/30 bg-white absolute -bottom-9 rounded-md rounded-tl-none flex items-center py-[0.5px] overflow-hidden"
+      >
+        <div className="rounded-md rounded-tl-none mx-[0.5px] bg-neutral items-center flex flex-grow w-full h-full justify-center space-x-2 px-4">
           <article className="prose">
             <p className="text-slate-200 text-sm">{formatSeconds(time)}</p>
           </article>
         </div>
         <div
           className="cursor-pointer"
-          onClick={() => onClick(time)}
+          onClick={handleOnAdd}
         >
           <PlusSignIcon
             size={20}
             className="text-black/80 mx-2"
           />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
