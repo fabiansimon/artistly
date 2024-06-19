@@ -41,9 +41,12 @@ export default function AudioPlayer({
           className="swap-on fill-current"
         />
       </label>
-      <WaveContainer intervals={intervalPeaks} />
+      <WaveContainer
+        simple
+        intervals={intervalPeaks}
+      />
       <article className="prose">
-        <p className="prose-sm">{formatSeconds(duration)}</p>
+        <p className="prose-sm text-white/70">{formatSeconds(duration)}</p>
       </article>
     </div>
   );

@@ -23,6 +23,15 @@ function ProjectPage() {
     return versions.find((v) => v.id === currVersionId) || versions[0];
   }, [currVersionId, project]);
 
+  const { timestampComments, generalComments } = useMemo(() => {
+    if (!version) return { timestampComments: [], generalComments: [] };
+    const { feedback } = version;
+    return {
+      timestampComments: feedback.filter((f) => f.timestamp),
+      generalComments: feedback.filter((f) => !f.timestamp),
+    };
+  }, [version]);
+
   useEffect(() => {
     if (audioFile) return;
     const cachedAudio = LocalStorage.fetchAudioFile();
@@ -57,17 +66,22 @@ function ProjectPage() {
 
   return (
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <article className="prose text-center">
-        <h3>{title}</h3>
+      <article className="prose text-center text-white/50">
+        <h3 className="text-white">{title}</h3>
         <p className="-mt-4">Version {version?.title}</p>
       </article>
       <div className="flex w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl
-          versions={project.versions}
+          versions={versions}
           currVersionId={currVersionId}
           onClick={setCurrVersionId}
         />
-        {audioFile && <AudioEditor audioFile={audioFile} />}
+        {audioFile && (
+          <AudioEditor
+            audioFile={audioFile}
+            comments={timestampComments}
+          />
+        )}
       </div>
     </div>
   );

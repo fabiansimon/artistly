@@ -14,11 +14,13 @@ interface WaveContainerProps {
   className?: string;
   amplifyBy?: number;
   duration?: number;
+  simple?: boolean;
   onTap?: (time: number) => void;
   onAdd?: (time: number) => void;
 }
 export default function WaveContainer({
   intervals,
+  simple = false,
   duration,
   className,
   amplifyBy,
@@ -83,14 +85,15 @@ export default function WaveContainer({
             />
           ))}
         </div>
-        <CursorLine
-          cursorVisible={cursorVisible}
-          onAdd={onAdd}
-          offsetX={offset.offsetX}
-          time={offset.time}
-        />
+        {!simple && (
+          <CursorLine
+            cursorVisible={cursorVisible}
+            onAdd={onAdd}
+            offsetX={offset.offsetX}
+            time={offset.time}
+          />
+        )}
       </div>
-      <div className="bg-black/10 mt-4 flex w-full h-7 rounded-md"></div>
     </div>
   );
 }
@@ -115,7 +118,7 @@ function CursorLine({
     <div
       style={{ left: offsetX }}
       className={cn(
-        'bg-white flex h-full w-[1px] absolute top-4 -mt-4',
+        'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-10',
         className
       )}
     >
@@ -128,7 +131,7 @@ function CursorLine({
         }}
         className="h-9 w-32 shadow-xl shadow-black/30 bg-white absolute -bottom-9 rounded-md rounded-tl-none flex items-center py-[0.5px] overflow-hidden"
       >
-        <div className="rounded-md rounded-tl-none mx-[0.5px] bg-neutral items-center flex flex-grow w-full h-full justify-center space-x-2 px-4">
+        <div className="rounded-md rounded-tl-none mx-[0.5px] bg-black/90 items-center flex flex-grow w-full h-full justify-center space-x-2 px-4">
           <article className="prose">
             <p className="text-slate-200 text-sm">{formatSeconds(time)}</p>
           </article>

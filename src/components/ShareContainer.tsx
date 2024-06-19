@@ -127,7 +127,7 @@ export default function ShareContainer({
   return (
     <div className="w-[80%] flex flex-col items-center">
       <article className="prose mb-4">
-        <h3 className="">Upload Track</h3>
+        <h3 className="text-white">Upload Track</h3>
       </article>
       <div className="flex flex-col w-full justify-center bg-neutral rounded-xl items-center space-y-4 px-4 py-4">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
@@ -151,7 +151,7 @@ export default function ShareContainer({
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea textarea-bordered bg-transparent w-full"
+          className="textarea textarea-bordered bg-transparent w-full max-h-44"
           placeholder="Add some feedback notes (optional)"
         ></textarea>
 
@@ -188,7 +188,7 @@ export default function ShareContainer({
           )}
         </div>
 
-        <div className="flex space-x-4 w-full">
+        <div className="flex gap-4 w-full flex-col md:flex-row">
           <label className="input input-bordered flex items-center gap-2 flex-grow">
             <Mail01Icon size={18} />
             <input
@@ -219,7 +219,7 @@ export default function ShareContainer({
         {loading ? (
           <span className="loading loading-spinner"></span>
         ) : (
-          <article className="prose">
+          <article className="prose text-white">
             <p>{'Share'}</p>
           </article>
         )}
@@ -241,7 +241,7 @@ function CollaboratorContainer({
       className="flex bg-primary/10 rounded-md px-2 py-1 items-center space-x-2"
     >
       <article className="prose">
-        <p className="prose-sm">{email}</p>
+        <p className="prose-sm text-white/70">{email}</p>
       </article>
       <Cancel01Icon size={16} />
     </div>
