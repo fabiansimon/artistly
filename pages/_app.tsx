@@ -5,7 +5,7 @@ import '../src/app/globals.css';
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <div
-      data-theme="synthwave"
+      data-theme="sunset"
       className="flex min-h-screen flex-col items-center justify-between"
     >
       <Component {...pageProps} />

@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="synthwave"
+      data-theme="sunset"
     >
       <body className={inter.className}>{children}</body>
     </html>
