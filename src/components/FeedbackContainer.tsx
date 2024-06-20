@@ -3,6 +3,7 @@ import { cn, formatSeconds } from '@/lib/utils';
 import { Comment } from '@/types';
 import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';
+import EmptyContainer from './EmptyContainer';
 
 enum FilterState {
   GENERAL,
@@ -30,14 +31,109 @@ export default function FeedbackContainer({
   duration,
 }: FeedbackContainerProps) {
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
-  const [input, setInput] = useState<Input>({ text: '' });
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const feedback = useMemo(() => {
     if (filter === FilterState.GENERAL) return generalComments;
     if (filter === FilterState.TIMESTAMPS) return timestampComments;
     return [...timestampComments, ...generalComments];
   }, [filter, timestampComments, generalComments]);
+
+  return (
+    <div
+      className={cn(
+        'mt-auto flex flex-col max-h-[60%] h-full w-full max-w-screen-md bg-black/10 py-4 px-6 rounded-lg',
+        className
+      )}
+    >
+      <div className="flex justify-between items-center">
+        <article className="prose">
+          <h4 className="text-white">Feedback</h4>
+        </article>
+        <button className={cn('btn btn-neutral btn-sm')}>
+          <Download04Icon size={16} />
+          Download Feedback
+        </button>
+      </div>
+      <div
+        role="tablist"
+        className="tabs tabs-boxed border border-neutral mt-4 max-w-sm mr-auto"
+      >
+        <a
+          onClick={() => setFilter(FilterState.ALL)}
+          role="tab"
+          className={cn('tab', filter === FilterState.ALL && 'tab-active')}
+        >
+          All
+        </a>
+        <a
+          onClick={() => setFilter(FilterState.GENERAL)}
+          role="tab"
+          className={cn('tab', filter === FilterState.GENERAL && 'tab-active')}
+        >
+          General
+        </a>
+        <a
+          onClick={() => setFilter(FilterState.TIMESTAMPS)}
+          role="tab"
+          className={cn(
+            'tab',
+            filter === FilterState.TIMESTAMPS && 'tab-active'
+          )}
+        >
+          Timestamps
+        </a>
+      </div>
+      {feedback.length > 0 ? (
+        <div className="space-y-2 mt-4 flex-grow h-full overflow-auto ">
+          {feedback.map(({ id, text, timestamp }) => {
+            return (
+              <div
+                key={id}
+                className="bg-neutral rounded-xl p-2 shadow-xl shadow-black/5 flex justify-between"
+              >
+                <article className="prose">
+                  <p className="text-xs text-white/30">
+                    fabian.simon98@gmail.com
+                  </p>
+                  <span className="flex">
+                    {timestamp != null && (
+                      <p className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1">
+                        @{formatSeconds(timestamp)}
+                      </p>
+                    )}
+                    <h3 className="text-sm text-white font-normal -mt-3">
+                      {text}
+                    </h3>
+                  </span>
+                </article>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyContainer
+          title="No comments yet"
+          description="Be the first one to add one"
+          className="flex-grow "
+        />
+      )}
+      <InputField
+        onAdd={onAddFeedback}
+        duration={duration}
+      />
+    </div>
+  );
+}
+
+function InputField({
+  onAdd,
+  duration,
+}: {
+  onAdd: (text: string, timestamp?: number) => void;
+  duration: number;
+}) {
+  const [input, setInput] = useState<Input>({ text: '' });
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     const timestampIndex = input.text.indexOf('@');
@@ -58,77 +154,8 @@ export default function FeedbackContainer({
 
     if (errorMessage) setErrorMessage('');
   }, [input.text, duration, errorMessage]);
-
   return (
-    <div
-      className={cn(
-        'mt-auto flex flex-col min-h-[60%] w-full max-w-screen-md bg-black/10 py-4 px-6 rounded-lg'
-      )}
-    >
-      <div className="flex justify-between items-center">
-        <article className="prose">
-          <h4 className="text-white">Feedback</h4>
-        </article>
-        <button className={cn('btn btn-neutral btn-sm')}>
-          <Download04Icon size={16} />
-          Download Feedback
-        </button>
-      </div>
-      <div
-        role="tablist"
-        className="tabs tabs-boxed border border-neutral mt-4 max-w-sm mr-auto"
-      >
-        <a
-          onClick={() => setFilter(FilterState.GENERAL)}
-          role="tab"
-          className={cn('tab', filter === FilterState.GENERAL && 'tab-active')}
-        >
-          General
-        </a>
-        <a
-          onClick={() => setFilter(FilterState.TIMESTAMPS)}
-          role="tab"
-          className={cn(
-            'tab',
-            filter === FilterState.TIMESTAMPS && 'tab-active'
-          )}
-        >
-          Timestamps
-        </a>
-        <a
-          onClick={() => setFilter(FilterState.ALL)}
-          role="tab"
-          className={cn('tab', filter === FilterState.ALL && 'tab-active')}
-        >
-          All
-        </a>
-      </div>
-      <div className="space-y-2 mt-4 mb-auto">
-        {feedback.map(({ id, text, timestamp }) => {
-          return (
-            <div
-              key={id}
-              className="bg-neutral rounded-xl p-2 shadow-xl shadow-black/5 flex justify-between"
-            >
-              <article className="prose">
-                <p className="text-xs text-white/30">
-                  fabian.simon98@gmail.com
-                </p>
-                <span className="flex">
-                  {timestamp != null && (
-                    <p className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1">
-                      @{formatSeconds(timestamp)}
-                    </p>
-                  )}
-                  <h3 className="text-sm text-white font-normal -mt-3">
-                    {text}
-                  </h3>
-                </span>
-              </article>
-            </div>
-          );
-        })}
-      </div>
+    <>
       <div className="mt-4 flex space-x-2">
         <input
           type="text"
@@ -149,7 +176,8 @@ export default function FeedbackContainer({
           Add Comment
         </button>
       </div>
-      <article className="prose mt-2">
+
+      <article className="prose mt-2 -mb-2">
         <p
           className={cn(
             'text-red-500/90 text-sm opacity-0',
@@ -159,6 +187,6 @@ export default function FeedbackContainer({
           {errorMessage || '1'}
         </p>
       </article>
-    </div>
+    </>
   );
 }

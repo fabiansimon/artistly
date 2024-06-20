@@ -1,7 +1,19 @@
 import { cn, formatSeconds } from '@/lib/utils';
 import { Clock01Icon, PlusSignIcon } from 'hugeicons-react';
-import { useMemo, useState } from 'react';
+import {
+  forwardRef,
+  LegacyRef,
+  Ref,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { motion } from 'framer-motion';
+
+export interface AudioRef {
+  play: () => void;
+}
 
 interface Offset {
   percentage: number;
@@ -18,21 +30,28 @@ interface WaveContainerProps {
   onTap?: (time: number) => void;
   onAdd?: (time: number) => void;
 }
-export default function WaveContainer({
-  intervals,
-  simple = false,
-  duration,
-  className,
-  amplifyBy,
-  onTap,
-  onAdd,
-}: WaveContainerProps) {
+
+function WaveContainer(
+  {
+    intervals,
+    simple = false,
+    duration,
+    className,
+    amplifyBy,
+    onTap,
+    onAdd,
+  }: WaveContainerProps,
+  ref: Ref<AudioRef>
+) {
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
   const [offset, setOffset] = useState<Offset>({
     percentage: 100,
     offsetX: 0,
     time: 0,
   });
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const AMPLIFY_BY = amplifyBy || 100;
 
   const clipPath = useMemo(
@@ -56,8 +75,20 @@ export default function WaveContainer({
     if (onTap) onTap(time);
   };
 
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      console.log('hello');
+    },
+  }));
+
   return (
     <div>
+      <audio
+        ref={audioRef}
+        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/69ea7685-e32c-4ef7-a384-c26288fe7aca?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy82OWVhNzY4NS1lMzJjLTRlZjctYTM4NC1jMjYyODhmZTdhY2EiLCJpYXQiOjE3MTg4NjIyOTUsImV4cCI6MTcxOTQ2NzA5NX0.PI1qDFZ9MAoV2fzDYlc_q1MItmqy2sV56Nm_01WwrbU&t=2024-06-20T05%3A44%3A55.186Z"
+      >
+        Your browser does not support the audio element.
+      </audio>
       <div
         onMouseEnter={() => setCursorVisible(true)}
         onMouseLeave={() => setCursorVisible(false)}
@@ -149,3 +180,5 @@ function CursorLine({
     </div>
   );
 }
+
+export default forwardRef(WaveContainer);

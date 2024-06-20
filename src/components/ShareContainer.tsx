@@ -60,8 +60,6 @@ export default function ShareContainer({
     return <span className="loading loading-ring loading-sm"></span>;
 
   const handleSubmit = async () => {
-    router.push('/project/0b27fc24-94ea-4776-b1ba-a48d1e77f099');
-    return;
     if (!inputValid) return;
     setLoading(true);
 
@@ -75,7 +73,7 @@ export default function ShareContainer({
 
     try {
       const result = await uploadTrack(form);
-      console.warn('Result:', result);
+      router.push('/project/0b27fc24-94ea-4776-b1ba-a48d1e77f099');
     } finally {
       setLoading(false);
     }
