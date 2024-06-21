@@ -12,7 +12,8 @@ import {
 import { motion } from 'framer-motion';
 
 export interface AudioRef {
-  play: () => void;
+  play: (timestamp?: number) => void;
+  pause: () => void;
 }
 
 interface Offset {
@@ -76,8 +77,11 @@ function WaveContainer(
   };
 
   useImperativeHandle(ref, () => ({
-    play: () => {
-      console.log('hello');
+    play: (timestamp?: number) => {
+      audioRef.current?.play();
+    },
+    pause: () => {
+      audioRef.current?.pause();
     },
   }));
 

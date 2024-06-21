@@ -1,14 +1,13 @@
 import { cn, formatSeconds } from '@/lib/utils';
 import { AudioFile, Comment } from '@/types';
-import { useState } from 'react';
-import WaveContainer from './WaveContainer';
+import { useRef, useState } from 'react';
+import WaveContainer, { AudioRef } from './WaveContainer';
 import {
   ArrowReloadHorizontalIcon,
   PauseIcon,
   PlayIcon,
 } from 'hugeicons-react';
 import { motion } from 'framer-motion';
-import { off } from 'process';
 
 export default function AudioEditor({
   audioFile,
@@ -24,13 +23,21 @@ export default function AudioEditor({
   const [playing, setPlaying] = useState<boolean>(false);
   const [looping, setLooping] = useState<boolean>(true);
 
+  const audioRef = useRef<AudioRef | null>(null);
+
   const toggleLoop = () => {
     setLooping((prev) => !prev);
   };
 
   const togglePlaying = () => {
     if (onPlay) onPlay();
-    setPlaying((prev) => !prev);
+    setPlaying((prev) => {
+      const newState = !prev;
+      if (newState) audioRef.current?.play();
+      else audioRef?.current?.pause();
+
+      return newState;
+    });
   };
 
   const { intervalPeaks, duration } = audioFile;
@@ -40,6 +47,7 @@ export default function AudioEditor({
     >
       <div className="flex relative flex-col w-full">
         <WaveContainer
+          ref={audioRef}
           onTap={(time) => console.log(time)}
           amplifyBy={200}
           duration={duration}
