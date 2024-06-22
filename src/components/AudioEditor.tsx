@@ -26,7 +26,11 @@ export default function AudioEditor({
   const audioRef = useRef<AudioRef | null>(null);
 
   const toggleLoop = () => {
-    setLooping((prev) => !prev);
+    setLooping((prev) => {
+      const newState = !prev;
+      audioRef?.current?.setLoop(newState);
+      return newState;
+    });
   };
 
   const togglePlaying = () => {
@@ -48,9 +52,7 @@ export default function AudioEditor({
       <div className="flex relative flex-col w-full">
         <WaveContainer
           ref={audioRef}
-          onTap={(time) => console.log(time)}
           amplifyBy={200}
-          duration={duration}
           intervals={intervalPeaks}
         />
         {comments && (
@@ -113,7 +115,6 @@ function CommentsSection({
       {comments.map((comment) => {
         const { timestamp } = comment;
         const offset = (timestamp / duration) * 100;
-        console.log(offset);
         return (
           <CommentTile
             style={{ left: `${offset}%` }}

@@ -2,8 +2,8 @@ import { cn, formatSeconds } from '@/lib/utils';
 import { Clock01Icon, PlusSignIcon } from 'hugeicons-react';
 import {
   forwardRef,
-  LegacyRef,
   Ref,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -14,12 +14,18 @@ import { motion } from 'framer-motion';
 export interface AudioRef {
   play: (timestamp?: number) => void;
   pause: () => void;
+  setLoop: (status: boolean) => void;
+  setTime: (timestamp: number) => void;
 }
 
 interface Offset {
   percentage: number;
   offsetX: number;
   time: number;
+}
+
+interface AudioSettings {
+  looping: boolean;
 }
 
 interface WaveContainerProps {
@@ -36,15 +42,16 @@ function WaveContainer(
   {
     intervals,
     simple = false,
-    duration,
     className,
     amplifyBy,
-    onTap,
     onAdd,
   }: WaveContainerProps,
   ref: Ref<AudioRef>
 ) {
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
+  const [audioSettings, setAudioSettings] = useState<AudioSettings>({
+    looping: true,
+  });
   const [offset, setOffset] = useState<Offset>({
     percentage: 100,
     offsetX: 0,
@@ -60,34 +67,71 @@ function WaveContainer(
     [offset.percentage]
   );
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (!duration) return;
+  useEffect(() => {
+    const updateOffset = () => {
+      if (!audioRef.current) return;
+      const currentTime = audioRef.current.currentTime;
+      const duration = audioRef.current.duration;
+      const percentage = 100 - (currentTime / duration) * 100;
+      setOffset((prev) => ({
+        ...prev,
+        percentage,
+        time: currentTime,
+      }));
+    };
 
+    const audioElement = audioRef.current;
+    if (audioElement) {
+      audioElement.addEventListener('timeupdate', updateOffset);
+      return () => {
+        audioElement.removeEventListener('timeupdate', updateOffset);
+      };
+    }
+  }, []);
+
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (!audioRef.current) return;
+
+    const duration = audioRef.current.duration;
     const target = e.currentTarget as HTMLElement;
     const { left, width } = target.getBoundingClientRect();
     const offsetX = e.clientX - left;
     const percentage = 100 - (offsetX / width) * 100;
     const time = duration - duration * (percentage / 100);
+    setTime(time);
     setOffset({
       percentage,
       offsetX,
       time,
     });
-    if (onTap) onTap(time);
+  };
+
+  const setTime = (timestamp: number) => {
+    if (!audioRef.current) return;
+    const duration = audioRef.current?.duration || 0;
+    audioRef.current.currentTime = Math.min(duration, timestamp);
   };
 
   useImperativeHandle(ref, () => ({
     play: (timestamp?: number) => {
+      if (timestamp) setTime(timestamp);
       audioRef.current?.play();
     },
     pause: () => {
       audioRef.current?.pause();
+    },
+    setTime: (timestamp: number) => {
+      setTime(timestamp);
+    },
+    setLoop: (status: boolean) => {
+      setAudioSettings((prev) => ({ ...prev, looping: status }));
     },
   }));
 
   return (
     <div>
       <audio
+        loop={audioSettings.looping}
         ref={audioRef}
         src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/69ea7685-e32c-4ef7-a384-c26288fe7aca?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy82OWVhNzY4NS1lMzJjLTRlZjctYTM4NC1jMjYyODhmZTdhY2EiLCJpYXQiOjE3MTg4NjIyOTUsImV4cCI6MTcxOTQ2NzA5NX0.PI1qDFZ9MAoV2fzDYlc_q1MItmqy2sV56Nm_01WwrbU&t=2024-06-20T05%3A44%3A55.186Z"
       >
@@ -122,9 +166,9 @@ function WaveContainer(
         </div>
         {!simple && (
           <CursorLine
+            className={`left-[${50}%]`}
             cursorVisible={cursorVisible}
             onAdd={onAdd}
-            offsetX={offset.offsetX}
             time={offset.time}
           />
         )}
@@ -135,13 +179,11 @@ function WaveContainer(
 
 function CursorLine({
   time,
-  offsetX,
   onAdd,
   className,
   cursorVisible,
 }: {
   time: number;
-  offsetX: number;
   onAdd?: (seconds: number) => void;
   cursorVisible: boolean;
   className?: string;
@@ -151,7 +193,6 @@ function CursorLine({
   };
   return (
     <div
-      style={{ left: offsetX }}
       className={cn(
         'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-10',
         className
