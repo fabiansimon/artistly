@@ -1,5 +1,5 @@
 import { cn, formatSeconds } from '@/lib/utils';
-import { AudioFile, Comment } from '@/types';
+import { Comment } from '@/types';
 import { useRef, useState } from 'react';
 import WaveContainer, { AudioRef } from './WaveContainer';
 import {
@@ -9,67 +9,63 @@ import {
 } from 'hugeicons-react';
 import { motion } from 'framer-motion';
 import AudioInfoBox from './AudioInfoBox';
+import useKeyShortcut from '@/hooks/useKeyShortcut';
+import { useAudioContext } from '@/providers/AudioProvider';
 
 export default function AudioEditor({
-  audioFile,
-  versionNumber,
-  comments,
-  onPlay,
   className,
+  comments,
 }: {
-  onPlay?: () => void;
-  comments: Comment[];
-  audioFile: AudioFile;
-  versionNumber: number;
   className?: string;
+  comments: Comment[];
 }) {
-  const [playing, setPlaying] = useState<boolean>(false);
-  const [looping, setLooping] = useState<boolean>(true);
-
+  const {
+    file,
+    settings: { looping, playing },
+    setSettings,
+  } = useAudioContext();
   const audioRef = useRef<AudioRef | null>(null);
 
   const toggleLoop = () => {
-    setLooping((prev) => {
-      const newState = !prev;
-      audioRef?.current?.setLoop(newState);
-      return newState;
+    setSettings((prev) => {
+      const newState = !prev.looping;
+      return {
+        ...prev,
+        looping: newState,
+      };
     });
   };
 
   const togglePlaying = () => {
-    if (onPlay) onPlay();
-    setPlaying((prev) => {
-      const newState = !prev;
+    setSettings((prev) => {
+      const newState = !prev.playing;
       if (newState) audioRef.current?.play();
       else audioRef?.current?.pause();
 
-      return newState;
+      return {
+        ...prev,
+        playing: newState,
+      };
     });
   };
 
-  const { intervalPeaks, duration } = audioFile;
+  useKeyShortcut(' ', togglePlaying, true);
+  useKeyShortcut('L', toggleLoop, true);
+
   return (
     <div
       className={cn('flex flex-grow w-full space-x-3 items-center', className)}
     >
       <div className="flex relative flex-col w-full">
-        <AudioInfoBox
-          information={{
-            commentsNumber: comments.length,
-            duration: duration,
-            looping,
-            versionNumber,
-          }}
-          className="mb-4"
-        />
+        <AudioInfoBox className="mb-4" />
         <WaveContainer
           ref={audioRef}
           amplifyBy={200}
-          intervals={intervalPeaks}
         />
         <CommentsSection
+          onClick={(timestamp: number) => audioRef.current?.setTime(timestamp)}
           comments={comments}
-          duration={audioFile.duration}
+          duration={file?.duration!}
         />
       </div>
 
@@ -116,9 +112,11 @@ export default function AudioEditor({
 function CommentsSection({
   comments,
   duration,
+  onClick,
 }: {
   comments: Comment[];
   duration: number;
+  onClick: (timestamp: number) => void;
 }) {
   return (
     <div className="flex w-full mt-3 relative">
@@ -127,6 +125,7 @@ function CommentsSection({
         const offset = (timestamp / duration) * 100;
         return (
           <CommentTile
+            onClick={() => onClick(timestamp)}
             style={{ left: `${offset}%` }}
             key={comment.id}
             comment={comment}
@@ -140,12 +139,15 @@ function CommentsSection({
 function CommentTile({
   comment,
   style,
+  onClick,
 }: {
   comment: Comment;
   style: React.CSSProperties;
+  onClick: () => void;
 }) {
   const [hovered, setHovered] = useState<boolean>(false);
   const { timestamp, text } = comment;
+
   return (
     <div
       style={style}
@@ -155,6 +157,7 @@ function CommentTile({
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onClick={onClick}
         className={cn(
           'flex cursor-pointer bg-neutral-900 relative items-center space-x-1 overflow-hidden rounded-sm h-full border border-neutral-100/5',
           hovered && 'z-10'

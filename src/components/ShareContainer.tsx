@@ -154,7 +154,6 @@ export default function ShareContainer({
         ></textarea>
 
         <AudioPlayer
-          onPlay={() => console.log(inputData.file)}
           className="py-4"
           audioFile={audioFile}
         />

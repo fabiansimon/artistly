@@ -17,9 +17,9 @@ export class LocalStorage {
     localStorage.setItem(KEYS.audioFile, JSON.stringify(serialized));
   }
 
-  static fetchAudioFile(): AudioFile | undefined {
+  static fetchAudioFile(): AudioFile | null {
     const res = localStorage.getItem(KEYS.audioFile);
-    if (!res) return;
+    if (!res) return null;
 
     const parsed = JSON.parse(res);
     const blob = dataURLToBlob(parsed.file);

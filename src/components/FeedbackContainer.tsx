@@ -1,10 +1,10 @@
 import { REGEX } from '@/constants/regex';
 import { cn, formatSeconds } from '@/lib/utils';
-import { Comment } from '@/types';
+import { Comment, Input } from '@/types';
 import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';
 import EmptyContainer from './EmptyContainer';
-import { Input } from 'postcss';
+import { useAudioContext } from '@/providers/AudioProvider';
 
 enum FilterState {
   GENERAL,
@@ -16,15 +16,11 @@ interface FeedbackContainerProps {
   timestampComments: Comment[];
   generalComments: Comment[];
   className?: string;
-  onAddFeedback: (input: Input) => void;
-  duration: number;
 }
 export default function FeedbackContainer({
   timestampComments,
   generalComments,
   className,
-  onAddFeedback,
-  duration,
 }: FeedbackContainerProps) {
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
 
@@ -113,21 +109,14 @@ export default function FeedbackContainer({
           className="flex-grow "
         />
       )}
-      <InputField
-        onAdd={onAddFeedback}
-        duration={duration}
-      />
+      <InputField />
     </div>
   );
 }
 
-function InputField({
-  onAdd,
-  duration,
-}: {
-  onAdd: (input: Input) => void;
-  duration: number;
-}) {
+function InputField() {
+  const { addFeedback, file } = useAudioContext();
+
   const [input, setInput] = useState<Input>({ text: '' });
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -143,13 +132,13 @@ function InputField({
 
       const [minutes, seconds] = rawTime.split(':').map(Number);
       const timestamp = minutes * 60 + seconds;
-      if (timestamp > duration)
+      if (timestamp > file?.duration!)
         return setErrorMessage('Timestamp is outside of song duration.');
       else setInput((prev) => ({ ...prev, timestamp }));
     }
 
     if (errorMessage) setErrorMessage('');
-  }, [input.text, duration, errorMessage]);
+  }, [input.text, file, errorMessage]);
   return (
     <>
       <div className="mt-4 flex space-x-2">
@@ -165,7 +154,7 @@ function InputField({
           )}
         />
         <button
-          onClick={() => onAdd(input)}
+          onClick={() => addFeedback(input)}
           disabled={!!(errorMessage || input.text.trim().length === 0)}
           className="btn btn-primary"
         >
