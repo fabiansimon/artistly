@@ -26,7 +26,7 @@ export async function storeFile({ file }: { file: UploadedFile }) {
     throw new Error('Invalid file type');
   }
 
-  const { error, data } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucket!)
     .upload(`uploads/${fileId}`, fileContent, {
       cacheControl: '3600',
@@ -42,6 +42,5 @@ export async function storeFile({ file }: { file: UploadedFile }) {
     data: { publicUrl: fileUrl },
   } = supabase.storage.from(bucket!).getPublicUrl(`uploads/${fileId}`);
 
-  console.log(data, fileUrl);
   return { fileUrl };
 }

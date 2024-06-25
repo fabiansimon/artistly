@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
-import { Version, VersionUpload } from '@/types';
+import { VersionUpload } from '@/types';
 
 export async function createVersion(version: VersionUpload) {
   const { title, fileUrl, feedbackNotes, projectId } = version;

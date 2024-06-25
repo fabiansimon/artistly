@@ -2,9 +2,9 @@
 
 import { act, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AudioFile, Project, Version } from '@/types';
+import { AudioFile, Input, Project, Version } from '@/types';
 import ToastController from '@/controllers/ToastController';
-import { fetchProject } from '@/lib/api';
+import { fetchProject, uploadFeeback } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import AudioEditor from '@/components/AudioEditor';
 import { cn } from '@/lib/utils';
@@ -14,24 +14,20 @@ function ProjectPage() {
   const router = useRouter();
   const { id } = router.query;
   const [project, setProject] = useState<Project | null>(null);
-  const [currVersionId, setCurrVersionId] = useState<string>('');
+  const [currVersion, setCurrVersion] = useState<
+    (Version & { index: number }) | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<AudioFile | undefined>();
 
-  const version = useMemo(() => {
-    if (!project) return;
-    const { versions } = project;
-    return versions.find((v) => v.id === currVersionId) || versions[0];
-  }, [currVersionId, project]);
-
   const { timestampComments, generalComments } = useMemo(() => {
-    if (!version) return { timestampComments: [], generalComments: [] };
-    const { feedback } = version;
+    if (!currVersion) return { timestampComments: [], generalComments: [] };
+    const { feedback } = currVersion;
     return {
       timestampComments: feedback.filter((f) => f.timestamp),
       generalComments: feedback.filter((f) => !f.timestamp),
     };
-  }, [version]);
+  }, [currVersion]);
 
   useEffect(() => {
     if (audioFile) return;
@@ -47,13 +43,37 @@ function ProjectPage() {
       try {
         const res = await fetchProject(id as string);
         setProject(res);
-        setCurrVersionId(res.versions[0].id);
+        setCurrVersion({ ...res.versions[0], index: 1 });
       } catch (error: any) {
         console.error(error.message);
         ToastController.showErrorToast('Something went wrong', error.message);
       }
     })();
   }, [id]);
+
+  const handleVersionChange = async (id: string) => {
+    if (!project) return;
+    const { versions } = project;
+    setCurrVersion(() => {
+      const index = versions.findIndex((v: Version) => v.id === id);
+      return { ...project?.versions[index], index };
+    });
+  };
+
+  const handleAddFeedback = async (input: Input) => {
+    if (!currVersion) return;
+    const { text, timestamp } = input;
+    try {
+      const result = await uploadFeeback({
+        text,
+        timestamp,
+        versionId: currVersion.id,
+      });
+    } catch {
+    } finally {
+      console.log('first');
+    }
+  };
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -69,16 +89,17 @@ function ProjectPage() {
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
       <article className="prose text-center text-white/50">
         <h3 className="text-white">{title}</h3>
-        <p className="-mt-4">Version {version?.title}</p>
+        <p className="-mt-4">Version {currVersion?.title}</p>
       </article>
       <div className="flex w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl
           versions={versions}
-          currVersionId={currVersionId}
-          onClick={setCurrVersionId}
+          currVersionId={currVersion?.id || ''}
+          onClick={handleVersionChange}
         />
         {audioFile && (
           <AudioEditor
+            versionNumber={currVersion?.index || 1}
             audioFile={audioFile}
             comments={timestampComments}
           />
@@ -86,7 +107,7 @@ function ProjectPage() {
       </div>
       {audioFile && (
         <FeedbackContainer
-          onAddFeedback={(text, seconds) => console.log(text, seconds)}
+          onAddFeedback={handleAddFeedback}
           duration={audioFile.duration}
           generalComments={generalComments}
           timestampComments={timestampComments}

@@ -4,6 +4,7 @@ import { Comment } from '@/types';
 import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';
 import EmptyContainer from './EmptyContainer';
+import { Input } from 'postcss';
 
 enum FilterState {
   GENERAL,
@@ -11,16 +12,11 @@ enum FilterState {
   ALL,
 }
 
-interface Input {
-  text: string;
-  timestamp?: number;
-}
-
 interface FeedbackContainerProps {
   timestampComments: Comment[];
   generalComments: Comment[];
   className?: string;
-  onAddFeedback: (text: string, timestamp?: number) => void;
+  onAddFeedback: (input: Input) => void;
   duration: number;
 }
 export default function FeedbackContainer({
@@ -129,7 +125,7 @@ function InputField({
   onAdd,
   duration,
 }: {
-  onAdd: (text: string, timestamp?: number) => void;
+  onAdd: (input: Input) => void;
   duration: number;
 }) {
   const [input, setInput] = useState<Input>({ text: '' });
@@ -169,6 +165,7 @@ function InputField({
           )}
         />
         <button
+          onClick={() => onAdd(input)}
           disabled={!!(errorMessage || input.text.trim().length === 0)}
           className="btn btn-primary"
         >

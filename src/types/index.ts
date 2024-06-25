@@ -83,3 +83,15 @@ export interface Project {
   versions: Version[];
   collaborators: User[];
 }
+
+export interface FeedbackUpload {
+  text: string;
+  versionId: string;
+  timestamp?: number;
+  creatorId: string;
+}
+
+export interface Input {
+  text: string;
+  timestamp?: number;
+}

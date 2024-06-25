@@ -1,6 +1,7 @@
 import ToastController from '@/controllers/ToastController';
 import { Project } from '@/types';
 import axios from 'axios';
+import { time } from 'console';
 
 const _axios = axios.create({
   headers: { 'Access-Control-Allow-Origin': '*' },
@@ -37,7 +38,6 @@ export async function uploadTrack(data: FormData) {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('res', res);
 
     return res.data;
   } catch (error) {
@@ -49,6 +49,29 @@ export async function uploadTrack(data: FormData) {
 export async function fetchProject(projectId: string) {
   try {
     const res = await axios.get<Project>(`/api/project/${projectId}`);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'uploadTrack' });
+    throw error;
+  }
+}
+
+export async function uploadFeeback({
+  versionId,
+  text,
+  timestamp,
+}: {
+  versionId: string;
+  text: string;
+  timestamp?: number;
+}) {
+  try {
+    const res = await axios.post<any>('/api/uploadFeedback', {
+      versionId,
+      text,
+      timestamp,
+    });
+    console.log(res.data);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadTrack' });
