@@ -1,4 +1,5 @@
 import { cn, formatSeconds, ordinalString } from '@/lib/utils';
+import { useAudioContext } from '@/providers/AudioProvider';
 import {
   ArrowReloadHorizontalIcon,
   Comment01Icon,
@@ -7,22 +8,12 @@ import {
 } from 'hugeicons-react';
 import { useMemo } from 'react';
 
-interface VersionInformation {
-  commentsNumber: number;
-  versionNumber: number;
-  duration: number;
-  looping: boolean;
-}
+export default function AudioInfoBox({ className }: { className?: string }) {
+  const { version, settings, file } = useAudioContext();
 
-export default function AudioInfoBox({
-  className,
-  information,
-}: {
-  information: VersionInformation;
-  className?: string;
-}) {
   const info = useMemo(() => {
-    const { commentsNumber, duration, looping, versionNumber } = information;
+    if (!version || !file) return;
+    const { feedback, index } = version;
     return [
       {
         icon: (
@@ -31,7 +22,7 @@ export default function AudioInfoBox({
             className="text-white/60"
           />
         ),
-        title: `${commentsNumber} comments`,
+        title: `${feedback.length} comments`,
       },
       {
         icon: (
@@ -40,7 +31,7 @@ export default function AudioInfoBox({
             className="text-white/60"
           />
         ),
-        title: `${ordinalString(versionNumber)} version`,
+        title: `${ordinalString(index)} version`,
       },
       {
         icon: (
@@ -49,7 +40,7 @@ export default function AudioInfoBox({
             className="text-white/60"
           />
         ),
-        title: formatSeconds(duration),
+        title: formatSeconds(file.duration),
       },
       {
         icon: (
@@ -59,10 +50,12 @@ export default function AudioInfoBox({
           />
         ),
         title: 'looping',
-        disabled: !looping,
+        disabled: !settings.looping,
       },
     ];
-  }, [information]);
+  }, [version, settings, file]);
+
+  if (!info) return;
 
   return (
     <div

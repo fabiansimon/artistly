@@ -9,25 +9,16 @@ import {
   useState,
 } from 'react';
 import CursorLine from './CursorLine';
+import { useAudioContext } from '@/providers/AudioProvider';
+import { Region } from '@/types';
 
 export interface AudioRef {
   play: (timestamp?: number) => void;
   pause: () => void;
-  setLoop: (status: boolean) => void;
   setTime: (timestamp: number) => void;
 }
 
-interface Region {
-  begin: number;
-  end: number;
-}
-
-interface AudioSettings {
-  looping: boolean;
-}
-
 interface WaveContainerProps {
-  intervals: number[];
   className?: string;
   amplifyBy?: number;
   duration?: number;
@@ -37,21 +28,11 @@ interface WaveContainerProps {
 }
 
 function WaveContainer(
-  {
-    intervals,
-    simple = false,
-    className,
-    amplifyBy,
-    onAdd,
-  }: WaveContainerProps,
+  { simple = false, className, amplifyBy, onAdd }: WaveContainerProps,
   ref: Ref<AudioRef>
 ) {
+  const { time, settings, file, setTime, setSettings } = useAudioContext();
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
-  const [region, setRegion] = useState<Region>({ begin: 0, end: 0 });
-  const [currTime, setCurrTime] = useState<number>(0);
-  const [audioSettings, setAudioSettings] = useState<AudioSettings>({
-    looping: true,
-  });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -59,17 +40,17 @@ function WaveContainer(
 
   const { percentage, clipPath } = useMemo(() => {
     if (!audioRef.current) return { percentage: 0, clipPath: '' };
-    let percentage = (currTime / audioRef.current.duration) * 100;
+    let percentage = (time / audioRef.current.duration) * 100;
     return {
       clipPath: `inset(0 ${100 - percentage}% 0 0)`,
       percentage,
     };
-  }, [currTime]);
+  }, [time]);
 
   useEffect(() => {
     const updateTime = () => {
       if (!audioRef.current) return;
-      setCurrTime(audioRef.current.currentTime);
+      setTime(audioRef.current.currentTime);
     };
 
     const audioElement = audioRef.current;
@@ -91,15 +72,15 @@ function WaveContainer(
     const offsetX = e.clientX - left;
     const percentage = (offsetX / width) * 100;
     const time = duration * (percentage / 100);
-    setTime(time);
+    updateTime(time);
   };
 
-  const setTime = (timestamp: number) => {
+  const updateTime = (timestamp: number) => {
     if (!audioRef.current) return;
     const duration = audioRef.current?.duration || 0;
     const time = Math.min(duration, timestamp);
     audioRef.current.currentTime = time;
-    setCurrTime(time);
+    setTime(time);
   };
 
   useImperativeHandle(ref, () => ({
@@ -111,17 +92,15 @@ function WaveContainer(
       audioRef.current?.pause();
     },
     setTime: (timestamp: number) => {
-      setTime(timestamp);
-    },
-    setLoop: (status: boolean) => {
-      setAudioSettings((prev) => ({ ...prev, looping: status }));
+      updateTime(timestamp);
     },
   }));
 
   return (
     <div>
       <audio
-        loop={audioSettings.looping}
+        loop={settings.looping}
+        onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
         ref={audioRef}
         src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/69ea7685-e32c-4ef7-a384-c26288fe7aca?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy82OWVhNzY4NS1lMzJjLTRlZjctYTM4NC1jMjYyODhmZTdhY2EiLCJpYXQiOjE3MTg4NjIyOTUsImV4cCI6MTcxOTQ2NzA5NX0.PI1qDFZ9MAoV2fzDYlc_q1MItmqy2sV56Nm_01WwrbU&t=2024-06-20T05%3A44%3A55.186Z"
       >
@@ -135,7 +114,7 @@ function WaveContainer(
         className={cn('relative w-full', className)}
       >
         <div className="flex w-full items-center lg:space-x-1 space-x-[0.5px]">
-          {intervals.map((peak, index) => (
+          {file?.intervalPeaks.map((peak, index) => (
             <div
               key={index}
               style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
@@ -147,7 +126,7 @@ function WaveContainer(
           style={{ clipPath }}
           className="absolute top-0 flex w-full left-0 items-center lg:space-x-1 space-x-[0.5px]"
         >
-          {intervals.map((peak, index) => (
+          {file?.intervalPeaks.map((peak, index) => (
             <div
               key={index}
               style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
@@ -160,7 +139,7 @@ function WaveContainer(
             style={{ left: `${percentage}%` }}
             cursorVisible={cursorVisible}
             onAdd={onAdd}
-            time={currTime}
+            time={time}
           />
         )}
       </div>

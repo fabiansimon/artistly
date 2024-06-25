@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import useDetectOS from './useDetectOS';
-import { OperationSystem } from '@/types';
+import { OperationSystem } from '../types';
 
 function useKeyShortcut(
   hotkey: string,

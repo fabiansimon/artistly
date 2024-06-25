@@ -95,3 +95,13 @@ export interface Input {
   text: string;
   timestamp?: number;
 }
+
+export interface AudioSettings {
+  looping: boolean;
+  playing: boolean;
+}
+
+export interface Region {
+  begin: number;
+  end: number;
+}
