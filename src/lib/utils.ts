@@ -80,3 +80,21 @@ export function dataURLToBlob(dataURL: string): Blob {
 export function formatSeconds(seconds: number) {
   return new Date(seconds * 1000).toISOString().slice(14, 19);
 }
+
+export function ordinalString(number: number) {
+  const last = number % 10;
+  const lastTwo = number % 100;
+
+  if (lastTwo === 11 || lastTwo === 12 || lastTwo === 13) return number + 'th';
+
+  switch (last) {
+    case 1:
+      return number + 'st';
+    case 2:
+      return number + 'nd';
+    case 3:
+      return number + 'rd';
+    default:
+      return number + 'th';
+  }
+}

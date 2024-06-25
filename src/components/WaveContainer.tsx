@@ -1,5 +1,4 @@
-import { cn, formatSeconds } from '@/lib/utils';
-import { Clock01Icon, PlusSignIcon } from 'hugeicons-react';
+import { cn } from '@/lib/utils';
 import {
   forwardRef,
   Ref,
@@ -9,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { motion } from 'framer-motion';
+import CursorLine from './CursorLine';
 
 export interface AudioRef {
   play: (timestamp?: number) => void;
@@ -18,10 +17,9 @@ export interface AudioRef {
   setTime: (timestamp: number) => void;
 }
 
-interface Offset {
-  percentage: number;
-  offsetX: number;
-  time: number;
+interface Region {
+  begin: number;
+  end: number;
 }
 
 interface AudioSettings {
@@ -49,42 +47,36 @@ function WaveContainer(
   ref: Ref<AudioRef>
 ) {
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
+  const [region, setRegion] = useState<Region>({ begin: 0, end: 0 });
+  const [currTime, setCurrTime] = useState<number>(0);
   const [audioSettings, setAudioSettings] = useState<AudioSettings>({
     looping: true,
-  });
-  const [offset, setOffset] = useState<Offset>({
-    percentage: 100,
-    offsetX: 0,
-    time: 0,
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const AMPLIFY_BY = amplifyBy || 100;
 
-  const clipPath = useMemo(
-    () => `inset(0 ${offset.percentage}% 0 0)`,
-    [offset.percentage]
-  );
+  const { percentage, clipPath } = useMemo(() => {
+    if (!audioRef.current) return { percentage: 0, clipPath: '' };
+    let percentage = (currTime / audioRef.current.duration) * 100;
+    return {
+      clipPath: `inset(0 ${100 - percentage}% 0 0)`,
+      percentage,
+    };
+  }, [currTime]);
 
   useEffect(() => {
-    const updateOffset = () => {
+    const updateTime = () => {
       if (!audioRef.current) return;
-      const currentTime = audioRef.current.currentTime;
-      const duration = audioRef.current.duration;
-      const percentage = 100 - (currentTime / duration) * 100;
-      setOffset((prev) => ({
-        ...prev,
-        percentage,
-        time: currentTime,
-      }));
+      setCurrTime(audioRef.current.currentTime);
     };
 
     const audioElement = audioRef.current;
     if (audioElement) {
-      audioElement.addEventListener('timeupdate', updateOffset);
+      audioElement.addEventListener('timeupdate', updateTime);
       return () => {
-        audioElement.removeEventListener('timeupdate', updateOffset);
+        audioElement.removeEventListener('timeupdate', updateTime);
       };
     }
   }, []);
@@ -93,23 +85,21 @@ function WaveContainer(
     if (!audioRef.current) return;
 
     const duration = audioRef.current.duration;
-    const target = e.currentTarget as HTMLElement;
-    const { left, width } = target.getBoundingClientRect();
+    const { left, width } = (
+      e.currentTarget as HTMLElement
+    ).getBoundingClientRect();
     const offsetX = e.clientX - left;
-    const percentage = 100 - (offsetX / width) * 100;
-    const time = duration - duration * (percentage / 100);
+    const percentage = (offsetX / width) * 100;
+    const time = duration * (percentage / 100);
     setTime(time);
-    setOffset({
-      percentage,
-      offsetX,
-      time,
-    });
   };
 
   const setTime = (timestamp: number) => {
     if (!audioRef.current) return;
     const duration = audioRef.current?.duration || 0;
-    audioRef.current.currentTime = Math.min(duration, timestamp);
+    const time = Math.min(duration, timestamp);
+    audioRef.current.currentTime = time;
+    setCurrTime(time);
   };
 
   useImperativeHandle(ref, () => ({
@@ -137,39 +127,40 @@ function WaveContainer(
       >
         Your browser does not support the audio element.
       </audio>
+      <RegionMakers onChange={(region) => console.log(region)} />
       <div
         onMouseEnter={() => setCursorVisible(true)}
         onMouseLeave={() => setCursorVisible(false)}
         onClick={handleClick}
         className={cn('relative w-full', className)}
       >
-        <div className="flex w-full items-center space-x-1">
+        <div className="flex w-full items-center lg:space-x-1 space-x-[0.5px]">
           {intervals.map((peak, index) => (
             <div
               key={index}
-              style={{ height: peak * AMPLIFY_BY, flex: 1 }}
-              className="flex-grow w-full min-w-[0.3px] max-w-2 bg-slate-50/30 rounded-full"
+              style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
+              className={cn('flex-grow bg-slate-50 rounded-full', 'opacity-30')}
             />
           ))}
         </div>
         <div
           style={{ clipPath }}
-          className="absolute top-0 flex w-full items-center space-x-1"
+          className="absolute top-0 flex w-full left-0 items-center lg:space-x-1 space-x-[0.5px]"
         >
           {intervals.map((peak, index) => (
             <div
               key={index}
-              style={{ height: peak * AMPLIFY_BY, flex: 1 }}
-              className="flex-grow w-full min-w-[0.3px] max-w-2 bg-slate-50 rounded-full"
+              style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
+              className={cn('flex-grow bg-slate-50 rounded-full')}
             />
           ))}
         </div>
         {!simple && (
           <CursorLine
-            className={`left-[${50}%]`}
+            style={{ left: `${percentage}%` }}
             cursorVisible={cursorVisible}
             onAdd={onAdd}
-            time={offset.time}
+            time={currTime}
           />
         )}
       </div>
@@ -177,53 +168,12 @@ function WaveContainer(
   );
 }
 
-function CursorLine({
-  time,
-  onAdd,
-  className,
-  cursorVisible,
+function RegionMakers({
+  onChange,
 }: {
-  time: number;
-  onAdd?: (seconds: number) => void;
-  cursorVisible: boolean;
-  className?: string;
-}) {
-  const handleOnAdd = () => {
-    if (onAdd) onAdd(time);
-  };
-  return (
-    <div
-      className={cn(
-        'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-10',
-        className
-      )}
-    >
-      <motion.div
-        initial={'hidden'}
-        animate={cursorVisible ? 'visible' : 'hidden'}
-        variants={{
-          visible: { width: 'auto', opacity: 1 },
-          hidden: { width: 0, opacity: 0 },
-        }}
-        className="h-9 w-32 shadow-xl shadow-black/30 bg-white absolute -bottom-9 rounded-md rounded-tl-none flex items-center py-[0.5px] overflow-hidden"
-      >
-        <div className="rounded-md rounded-tl-none mx-[0.5px] bg-black/90 items-center flex flex-grow w-full h-full justify-center space-x-2 px-4">
-          <article className="prose">
-            <p className="text-slate-200 text-sm">{formatSeconds(time)}</p>
-          </article>
-        </div>
-        <div
-          className="cursor-pointer"
-          onClick={handleOnAdd}
-        >
-          <PlusSignIcon
-            size={20}
-            className="text-black/80 mx-2"
-          />
-        </div>
-      </motion.div>
-    </div>
-  );
+  onChange: (region: Region) => void;
+}): JSX.Element {
+  return <div></div>;
 }
 
 export default forwardRef(WaveContainer);
