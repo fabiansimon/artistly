@@ -9,6 +9,7 @@ import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import VersionControl from '@/components/VersionControl';
+import AudioControls from '@/components/AudioControls';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
@@ -55,17 +56,12 @@ function ProjectPage() {
     return <div>Loading...</div>;
   }
 
-  const { title, versions } = project;
-
   return (
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <article className="prose text-center text-white/50">
-        <h3 className="text-white">{title}</h3>
-        <p className="-mt-4">Version {version?.title}</p>
-      </article>
-      <div className="flex w-full space-x-6 px-10 mt-4 justify-center">
+      <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl />
         {file && <AudioEditor comments={timestampComments} />}
+        <AudioControls />
       </div>
       {file && (
         <FeedbackContainer

@@ -4,7 +4,7 @@ import {
   AudioSettings,
   Input,
   Project,
-  Region,
+  Range,
   Version,
 } from '@/types';
 import {
@@ -13,24 +13,30 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 
 interface AudioContextType {
   settings: AudioSettings;
-  region: Region;
+  region: Range;
   time: number;
   project: Project | null;
   version: (Version & { index: number }) | null;
   file: AudioFile | null;
+  audioRef: React.MutableRefObject<HTMLAudioElement | null>;
   setSettings: Dispatch<SetStateAction<AudioSettings>>;
-  setRegions: Dispatch<SetStateAction<Region>>;
+  setRange: Dispatch<SetStateAction<Range>>;
   setTime: (time: number) => void;
   setProject: (project: Project | null) => void;
   setVersion: (version: (Version & { index: number }) | null) => void;
   setFile: (file: AudioFile | null) => void;
   handleVersionChange: (id: string) => void;
   addFeedback: (input: Input) => void;
+  jumpTo: (timestamp: number) => void;
+  toggleLoop: (status?: boolean) => void;
+  togglePlaying: (status?: boolean) => void;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -44,13 +50,21 @@ export default function AudioProvider({
     looping: true,
     playing: false,
   });
-  const [region, setRegions] = useState<Region>({ begin: 0, end: 0 });
   const [time, setTime] = useState<number>(0);
   const [project, setProject] = useState<Project | null>(null);
   const [file, setFile] = useState<AudioFile | null>(null);
+  const [range, setRange] = useState<Range>({ begin: 0, end: 0 });
   const [version, setVersion] = useState<(Version & { index: number }) | null>(
     null
   );
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const { playing } = settings;
+    if (playing) audioRef.current?.play();
+    else audioRef?.current?.pause();
+  }, [settings]);
 
   const handleVersionChange = useCallback(
     async (id: string) => {
@@ -79,21 +93,49 @@ export default function AudioProvider({
     [version]
   );
 
+  const togglePlaying = useCallback((status?: boolean) => {
+    setSettings((prev) => ({
+      ...prev,
+      playing: status || !prev.playing,
+    }));
+  }, []);
+
+  const toggleLoop = useCallback((status?: boolean) => {
+    setSettings((prev) => ({
+      ...prev,
+      looping: status || !prev.looping,
+    }));
+  }, []);
+
+  const jumpTo = useCallback(
+    (timestamp: number) => {
+      if (!audioRef.current) return;
+      const duration = audioRef.current.duration;
+      audioRef.current.currentTime = Math.min(duration, timestamp);
+      if (!settings.playing) togglePlaying(true);
+    },
+    [settings.playing, togglePlaying]
+  );
+
   const value = {
     settings,
-    region,
+    range,
     time,
     project,
     version,
     file,
+    audioRef,
     setSettings,
-    setRegions,
+    setRange,
     setTime,
     setProject,
     setVersion,
     setFile,
     handleVersionChange,
     addFeedback,
+    jumpTo,
+    togglePlaying,
+    toggleLoop,
   };
 
   return (
