@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import ToastController from '@/controllers/ToastController';
-import { fetchProject, uploadFeeback } from '@/lib/api';
+import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import VersionControl from '@/components/VersionControl';
 import AudioControls from '@/components/AudioControls';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
     useAudioContext();
-  const router = useRouter();
-  const { id } = router.query;
+  const { id } = useParams();
+
   const [error, setError] = useState<string | null>(null);
 
   const { timestampComments, generalComments } = useMemo(() => {
