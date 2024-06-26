@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multiparty from 'multiparty';
-import { createProject } from '../controllers/projectController';
 import { storeFile } from '../controllers/fileController';
+import { createProject } from '../controllers/projectController';
 import { createVersion } from '../controllers/versionController';
+import { NextResponse } from 'next/server';
 
 export const config = {
   api: {
@@ -10,20 +11,12 @@ export const config = {
   },
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export default async function POST(req: NextApiRequest) {
   const form = new multiparty.Form();
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      console.error('Error parsing form data:', err);
-      return res.status(500).json({ error: 'Error parsing form data' });
+      return NextResponse.json({ message: 'Error parsing form data' });
     }
 
     try {
@@ -51,14 +44,17 @@ export default async function handler(
         projectId: project.id,
       });
 
-      return res.status(200).json({
+      return NextResponse.json({
         message: 'File uploaded and version created successfully',
         project,
         version,
       });
     } catch (error) {
       console.error('Error handling upload:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: 500 }
+      );
     }
   });
 }

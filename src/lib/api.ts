@@ -1,9 +1,9 @@
 import ToastController from '@/controllers/ToastController';
 import { Project } from '@/types';
 import axios from 'axios';
-import { time } from 'console';
 
 const _axios = axios.create({
+  baseURL: 'http://localhost:3000/',
   headers: { 'Access-Control-Allow-Origin': '*' },
 });
 
@@ -33,7 +33,7 @@ function handleError({
 
 export async function uploadTrack(data: FormData) {
   try {
-    const res = await _axios.post('/api/uploadTrack', data, {
+    const res = await _axios.post('/api/project/uploadTrack', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -48,10 +48,10 @@ export async function uploadTrack(data: FormData) {
 
 export async function fetchProject(projectId: string) {
   try {
-    const res = await axios.get<Project>(`/api/project/${projectId}`);
+    const res = await _axios.get<Project>(`api/project/${projectId}`);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'uploadTrack' });
+    handleError({ error, callName: 'fetchProject' });
     throw error;
   }
 }
@@ -66,7 +66,7 @@ export async function uploadFeeback({
   timestamp?: number;
 }) {
   try {
-    const res = await axios.post<any>('/api/uploadFeedback', {
+    const res = await _axios.post<any>('/api/project/uploadFeedback', {
       versionId,
       text,
       timestamp,
@@ -74,7 +74,7 @@ export async function uploadFeeback({
     console.log(res.data);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'uploadTrack' });
+    handleError({ error, callName: 'uploadFeeback' });
     throw error;
   }
 }

@@ -43,8 +43,6 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
     currTotal += Math.abs(channelData[i]);
   }
 
-  for (const peak of intervalPeaks) console.log(peak);
-
   const audioData: AudioFile = {
     channels: numberOfChannels,
     duration: duration,

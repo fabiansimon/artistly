@@ -1,3 +1,5 @@
+'use client';
+
 import { uploadFeeback } from '@/lib/api';
 import {
   AudioFile,
@@ -20,7 +22,7 @@ import {
 
 interface AudioContextType {
   settings: AudioSettings;
-  region: Range;
+  range: Range;
   time: number;
   project: Project | null;
   version: (Version & { index: number }) | null;
