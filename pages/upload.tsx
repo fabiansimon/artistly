@@ -17,8 +17,8 @@ const transition = {
 
 export default function UploadPage() {
   const [dragging, setDragging] = useState<boolean>(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<AudioFile | undefined>();
+  const [file, setFile] = useState<File | undefined>();
+  const [audioFile, setAudioFile] = useState<AudioFile | null>();
 
   useEffect(() => {
     if (audioFile) return;
@@ -66,7 +66,7 @@ export default function UploadPage() {
           'flex items-center justify-center flex-grow h-full w-full max-w-screen-xl flex-col'
         }
       >
-        {!file && !audioFile ? (
+        {!file || !audioFile ? (
           <InitContainer />
         ) : (
           <ShareContainer audioFile={audioFile} />

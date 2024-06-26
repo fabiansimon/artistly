@@ -1,22 +1,7 @@
 import { cn } from '@/lib/utils';
-import {
-  forwardRef,
-  Ref,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CursorLine from './CursorLine';
 import { useAudioContext } from '@/providers/AudioProvider';
-import { Region } from '@/types';
-
-export interface AudioRef {
-  play: (timestamp?: number) => void;
-  pause: () => void;
-  setTime: (timestamp: number) => void;
-}
 
 interface WaveContainerProps {
   className?: string;
@@ -27,14 +12,15 @@ interface WaveContainerProps {
   onAdd?: (time: number) => void;
 }
 
-function WaveContainer(
-  { simple = false, className, amplifyBy, onAdd }: WaveContainerProps,
-  ref: Ref<AudioRef>
-) {
-  const { time, settings, file, setTime, setSettings } = useAudioContext();
+export default function WaveContainer({
+  simple = false,
+  className,
+  amplifyBy,
+  onAdd,
+}: WaveContainerProps) {
+  const { time, settings, file, audioRef, setTime, setSettings } =
+    useAudioContext();
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const AMPLIFY_BY = amplifyBy || 100;
 
@@ -45,7 +31,7 @@ function WaveContainer(
       clipPath: `inset(0 ${100 - percentage}% 0 0)`,
       percentage,
     };
-  }, [time]);
+  }, [time, audioRef]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -83,19 +69,6 @@ function WaveContainer(
     setTime(time);
   };
 
-  useImperativeHandle(ref, () => ({
-    play: (timestamp?: number) => {
-      if (timestamp) setTime(timestamp);
-      audioRef.current?.play();
-    },
-    pause: () => {
-      audioRef.current?.pause();
-    },
-    setTime: (timestamp: number) => {
-      updateTime(timestamp);
-    },
-  }));
-
   return (
     <div>
       <audio
@@ -106,7 +79,6 @@ function WaveContainer(
       >
         Your browser does not support the audio element.
       </audio>
-      <RegionMakers onChange={(region) => console.log(region)} />
       <div
         onMouseEnter={() => setCursorVisible(true)}
         onMouseLeave={() => setCursorVisible(false)}
@@ -146,13 +118,3 @@ function WaveContainer(
     </div>
   );
 }
-
-function RegionMakers({
-  onChange,
-}: {
-  onChange: (region: Region) => void;
-}): JSX.Element {
-  return <div></div>;
-}
-
-export default forwardRef(WaveContainer);

@@ -1,16 +1,17 @@
-import { cn, formatSeconds } from '@/lib/utils';
+import { cn, formatSeconds, ordinalString } from '@/lib/utils';
 import { Comment } from '@/types';
-import { useRef, useState } from 'react';
-import WaveContainer, { AudioRef } from './WaveContainer';
+import { useMemo, useState } from 'react';
+import WaveContainer from './WaveContainer';
 import {
   ArrowReloadHorizontalIcon,
-  PauseIcon,
-  PlayIcon,
+  Comment01Icon,
+  Layers01Icon,
+  Time04Icon,
 } from 'hugeicons-react';
-import { motion } from 'framer-motion';
-import AudioInfoBox from './AudioInfoBox';
-import useKeyShortcut from '@/hooks/useKeyShortcut';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { motion } from 'framer-motion';
+import CommentsSection from './CommentsSection';
+import RangeIndicator from './RangeIndicator';
 
 export default function AudioEditor({
   className,
@@ -21,170 +22,108 @@ export default function AudioEditor({
 }) {
   const {
     file,
-    settings: { looping, playing },
-    setSettings,
+    audioRef,
+    project,
+    version,
+    settings: { looping },
+    jumpTo,
   } = useAudioContext();
-  const audioRef = useRef<AudioRef | null>(null);
 
-  const toggleLoop = () => {
-    setSettings((prev) => {
-      const newState = !prev.looping;
-      return {
-        ...prev,
-        looping: newState,
-      };
-    });
-  };
+  const info = useMemo(() => {
+    if (!version || !file) return;
+    const { feedback, index } = version;
+    return [
+      {
+        icon: (
+          <Comment01Icon
+            size={12}
+            className="text-white/60"
+          />
+        ),
+        title: `${feedback.length} comments`,
+      },
+      {
+        icon: (
+          <Layers01Icon
+            size={12}
+            className="text-white/60"
+          />
+        ),
+        title: `${ordinalString(index)} version`,
+      },
+      {
+        icon: (
+          <Time04Icon
+            size={12}
+            className="text-white/60"
+          />
+        ),
+        title: formatSeconds(audioRef.current?.duration || 10),
+      },
+      {
+        icon: (
+          <ArrowReloadHorizontalIcon
+            size={12}
+            className="text-white/60"
+          />
+        ),
+        title: 'looping',
+        disabled: !looping,
+      },
+    ];
+  }, [version, looping, file, audioRef]);
 
-  const togglePlaying = () => {
-    setSettings((prev) => {
-      const newState = !prev.playing;
-      if (newState) audioRef.current?.play();
-      else audioRef?.current?.pause();
-
-      return {
-        ...prev,
-        playing: newState,
-      };
-    });
-  };
-
-  useKeyShortcut(' ', togglePlaying, true);
-  useKeyShortcut('L', toggleLoop, true);
+  if (!info || !project) return;
 
   return (
     <div
       className={cn('flex flex-grow w-full space-x-3 items-center', className)}
     >
       <div className="flex relative flex-col w-full">
-        <AudioInfoBox className="mb-4" />
-        <WaveContainer
-          ref={audioRef}
-          amplifyBy={200}
-        />
-        <CommentsSection
-          onClick={(timestamp: number) => audioRef.current?.setTime(timestamp)}
-          comments={comments}
-          duration={file?.duration!}
-        />
-      </div>
-
-      <div className="flex flex-col w-32 pl-4">
-        <div className="flex w-full">
-          <button
-            onClick={toggleLoop}
-            className={cn(
-              'btn flex-row btn-primary flex-grow rounded-b-none btn-sm',
-              !looping && 'btn-outline'
-            )}
-          >
-            <ArrowReloadHorizontalIcon size={16} />
-            Loop
-          </button>
-        </div>
-        <div className="flex w-full">
-          <button
-            onClick={togglePlaying}
-            className={cn(
-              'btn flex-row btn-primary flex-grow rounded-t-none -mt-[1px] btn-sm',
-              !playing && 'btn-outline'
-            )}
-          >
-            {playing ? (
-              <PauseIcon
-                size={16}
-                className="swap-off fill-current"
-              />
-            ) : (
-              <PlayIcon
-                size={16}
-                className="swap-on fill-current"
-              />
-            )}
-            {playing ? 'Pause' : 'Play'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CommentsSection({
-  comments,
-  duration,
-  onClick,
-}: {
-  comments: Comment[];
-  duration: number;
-  onClick: (timestamp: number) => void;
-}) {
-  return (
-    <div className="flex w-full mt-3 relative">
-      {comments.map((comment) => {
-        const { timestamp } = comment;
-        const offset = (timestamp / duration) * 100;
-        return (
-          <CommentTile
-            onClick={() => onClick(timestamp)}
-            style={{ left: `${offset}%` }}
-            key={comment.id}
-            comment={comment}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function CommentTile({
-  comment,
-  style,
-  onClick,
-}: {
-  comment: Comment;
-  style: React.CSSProperties;
-  onClick: () => void;
-}) {
-  const [hovered, setHovered] = useState<boolean>(false);
-  const { timestamp, text } = comment;
-
-  return (
-    <div
-      style={style}
-      className="absolute h-7"
-    >
-      <div className="w-[1px] h-16 bg-white/80 absolute bottom-4 left-[1px]" />
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={onClick}
-        className={cn(
-          'flex cursor-pointer bg-neutral-900 relative items-center space-x-1 overflow-hidden rounded-sm h-full border border-neutral-100/5',
-          hovered && 'z-10'
-        )}
-      >
-        <div className="items-center flex px-2 py-1 h-full">
-          <p className="prose text-xs text-neutral-500">
-            {formatSeconds(timestamp)}
-          </p>
-        </div>
-
-        <motion.div
-          transition={{
-            ease: 'linear',
-            stiffness: 1,
-            duration: 0.09,
-          }}
-          initial="minimized"
-          animate={hovered ? 'expanded' : 'minimized'}
-          variants={{
-            expanded: { width: 'auto' },
-            minimized: { width: 60 },
-          }}
-          className="flex h-full items-center pr-4"
+        <div
+          className={cn(
+            'flex-grow bg-black/20 w-full flex-col items-center px-4 py-2 rounded-md',
+            className
+          )}
         >
-          <p className="prose text-[13px] text-white/80 truncate">{text}</p>
-        </motion.div>
+          <div className="flex justify-between">
+            <h2 className="text-white text-sm">{project?.title}</h2>
+            <p className="text-xs text-right text-white/50">
+              Version {version?.title}
+            </p>
+          </div>
+          <p className="text-xs text-white/50 mb-4 mt-1">{version?.notes}</p>
+          <RangeIndicator className="mb-4" />
+          <WaveContainer amplifyBy={200} />
+          {audioRef.current && (
+            <CommentsSection
+              onClick={jumpTo}
+              comments={comments}
+              duration={audioRef.current?.duration}
+            />
+          )}
+          <div
+            className={cn(
+              'flex justify-between mt-4',
+              comments.length > 0 && 'mt-8'
+            )}
+          >
+            {info.map(({ icon, title, disabled }, index) => (
+              <div
+                key={index}
+                className={cn(
+                  'flex items-center justify-center space-x-1',
+                  disabled && 'opacity-10'
+                )}
+              >
+                {icon}
+                <article className="prose text-white/60">
+                  <p className="text-xs">{title}</p>
+                </article>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

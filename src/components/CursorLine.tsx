@@ -28,11 +28,11 @@ export default function CursorLine({
           visible: { width: 'auto', opacity: 1 },
           hidden: { width: 0, opacity: 0 },
         }}
-        className="h-9 w-32 shadow-xl shadow-black/30 bg-white absolute -bottom-9 rounded-md rounded-tl-none flex items-center py-[0.5px] overflow-hidden"
+        className="h-7 w-30 shadow-xl shadow-black/30 bg-white absolute -bottom-6 rounded-md rounded-tl-none flex items-center py-[0.5px] overflow-hidden"
       >
         <div className="rounded-md rounded-tl-none mx-[0.5px] bg-black/90 items-center flex flex-grow w-full h-full justify-center space-x-2 px-4">
           <article className="prose">
-            <p className="text-slate-200 text-sm">{formatSeconds(time)}</p>
+            <p className="text-slate-200 text-xs">{formatSeconds(time)}</p>
           </article>
         </div>
         <div
@@ -40,8 +40,8 @@ export default function CursorLine({
           onClick={handleOnAdd}
         >
           <PlusSignIcon
-            size={20}
-            className="text-black/80 mx-2"
+            size={15}
+            className="text-black/80 mx-1"
           />
         </div>
       </motion.div>

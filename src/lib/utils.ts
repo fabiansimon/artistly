@@ -78,6 +78,7 @@ export function dataURLToBlob(dataURL: string): Blob {
 }
 
 export function formatSeconds(seconds: number) {
+  if (!seconds) return 0;
   return new Date(seconds * 1000).toISOString().slice(14, 19);
 }
 

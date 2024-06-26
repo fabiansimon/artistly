@@ -1,5 +1,6 @@
 import Toast from '@/components/Toast';
 import UploadPage from '../../pages/upload';
+import AudioProvider from '@/providers/AudioProvider';
 
 export default function Home() {
   return (

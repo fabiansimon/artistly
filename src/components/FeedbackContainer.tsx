@@ -22,6 +22,7 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
+  const { jumpTo } = useAudioContext();
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
 
   const feedback = useMemo(() => {
@@ -89,7 +90,10 @@ export default function FeedbackContainer({
                   </p>
                   <span className="flex">
                     {timestamp != null && (
-                      <p className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1">
+                      <p
+                        onClick={() => jumpTo(timestamp)}
+                        className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1"
+                      >
                         @{formatSeconds(timestamp)}
                       </p>
                     )}

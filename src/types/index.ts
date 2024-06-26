@@ -101,7 +101,7 @@ export interface AudioSettings {
   playing: boolean;
 }
 
-export interface Region {
+export interface Range {
   begin: number;
   end: number;
 }
