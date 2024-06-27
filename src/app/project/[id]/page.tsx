@@ -9,7 +9,7 @@ import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import VersionControl from '@/components/VersionControl';
 import AudioControls from '@/components/AudioControls';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
@@ -31,7 +31,7 @@ function ProjectPage() {
     if (file) return;
     const cachedAudio = LocalStorage.fetchAudioFile();
     setFile(cachedAudio);
-  }, []);
+  }, [file, setFile]);
 
   useEffect(() => {
     if (!id) return;
@@ -46,7 +46,7 @@ function ProjectPage() {
         ToastController.showErrorToast('Something went wrong', error.message);
       }
     })();
-  }, [id]);
+  }, [id, setProject, setVersion]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -60,15 +60,13 @@ function ProjectPage() {
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
       <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl />
-        {file && <AudioEditor comments={timestampComments} />}
+        <AudioEditor comments={timestampComments} />
         <AudioControls />
       </div>
-      {file && (
-        <FeedbackContainer
-          generalComments={generalComments}
-          timestampComments={timestampComments}
-        />
-      )}
+      <FeedbackContainer
+        generalComments={generalComments}
+        timestampComments={timestampComments}
+      />
     </div>
   );
 }
