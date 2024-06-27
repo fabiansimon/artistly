@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import multiparty from 'multiparty';
 import { storeFile } from '../controllers/fileController';
 import { createProject } from '../controllers/projectController';
@@ -11,10 +10,11 @@ export const config = {
   },
 };
 
-export default async function POST(req: NextApiRequest) {
+export async function POST(req: Request) {
+  console.log(await req.json());
   const form = new multiparty.Form();
 
-  form.parse(req, async (err, fields, files) => {
+  form.parse(await req, async (err, fields, files) => {
     if (err) {
       return NextResponse.json({ message: 'Error parsing form data' });
     }

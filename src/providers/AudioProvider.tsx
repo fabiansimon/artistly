@@ -66,7 +66,7 @@ export default function AudioProvider({
     const { playing } = settings;
     if (playing) audioRef.current?.play();
     else audioRef?.current?.pause();
-  }, [settings]);
+  }, [settings, audioRef]);
 
   const handleVersionChange = useCallback(
     async (id: string) => {

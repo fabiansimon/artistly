@@ -49,7 +49,7 @@ export default function WaveContainer({
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (!audioRef.current) return;
+    if (simple || !audioRef.current) return;
 
     const duration = audioRef.current.duration;
     const { left, width } = (
@@ -70,7 +70,7 @@ export default function WaveContainer({
   };
 
   return (
-    <div>
+    <div className="flex flex-grow w-full">
       <audio
         loop={settings.looping}
         onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
@@ -85,18 +85,21 @@ export default function WaveContainer({
         onClick={handleClick}
         className={cn('relative w-full', className)}
       >
-        <div className="flex w-full items-center lg:space-x-1 space-x-[0.5px]">
+        <div className="flex w-full items-center lg:space-x-1 ">
           {file?.intervalPeaks.map((peak, index) => (
             <div
               key={index}
               style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
-              className={cn('flex-grow bg-slate-50 rounded-full', 'opacity-30')}
+              className={cn(
+                'flex-grow bg-slate-50 min-w-[0.5px] rounded-full',
+                'opacity-30'
+              )}
             />
           ))}
         </div>
         <div
           style={{ clipPath }}
-          className="absolute top-0 flex w-full left-0 items-center lg:space-x-1 space-x-[0.5px]"
+          className="absolute top-0 flex w-full left-0 items-center space-x-1"
         >
           {file?.intervalPeaks.map((peak, index) => (
             <div

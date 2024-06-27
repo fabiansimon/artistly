@@ -1,13 +1,18 @@
 'use client';
 
 import ToastController from '@/controllers/ToastController';
-import { LocalStorage } from '@/lib/localStorage';
 import { analyzeAudio, cn } from '@/lib/utils';
-import { AudioFile } from '@/types';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { DragEvent, useCallback, useState, useEffect } from 'react';
+import {
+  DragEvent,
+  useCallback,
+  useState,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import ShareContainer from '@/components/ShareContainer';
+import { useAudioContext } from '@/providers/AudioProvider';
 
 const transition = {
   duration: 500,
@@ -16,24 +21,17 @@ const transition = {
 };
 
 export default function UploadPage() {
+  const { file, setFile } = useAudioContext();
   const [dragging, setDragging] = useState<boolean>(false);
-  const [file, setFile] = useState<File | undefined>();
-  const [audioFile, setAudioFile] = useState<AudioFile | null>();
+  const [rawFile, setRawFile] = useState<File | undefined>();
 
   useEffect(() => {
-    if (audioFile) return;
-    const cachedAudio = LocalStorage.fetchAudioFile();
-    setAudioFile(cachedAudio);
-  }, []);
-
-  useEffect(() => {
-    if (!file) return;
+    if (!rawFile) return;
     (async () => {
-      const data = await analyzeAudio(file);
-      LocalStorage.saveAudioFile(data);
-      setAudioFile(data);
+      const data = await analyzeAudio(rawFile);
+      setFile(data);
     })();
-  }, [file]);
+  }, [rawFile, setFile]);
 
   const handleDragging = useCallback(
     (e: DragEvent<HTMLDivElement>, status: boolean) => {
@@ -44,46 +42,52 @@ export default function UploadPage() {
     []
   );
 
-  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
-    handleDragging(e, false);
-    const file = e.dataTransfer.files[0];
-
-    if (!file.type.includes('audio')) {
+  const addrawFile = (rawFile: File) => {
+    if (!rawFile.type.includes('audio')) {
       ToastController.showErrorToast(
         'Wrong format.',
-        'This service is only made for audio files.'
+        'This service is only made for audio rawFiles.'
       );
       return;
     }
 
-    setFile(file);
+    setRawFile(rawFile);
+  };
+
+  const handlerawFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const rawFile = e.target.files[0];
+    addrawFile(rawFile);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    handleDragging(e, false);
+    const rawFile = e.dataTransfer.files[0];
+    addrawFile(rawFile);
   };
 
   return (
-    <>
-      <div
-        className={
-          'flex items-center justify-center flex-grow h-full w-full max-w-screen-xl flex-col'
-        }
-      >
-        {!file || !audioFile ? (
-          <InitContainer />
+    <div
+      onDragEnter={(e) => handleDragging(e, true)}
+      onDragLeave={(e) => handleDragging(e, false)}
+      onDragOver={(e) => handleDragging(e, true)}
+      onDrop={handleDrop}
+      className="flex flex-grow items-center justify-center h-full w-full"
+    >
+      <div className={'flex'}>
+        {!rawFile || !file ? (
+          <InitContainer onFile={handlerawFileChange} />
         ) : (
-          <ShareContainer audioFile={audioFile} />
+          <ShareContainer audioFile={file} />
         )}
       </div>
       <motion.div
         initial={'hidden'}
-        onDragEnter={(e) => handleDragging(e, true)}
-        onDragLeave={(e) => handleDragging(e, false)}
-        onDragOver={(e) => handleDragging(e, true)}
-        onDrop={handleDrop}
         transition={transition}
         animate={dragging ? 'visible' : 'hidden'}
         variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 } }}
         className={cn(
-          'absolute flex flex-grow h-full w-full bg-secondary items-center justify-center',
-          audioFile && 'pointer-events-none'
+          'absolute pointer-events-none flex flex-grow h-full w-full bg-secondary items-center justify-center'
         )}
       >
         <article className="prose text-center">
@@ -93,16 +97,20 @@ export default function UploadPage() {
           </p>
         </article>
       </motion.div>
-    </>
+    </div>
   );
 }
 
-function InitContainer() {
+function InitContainer({
+  onFile,
+}: {
+  onFile: (e: ChangeEvent<HTMLInputElement>) => void;
+}) {
   return (
-    <>
+    <div className="flex items-center flex-col">
       <Image
-        width={70}
-        height={70}
+        width={60}
+        height={60}
         src={'/music_icon.png'}
         alt="Music Icon"
       />
@@ -114,8 +122,9 @@ function InitContainer() {
       </article>
       <input
         type="file"
+        onChange={onFile}
         className="file-input file-input-bordered file-input-md w-full max-w-xs mt-4"
       />
-    </>
+    </div>
   );
 }

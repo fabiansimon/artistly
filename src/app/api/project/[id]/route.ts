@@ -5,7 +5,7 @@ import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionCo
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  req: NextApiRequest,
+  _: NextApiRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;

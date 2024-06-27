@@ -31,9 +31,20 @@ function handleError({
   ToastController.showErrorToast(errorTitle, errorDescription);
 }
 
+export async function fetchProject(projectId: string) {
+  try {
+    const res = await _axios.get(`api/project/${projectId}`);
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'fetchProject' });
+    throw error;
+  }
+}
+
 export async function uploadTrack(data: FormData) {
   try {
-    const res = await _axios.post('/api/project/uploadTrack', data, {
+    const res = await _axios.post('/api/uploadTrack', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -42,16 +53,6 @@ export async function uploadTrack(data: FormData) {
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadTrack' });
-    throw error;
-  }
-}
-
-export async function fetchProject(projectId: string) {
-  try {
-    const res = await _axios.get<Project>(`api/project/${projectId}`);
-    return res.data;
-  } catch (error) {
-    handleError({ error, callName: 'fetchProject' });
     throw error;
   }
 }
@@ -66,12 +67,11 @@ export async function uploadFeeback({
   timestamp?: number;
 }) {
   try {
-    const res = await _axios.post<any>('/api/project/uploadFeedback', {
+    const res = await _axios.post('/api/uploadFeedback', {
       versionId,
       text,
       timestamp,
     });
-    console.log(res.data);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadFeeback' });
