@@ -57,9 +57,6 @@ export default function ShareContainer({
     LocalStorage.saveInputData(inputData);
   }, [inputData]);
 
-  if (audioFile === undefined)
-    return <span className="loading loading-ring loading-sm"></span>;
-
   const handleSubmit = async () => {
     if (!inputValid) return;
     setLoading(true);
@@ -80,8 +77,8 @@ export default function ShareContainer({
     LocalStorage.saveAudioFile(data);
 
     try {
-      const result = await uploadTrack(form);
-      router.push('/project/0b27fc24-94ea-4776-b1ba-a48d1e77f099');
+      const res = await uploadTrack(form);
+      router.push(`/project/${res.project.id}`);
     } finally {
       setLoading(false);
     }
@@ -129,6 +126,9 @@ export default function ShareContainer({
       }
     });
   };
+
+  if (audioFile === undefined)
+    return <span className="loading loading-ring loading-sm"></span>;
 
   return (
     <div className="flex flex-col items-center">

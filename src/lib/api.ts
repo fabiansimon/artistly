@@ -34,7 +34,6 @@ function handleError({
 export async function fetchProject(projectId: string) {
   try {
     const res = await _axios.get(`api/project/${projectId}`);
-    console.log(res);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'fetchProject' });

@@ -1,38 +1,17 @@
 import { supabase } from '@/lib/supabaseClient';
-import fs from 'fs';
-import mime from 'mime-types';
 import { v4 as uuidv4 } from 'uuid';
 
 const bucket = process.env.NEXT_PUBLIC_BUCKET_NAME;
 
-interface UploadedFile {
-  fieldName: string;
-  originalFilename: string;
-  path: string;
-  headers: {
-    'content-disposition': string;
-    'content-type': string;
-  };
-  size: number;
-}
-
-export async function storeFile({ file }: { file: UploadedFile }) {
-  const fileContent = fs.readFileSync(file.path);
-  const mimeType = mime.lookup(file.originalFilename); // Type check to for Supabase Storage
+export async function storeFile({ file }: { file: File }) {
+  const buffer = Buffer.from(await file.arrayBuffer());
   const fileId = uuidv4();
+  const contentType = file.type;
+  const path = `uploads/${fileId}`;
 
-  // Check if mimeType is valid
-  if (!mimeType) {
-    throw new Error('Invalid file type');
-  }
-
-  const { error } = await supabase.storage
-    .from(bucket!)
-    .upload(`uploads/${fileId}`, fileContent, {
-      cacheControl: '3600',
-      upsert: false,
-      contentType: mimeType,
-    });
+  const { error } = await supabase.storage.from(bucket!).upload(path, buffer, {
+    contentType,
+  });
 
   if (error) {
     throw new Error(`Error uploading file: ${error.message}`);
@@ -40,7 +19,7 @@ export async function storeFile({ file }: { file: UploadedFile }) {
 
   const {
     data: { publicUrl: fileUrl },
-  } = supabase.storage.from(bucket!).getPublicUrl(`uploads/${fileId}`);
+  } = supabase.storage.from(bucket!).getPublicUrl(path);
 
   return { fileUrl };
 }
