@@ -1,11 +1,8 @@
 import { formatSeconds } from '@/lib/utils';
-import { Comment } from '@/types';
-import {
-  Delete01Icon,
-  More01Icon,
-  MoreHorizontalIcon,
-  MoreIcon,
-} from 'hugeicons-react';
+import { Comment, MenuOption } from '@/types';
+import { Delete01Icon } from 'hugeicons-react';
+import DropDown from './Dropdown';
+import { useMemo } from 'react';
 
 export default function CommentTile({
   comment,
@@ -17,6 +14,25 @@ export default function CommentTile({
   onDelete: (id: string) => void;
 }) {
   const { id, timestamp, text } = comment;
+
+  const options: MenuOption[] = useMemo(
+    () => [
+      {
+        icon: (
+          <Delete01Icon
+            size={14}
+            className="text-white/70"
+          />
+        ),
+        text: 'Remove',
+        confirm: true,
+        onClick: () => onDelete(id),
+      },
+    ],
+    [onDelete, id]
+  );
+
+  const includesTimestamp = useMemo(() => {}, [text, timestamp]);
 
   return (
     <div
@@ -37,25 +53,7 @@ export default function CommentTile({
           <h3 className="text-sm text-white font-normal -mt-3">{text}</h3>
         </span>
       </article>
-      <div className="dropdown dropdown-left">
-        <div
-          tabIndex={0}
-          role="button"
-        >
-          <MoreHorizontalIcon />
-        </div>
-        <ul
-          tabIndex={0}
-          className="dropdown-content menu bg-base-100 rounded-box z-[10] p-1 shadow"
-        >
-          <li>
-            <div>
-              <Delete01Icon size={16} />
-              <p>{'Delete'}</p>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <DropDown options={options} />
     </div>
   );
 }

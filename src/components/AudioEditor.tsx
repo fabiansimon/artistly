@@ -95,17 +95,15 @@ export default function AudioEditor({
           <p className="text-xs text-white/50 mb-4 mt-1">{version?.notes}</p>
           <RangeIndicator className="mb-4" />
           <WaveContainer amplifyBy={200} />
-          {audioRef.current && (
-            <CommentsSection
-              onClick={jumpTo}
-              comments={comments}
-              duration={audioRef.current?.duration}
-            />
-          )}
+          <CommentsSection
+            onClick={jumpTo}
+            comments={comments}
+            duration={audioRef.current?.duration || 10}
+          />
           <div
             className={cn(
               'flex justify-between mt-4',
-              comments.length > 0 && 'mt-8'
+              comments.length > 0 && 'mt-10'
             )}
           >
             {info.map(({ icon, title, disabled }, index) => (

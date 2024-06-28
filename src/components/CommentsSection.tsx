@@ -16,11 +16,11 @@ export default function CommentsSection({
     <div className="flex w-full mt-3 relative">
       {comments.map((comment) => {
         const { timestamp } = comment;
-        const offset = (timestamp / duration) * 100;
+        const offset = (timestamp! / duration) * 100;
 
         return (
           <CommentTile
-            onClick={() => onClick(timestamp)}
+            onClick={() => onClick(timestamp!)}
             style={{ left: `${offset}%` }}
             key={comment.id}
             comment={comment}
@@ -57,7 +57,7 @@ function CommentTile({
           className="bg-neutral rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
-            {formatSeconds(timestamp)}
+            {formatSeconds(timestamp!)}
           </p>
         </div>
       </div>

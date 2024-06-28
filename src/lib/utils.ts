@@ -102,3 +102,5 @@ export function ordinalString(number: number) {
 export function generateId() {
   return uuidv4();
 }
+
+export const _ = undefined;
