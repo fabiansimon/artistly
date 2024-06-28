@@ -1,9 +1,11 @@
 'use client';
 
 import { uploadFeeback } from '@/lib/api';
+import { generateId } from '@/lib/utils';
 import {
   AudioFile,
   AudioSettings,
+  Comment,
   Input,
   Project,
   Range,
@@ -78,21 +80,63 @@ export default function AudioProvider({
     [project]
   );
 
+  const addComment = useCallback((comment: Comment) => {
+    setVersion((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        feedback: prev.feedback.concat(comment),
+      };
+    });
+  }, []);
+
+  const updateComment = useCallback((id: string, comment: Comment) => {
+    setVersion((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        feedback: prev.feedback.map((f) => (f.id === id ? comment : f)),
+      };
+    });
+  }, []);
+
+  const removeComment = useCallback((id: string) => {
+    setVersion((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        feedback: prev.feedback.filter((f) => f.id !== id),
+      };
+    });
+  }, []);
+
   const addFeedback = useCallback(
     async (input: Input) => {
       if (!version) return;
       const { text, timestamp } = input;
+      const tempId = generateId();
+
+      const newComment: Comment = {
+        id: tempId,
+        text,
+        timestamp,
+      };
+
       try {
-        const result = await uploadFeeback({
+        addComment(newComment);
+        const { id } = await uploadFeeback({
           text,
           timestamp,
           versionId: version.id,
         });
+        updateComment(tempId, { ...newComment, id });
+      } catch (error) {
+        console.error(error);
+        removeComment(tempId);
       } finally {
-        console.log('got it ');
       }
     },
-    [version]
+    [version, addComment, removeComment, updateComment]
   );
 
   const togglePlaying = useCallback((status?: boolean) => {

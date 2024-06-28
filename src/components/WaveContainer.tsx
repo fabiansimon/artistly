@@ -85,15 +85,12 @@ export default function WaveContainer({
         onClick={handleClick}
         className={cn('relative w-full', className)}
       >
-        <div className="flex w-full items-center lg:space-x-1 ">
+        <div className="absolute top-0 flex w-full left-0 items-center space-x-1">
           {file?.intervalPeaks.map((peak, index) => (
             <div
               key={index}
               style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
-              className={cn(
-                'flex-grow bg-slate-50 min-w-[0.5px] rounded-full',
-                'opacity-30'
-              )}
+              className={cn('flex-grow bg-slate-50 rounded-full', 'opacity-30')}
             />
           ))}
         </div>

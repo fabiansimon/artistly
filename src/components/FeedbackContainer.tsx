@@ -5,6 +5,7 @@ import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';
 import EmptyContainer from './EmptyContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
+import CommentTile from './CommentTile';
 
 enum FilterState {
   GENERAL,
@@ -78,33 +79,14 @@ export default function FeedbackContainer({
       </div>
       {feedback.length > 0 ? (
         <div className="space-y-2 mt-4 flex-grow h-full overflow-auto ">
-          {feedback.map(({ id, text, timestamp }) => {
-            return (
-              <div
-                key={id}
-                className="bg-neutral rounded-xl p-2 shadow-xl shadow-black/5 flex justify-between"
-              >
-                <article className="prose">
-                  <p className="text-xs text-white/30">
-                    fabian.simon98@gmail.com
-                  </p>
-                  <span className="flex">
-                    {timestamp != null && (
-                      <p
-                        onClick={() => jumpTo(timestamp)}
-                        className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1"
-                      >
-                        @{formatSeconds(timestamp)}
-                      </p>
-                    )}
-                    <h3 className="text-sm text-white font-normal -mt-3">
-                      {text}
-                    </h3>
-                  </span>
-                </article>
-              </div>
-            );
-          })}
+          {feedback.map((comment) => (
+            <CommentTile
+              key={comment.id}
+              comment={comment}
+              onDelete={(id) => console.log(id)}
+              onTimestamp={jumpTo}
+            />
+          ))}
         </div>
       ) : (
         <EmptyContainer

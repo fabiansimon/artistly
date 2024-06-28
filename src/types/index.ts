@@ -71,7 +71,7 @@ export interface User {
 
 export interface Comment {
   id: string;
-  timestamp: number;
+  timestamp?: number;
   text: string;
 }
 

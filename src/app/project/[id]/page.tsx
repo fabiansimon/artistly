@@ -10,6 +10,7 @@ import { useAudioContext } from '@/providers/AudioProvider';
 import VersionControl from '@/components/VersionControl';
 import AudioControls from '@/components/AudioControls';
 import { useParams } from 'next/navigation';
+import AnimatedText from '@/components/AnimatedText';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
@@ -53,14 +54,29 @@ function ProjectPage() {
   }
 
   if (!project) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
+        <span className="loading loading-ring loading-sm"></span>
+        <AnimatedText
+          className="mt-2"
+          strings={[
+            'Fetching Audio',
+            'Gathering Data',
+            'Searching for new Versions',
+          ]}
+        />
+      </div>
+    );
   }
 
   return (
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
       <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl />
-        <AudioEditor comments={timestampComments} />
+        <AudioEditor
+          className="max-w-screen-md"
+          comments={timestampComments}
+        />
         <AudioControls />
       </div>
       <FeedbackContainer
