@@ -1,6 +1,5 @@
-import { error } from 'console';
-import { createFeedback } from '../controllers/feedbackController';
 import { NextRequest, NextResponse } from 'next/server';
+import { createFeedback } from '../../controllers/feedbackController';
 
 export async function POST(req: NextRequest) {
   try {

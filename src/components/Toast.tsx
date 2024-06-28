@@ -20,7 +20,7 @@ import { motion } from 'framer-motion';
 import { ToastType } from '@/types';
 import { cn } from '@/lib/utils';
 
-interface ModalInfo {
+interface ToastInfo {
   title?: string;
   description?: string;
   type: ToastType;
@@ -35,7 +35,7 @@ const ANIMATION_DURATION = 0.2; // in seconds
 
 function Toast(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [info, setInfo] = useState<ModalInfo | null>(null);
+  const [info, setInfo] = useState<ToastInfo | null>(null);
 
   const ref = useRef<ToastMethods>();
 

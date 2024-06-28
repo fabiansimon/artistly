@@ -5,6 +5,7 @@ import Toast from '@/components/Toast';
 import { getServerSession } from 'next-auth';
 import NextAuthProvider from '@/providers/NextAuthProvider';
 import AudioProvider from '@/providers/AudioProvider';
+import Dialog from '@/components/Dialog';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,6 +32,7 @@ export default async function RootLayout({
           <main className="flex min-h-screen flex-col items-center justify-between">
             {children}
             <Toast />
+            <Dialog />
           </main>
         </AudioProvider>
         {/* </NextAuthProvider> */}

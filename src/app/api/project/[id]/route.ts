@@ -1,11 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { Project } from '@/types';
 import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  _: NextApiRequest,
+  _: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
@@ -32,6 +31,6 @@ export async function GET(
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Error fetching project:', error.message);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return NextResponse.json({ error: 'Internal Server Error', status: 500 });
   }
 }

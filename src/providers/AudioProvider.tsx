@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadFeeback } from '@/lib/api';
+import { deleteFeedback, uploadFeeback } from '@/lib/api';
 import { generateId } from '@/lib/utils';
 import {
   AudioFile,
@@ -41,6 +41,7 @@ interface AudioContextType {
   jumpTo: (timestamp: number) => void;
   toggleLoop: (status?: boolean) => void;
   togglePlaying: (status?: boolean) => void;
+  removeFeedback: (id: string) => void;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -133,10 +134,27 @@ export default function AudioProvider({
       } catch (error) {
         console.error(error);
         removeComment(tempId);
-      } finally {
       }
     },
     [version, addComment, removeComment, updateComment]
+  );
+
+  const removeFeedback = useCallback(
+    async (id: string) => {
+      const comment = version?.feedback.find((f) => f.id === id);
+      if (!comment) return;
+
+      removeComment(id);
+      try {
+        await deleteFeedback({
+          id,
+        });
+      } catch (error) {
+        console.error(error);
+        addComment(comment);
+      }
+    },
+    [version, addComment, removeComment]
   );
 
   const togglePlaying = useCallback((status?: boolean) => {
@@ -182,6 +200,7 @@ export default function AudioProvider({
     jumpTo,
     togglePlaying,
     toggleLoop,
+    removeFeedback,
   };
 
   return (

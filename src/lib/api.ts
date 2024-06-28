@@ -66,7 +66,7 @@ export async function uploadFeeback({
   timestamp?: number;
 }) {
   try {
-    const res = await _axios.post('/api/uploadFeedback', {
+    const res = await _axios.post('/api/feedback/create', {
       versionId,
       text,
       timestamp,
@@ -74,6 +74,16 @@ export async function uploadFeeback({
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadFeeback' });
+    throw error;
+  }
+}
+
+export async function deleteFeedback({ id }: { id: string }) {
+  try {
+    const res = await _axios.delete(`/api/feedback/delete/${id}`);
+    return res.status;
+  } catch (error) {
+    handleError({ error, callName: 'deleteFeedback' });
     throw error;
   }
 }

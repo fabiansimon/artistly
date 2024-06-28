@@ -23,7 +23,7 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
-  const { jumpTo } = useAudioContext();
+  const { jumpTo, removeFeedback } = useAudioContext();
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
 
   const feedback = useMemo(() => {
@@ -83,7 +83,7 @@ export default function FeedbackContainer({
             <CommentTile
               key={comment.id}
               comment={comment}
-              onDelete={(id) => console.log(id)}
+              onDelete={removeFeedback}
               onTimestamp={jumpTo}
             />
           ))}

@@ -105,3 +105,10 @@ export interface Range {
   begin: number;
   end: number;
 }
+
+export interface MenuOption {
+  text: string;
+  icon: React.ReactNode;
+  confirm?: boolean;
+  onClick: (args?: any) => any | void;
+}
