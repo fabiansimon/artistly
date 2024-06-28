@@ -1,9 +1,9 @@
 import ToastController from '@/controllers/ToastController';
 import { Project } from '@/types';
 import axios from 'axios';
-import { time } from 'console';
 
 const _axios = axios.create({
+  baseURL: 'http://localhost:3000/',
   headers: { 'Access-Control-Allow-Origin': '*' },
 });
 
@@ -31,6 +31,16 @@ function handleError({
   ToastController.showErrorToast(errorTitle, errorDescription);
 }
 
+export async function fetchProject(projectId: string) {
+  try {
+    const res = await _axios.get(`api/project/${projectId}`);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'fetchProject' });
+    throw error;
+  }
+}
+
 export async function uploadTrack(data: FormData) {
   try {
     const res = await _axios.post('/api/uploadTrack', data, {
@@ -39,16 +49,6 @@ export async function uploadTrack(data: FormData) {
       },
     });
 
-    return res.data;
-  } catch (error) {
-    handleError({ error, callName: 'uploadTrack' });
-    throw error;
-  }
-}
-
-export async function fetchProject(projectId: string) {
-  try {
-    const res = await axios.get<Project>(`/api/project/${projectId}`);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadTrack' });
@@ -66,15 +66,24 @@ export async function uploadFeeback({
   timestamp?: number;
 }) {
   try {
-    const res = await axios.post<any>('/api/uploadFeedback', {
+    const res = await _axios.post('/api/feedback/create', {
       versionId,
       text,
       timestamp,
     });
-    console.log(res.data);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'uploadTrack' });
+    handleError({ error, callName: 'uploadFeeback' });
+    throw error;
+  }
+}
+
+export async function deleteFeedback({ id }: { id: string }) {
+  try {
+    const res = await _axios.delete(`/api/feedback/delete/${id}`);
+    return res.status;
+  } catch (error) {
+    handleError({ error, callName: 'deleteFeedback' });
     throw error;
   }
 }

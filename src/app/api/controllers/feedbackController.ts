@@ -1,11 +1,13 @@
 import { supabase } from '@/lib/supabaseClient';
 import { FeedbackUpload } from '@/types';
 
+const TABLE = 'comments';
+
 export async function createFeedback(feedback: FeedbackUpload) {
   const { creatorId, text, timestamp, versionId } = feedback;
 
   const { data, error } = await supabase
-    .from('comments')
+    .from(TABLE)
     .insert([
       {
         text,
@@ -22,4 +24,12 @@ export async function createFeedback(feedback: FeedbackUpload) {
   }
 
   return data;
+}
+
+export async function deleteFeedback(id: string) {
+  const { error } = await supabase.from(TABLE).delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Error deleting feedback: ${error.message}`);
+  }
 }

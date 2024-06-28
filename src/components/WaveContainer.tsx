@@ -49,7 +49,7 @@ export default function WaveContainer({
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (!audioRef.current) return;
+    if (simple || !audioRef.current) return;
 
     const duration = audioRef.current.duration;
     const { left, width } = (
@@ -70,12 +70,12 @@ export default function WaveContainer({
   };
 
   return (
-    <div>
+    <div className="flex flex-grow w-fullbg-red-500">
       <audio
         loop={settings.looping}
         onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
         ref={audioRef}
-        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/69ea7685-e32c-4ef7-a384-c26288fe7aca?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy82OWVhNzY4NS1lMzJjLTRlZjctYTM4NC1jMjYyODhmZTdhY2EiLCJpYXQiOjE3MTg4NjIyOTUsImV4cCI6MTcxOTQ2NzA5NX0.PI1qDFZ9MAoV2fzDYlc_q1MItmqy2sV56Nm_01WwrbU&t=2024-06-20T05%3A44%3A55.186Z"
+        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/4894cdd8-8cca-4bfd-9adb-0e6fa919358e?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy80ODk0Y2RkOC04Y2NhLTRiZmQtOWFkYi0wZTZmYTkxOTM1OGUiLCJpYXQiOjE3MTk1ODE1MjgsImV4cCI6MTc1MTExNzUyOH0.v8MM5a8gWUvXlj91FTQWubDzVO1II5LMGq9e-w5aqbM&t=2024-06-28T13%3A32%3A08.817Z"
       >
         Your browser does not support the audio element.
       </audio>
@@ -85,7 +85,7 @@ export default function WaveContainer({
         onClick={handleClick}
         className={cn('relative w-full', className)}
       >
-        <div className="flex w-full items-center lg:space-x-1 space-x-[0.5px]">
+        <div className="top-0 flex w-full left-0 items-center space-x-1">
           {file?.intervalPeaks.map((peak, index) => (
             <div
               key={index}
@@ -96,7 +96,7 @@ export default function WaveContainer({
         </div>
         <div
           style={{ clipPath }}
-          className="absolute top-0 flex w-full left-0 items-center lg:space-x-1 space-x-[0.5px]"
+          className="absolute top-0 flex w-full left-0 items-center space-x-1"
         >
           {file?.intervalPeaks.map((peak, index) => (
             <div

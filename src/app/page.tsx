@@ -1,12 +1,5 @@
-import Toast from '@/components/Toast';
-import UploadPage from '../../pages/upload';
-import AudioProvider from '@/providers/AudioProvider';
+import UploadPage from './upload/page';
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
-      <UploadPage />
-      <Toast />
-    </main>
-  );
+  return <UploadPage />;
 }

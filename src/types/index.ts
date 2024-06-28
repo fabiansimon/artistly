@@ -71,7 +71,7 @@ export interface User {
 
 export interface Comment {
   id: string;
-  timestamp: number;
+  timestamp?: number;
   text: string;
 }
 
@@ -104,4 +104,11 @@ export interface AudioSettings {
 export interface Range {
   begin: number;
   end: number;
+}
+
+export interface MenuOption {
+  text: string;
+  icon: React.ReactNode;
+  confirm?: boolean;
+  onClick: (args?: any) => any | void;
 }
