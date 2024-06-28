@@ -13,6 +13,7 @@ import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
 import { useRouter } from 'next/navigation';
+import { analyzeAudio } from '@/lib/utils';
 
 export default function ShareContainer({
   audioFile,
@@ -56,9 +57,6 @@ export default function ShareContainer({
     LocalStorage.saveInputData(inputData);
   }, [inputData]);
 
-  if (audioFile === undefined)
-    return <span className="loading loading-ring loading-sm"></span>;
-
   const handleSubmit = async () => {
     if (!inputValid) return;
     setLoading(true);
@@ -71,9 +69,16 @@ export default function ShareContainer({
     form.append('emailList', JSON.stringify(Array.from(emailList)));
     form.append('tracks', file!);
 
+    /*
+    DEBUG PURPOSES
+    */
+
+    const data = await analyzeAudio(file!);
+    LocalStorage.saveAudioFile(data);
+
     try {
-      const result = await uploadTrack(form);
-      router.push('/project/0b27fc24-94ea-4776-b1ba-a48d1e77f099');
+      const res = await uploadTrack(form);
+      router.push(`/project/${res.project.id}`);
     } finally {
       setLoading(false);
     }
@@ -122,8 +127,11 @@ export default function ShareContainer({
     });
   };
 
+  if (audioFile === undefined)
+    return <span className="loading loading-ring loading-sm"></span>;
+
   return (
-    <div className="w-[80%] flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <article className="prose mb-4">
         <h3 className="text-white">Upload Track</h3>
       </article>
@@ -153,13 +161,10 @@ export default function ShareContainer({
           placeholder="Add some feedback notes (optional)"
         ></textarea>
 
-        <AudioPlayer
-          className="py-4"
-          audioFile={audioFile}
-        />
+        <AudioPlayer className="py-4" />
 
         <div className="w-full flex flex-col space-y-1">
-          <article className="prose text-left">
+          <article className="prose text-left text-white">
             <p>{'Share with'}</p>
           </article>
           {inputData.emailList.size > 0 ? (

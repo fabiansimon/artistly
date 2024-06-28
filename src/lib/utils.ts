@@ -1,6 +1,7 @@
 import { AudioFile } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { v4 as uuidv4 } from 'uuid';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
@@ -42,8 +43,6 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
 
     currTotal += Math.abs(channelData[i]);
   }
-
-  for (const peak of intervalPeaks) console.log(peak);
 
   const audioData: AudioFile = {
     channels: numberOfChannels,
@@ -99,3 +98,9 @@ export function ordinalString(number: number) {
       return number + 'th';
   }
 }
+
+export function generateId() {
+  return uuidv4();
+}
+
+export const _ = undefined;

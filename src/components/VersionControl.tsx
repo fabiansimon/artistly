@@ -20,13 +20,13 @@ export default function VersionControl() {
           const active = version.id === id;
           return (
             <div
+              key={id}
               onClick={() => handleVersionChange(id)}
               className={cn(
                 'bg-white/40 cursor-pointer min-h-8 flex items-center justify-center px-4',
                 active && 'bg-white',
                 !isLast && 'border-b border-neutral/40'
               )}
-              key={id}
             >
               <p
                 className={cn(

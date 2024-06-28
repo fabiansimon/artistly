@@ -1,21 +1,22 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import ToastController from '@/controllers/ToastController';
-import { fetchProject, uploadFeeback } from '@/lib/api';
+import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import VersionControl from '@/components/VersionControl';
 import AudioControls from '@/components/AudioControls';
+import { useParams } from 'next/navigation';
+import AnimatedText from '@/components/AnimatedText';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
     useAudioContext();
-  const router = useRouter();
-  const { id } = router.query;
+  const { id } = useParams();
+
   const [error, setError] = useState<string | null>(null);
 
   const { timestampComments, generalComments } = useMemo(() => {
@@ -31,7 +32,7 @@ function ProjectPage() {
     if (file) return;
     const cachedAudio = LocalStorage.fetchAudioFile();
     setFile(cachedAudio);
-  }, []);
+  }, [file, setFile]);
 
   useEffect(() => {
     if (!id) return;
@@ -46,29 +47,42 @@ function ProjectPage() {
         ToastController.showErrorToast('Something went wrong', error.message);
       }
     })();
-  }, [id]);
+  }, [id, setProject, setVersion]);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   if (!project) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
+        <span className="loading loading-ring loading-sm"></span>
+        <AnimatedText
+          className="mt-2"
+          strings={[
+            'Fetching Audio',
+            'Gathering Data',
+            'Searching for new Versions',
+          ]}
+        />
+      </div>
+    );
   }
 
   return (
     <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
       <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
         <VersionControl />
-        {file && <AudioEditor comments={timestampComments} />}
+        <AudioEditor
+          className="max-w-screen-md"
+          comments={timestampComments}
+        />
         <AudioControls />
       </div>
-      {file && (
-        <FeedbackContainer
-          generalComments={generalComments}
-          timestampComments={timestampComments}
-        />
-      )}
+      <FeedbackContainer
+        generalComments={generalComments}
+        timestampComments={timestampComments}
+      />
     </div>
   );
 }
