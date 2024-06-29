@@ -9,14 +9,12 @@ interface WaveContainerProps {
   duration?: number;
   simple?: boolean;
   onTap?: (time: number) => void;
-  onAdd?: (time: number) => void;
 }
 
 export default function WaveContainer({
   simple = false,
   className,
   amplifyBy,
-  onAdd,
 }: WaveContainerProps) {
   const { time, settings, file, audioRef, setTime, setSettings } =
     useAudioContext();
@@ -110,7 +108,6 @@ export default function WaveContainer({
           <CursorLine
             style={{ left: `${percentage}%` }}
             cursorVisible={cursorVisible}
-            onAdd={onAdd}
             time={time}
           />
         )}

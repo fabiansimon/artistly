@@ -9,7 +9,6 @@ import {
   Time04Icon,
 } from 'hugeicons-react';
 import { useAudioContext } from '@/providers/AudioProvider';
-import { motion } from 'framer-motion';
 import CommentsSection from './CommentsSection';
 import RangeIndicator from './RangeIndicator';
 
@@ -40,7 +39,7 @@ export default function AudioEditor({
             className="text-white/60"
           />
         ),
-        title: `${feedback.length} comments`,
+        title: `${feedback?.length} comments`,
       },
       {
         icon: (

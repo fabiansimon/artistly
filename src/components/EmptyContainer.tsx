@@ -16,10 +16,10 @@ export default function EmptyContainer({
       <article className="prose text-center space-y-0 items-center flex flex-col">
         <FastWindIcon
           size={26}
-          className="mb-3"
+          className="mb-3 text-white"
         />
-        <h4>{title}</h4>
-        <p className="text-sm">{description}</p>
+        <h4 className="text-white">{title}</h4>
+        <p className="text-sm text-white/80">{description}</p>
       </article>
     </div>
   );

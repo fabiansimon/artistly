@@ -1,4 +1,5 @@
 import { formatSeconds } from '@/lib/utils';
+import { useAudioContext } from '@/providers/AudioProvider';
 import { motion } from 'framer-motion';
 import { PlusSignIcon } from 'hugeicons-react';
 
@@ -13,9 +14,8 @@ export default function CursorLine({
   cursorVisible: boolean;
   style: React.CSSProperties;
 }) {
-  const handleOnAdd = () => {
-    if (onAdd) onAdd(time);
-  };
+  const { openInputModal } = useAudioContext();
+
   return (
     <div
       className={'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-10'}
@@ -37,7 +37,7 @@ export default function CursorLine({
         </div>
         <div
           className="cursor-pointer"
-          onClick={handleOnAdd}
+          onClick={() => openInputModal(time)}
         >
           <PlusSignIcon
             size={15}
