@@ -1,26 +1,25 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import ToastController from '@/controllers/ToastController';
 import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
-import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
-import VersionControl from '@/components/VersionControl';
-import AudioControls from '@/components/AudioControls';
 import { useParams } from 'next/navigation';
 import AnimatedText from '@/components/AnimatedText';
+import VersionControl from '@/components/VersionControl';
+import AudioEditor from '@/components/AudioEditor';
+import AudioControls from '@/components/AudioControls';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
     useAudioContext();
   const { id } = useParams();
 
-  const [error, setError] = useState<string | null>(null);
-
   const { timestampComments, generalComments } = useMemo(() => {
-    if (!version) return { timestampComments: [], generalComments: [] };
+    if (!version?.feedback)
+      return { timestampComments: [], generalComments: [] };
     const { feedback } = version;
     return {
       timestampComments: feedback.filter((f) => f.timestamp),
@@ -48,10 +47,6 @@ function ProjectPage() {
       }
     })();
   }, [id, setProject, setVersion]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   if (!project) {
     return (
