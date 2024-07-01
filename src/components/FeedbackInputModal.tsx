@@ -119,6 +119,7 @@ export default function FeedbackInputModal({
               {'Close'}
             </button>
             <button
+              disabled={input.text.trim().length < 1}
               onClick={postComment}
               className="btn btn-primary ml-2"
             >

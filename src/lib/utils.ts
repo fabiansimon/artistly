@@ -1,3 +1,4 @@
+import { REGEX } from '@/constants/regex';
 import { AudioFile } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -111,6 +112,13 @@ export function generateId() {
 export function formatTimeInput(value: string) {
   const clean = value.replace(/[^0-9:]/g, '');
   return clean.toString();
+}
+
+export function timestampIndex(string: string) {
+  const index = string.indexOf('@');
+  if (index === -1) return -1;
+  const rawTime = string.substring(index + 1, index + 6);
+  return REGEX.timestamp.test(rawTime) ? index : -1;
 }
 
 export const _ = undefined;

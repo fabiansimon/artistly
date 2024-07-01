@@ -1,4 +1,4 @@
-import { formatSeconds } from '@/lib/utils';
+import { cn, formatSeconds } from '@/lib/utils';
 import { Comment } from '@/types';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -46,15 +46,18 @@ function CommentTile({
   return (
     <div
       style={style}
-      className="absolute flex flex-col"
+      className={cn(
+        'absolute pointer-events-none flex flex-col',
+        hovered && 'z-20'
+      )}
     >
-      <div className="flex h-full">
+      <div className="flex">
         <div className="w-[2px] bg-primary h-6 absolute" />
         <div
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
+          className="bg-neutral pointer-events-auto rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}

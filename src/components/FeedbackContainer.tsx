@@ -106,6 +106,12 @@ function InputField() {
   const [input, setInput] = useState<Input>({ text: '' });
   const [errorMessage, setErrorMessage] = useState<string>('');
 
+  const handleAddFeedback = (input: Input) => {
+    setInput({ text: '' });
+    setErrorMessage('');
+    addFeedback(input);
+  };
+
   useEffect(() => {
     const timestampIndex = input.text.indexOf('@');
     if (timestampIndex !== -1) {
@@ -133,6 +139,7 @@ function InputField() {
           onInput={({ currentTarget: { value } }) =>
             setInput((prev) => ({ ...prev, text: value }))
           }
+          value={input.text}
           placeholder="Add comment"
           className={cn(
             'input bg-neutral text-sm w-full',
@@ -140,7 +147,7 @@ function InputField() {
           )}
         />
         <button
-          onClick={() => addFeedback(input)}
+          onClick={() => handleAddFeedback(input)}
           disabled={!!(errorMessage || input.text.trim().length === 0)}
           className="btn btn-primary"
         >
