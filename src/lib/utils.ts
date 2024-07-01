@@ -81,6 +81,11 @@ export function formatSeconds(seconds: number) {
   return new Date(seconds * 1000).toISOString().slice(14, 19);
 }
 
+export function formattedTimeToNumber(value: string) {
+  const [minutes, seconds] = value.split(':');
+  return parseInt(minutes) * 60 + parseInt(seconds);
+}
+
 export function ordinalString(number: number) {
   const last = number % 10;
   const lastTwo = number % 100;
@@ -101,6 +106,11 @@ export function ordinalString(number: number) {
 
 export function generateId() {
   return uuidv4();
+}
+
+export function formatTimeInput(value: string) {
+  const clean = value.replace(/[^0-9:]/g, '');
+  return clean.toString();
 }
 
 export const _ = undefined;

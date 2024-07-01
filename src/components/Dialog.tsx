@@ -10,8 +10,7 @@ import {
 } from 'react';
 
 import DialogController from '@/controllers/DialogController';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import DialogModal from './DialogModal';
 
 const DEFAULT_TITLE = 'Are you sure?';
 const DEFAULT_DESCRIPTION = 'This cannot be reverted.';
@@ -61,57 +60,37 @@ function Dialog(): JSX.Element {
   );
 
   return (
-    <motion.div
-      initial="hidden"
-      transition={{ duration: 0.08 }}
-      animate={isVisible ? 'visible' : 'hidden'}
-      variants={{
-        visible: { opacity: 1 },
-        hidden: { opacity: 0 },
-      }}
-      className={cn(
-        'fixed w-full h-full bg-black/50 content-center justify-center items-center',
-        !isVisible && 'pointer-events-none'
-      )}
-    >
-      <motion.div
-        initial="hidden"
-        transition={{ duration: 0.08 }}
-        animate={isVisible ? 'visible' : 'hidden'}
-        variants={{ visible: { scale: 1 }, hidden: { scale: 0.7 } }}
-        className="modal-box mx-auto"
-      >
-        <article className="prose">
-          <h3 className="font-medium text-white text-md">
-            {info?.title || DEFAULT_TITLE}
-          </h3>
-          <p className="text-white/80 text-sm">
-            {info?.description || DEFAULT_DESCRIPTION}
-          </p>
-        </article>
-        <div className="modal-action">
-          <form method="dialog">
+    <DialogModal isVisible={isVisible}>
+      <article className="prose">
+        <h3 className="font-medium text-white text-md">
+          {info?.title || DEFAULT_TITLE}
+        </h3>
+        <p className="text-white/80 text-sm">
+          {info?.description || DEFAULT_DESCRIPTION}
+        </p>
+      </article>
+      <div className="modal-action">
+        <form method="dialog">
+          <button
+            className="btn btn-outline text-white/60"
+            onClick={closeDialog}
+          >
+            {'Close'}
+          </button>
+          {info?.callback !== undefined && (
             <button
-              className="btn"
-              onClick={closeDialog}
+              onClick={() => {
+                info.callback!();
+                closeDialog();
+              }}
+              className="btn btn-error ml-2"
             >
-              {'Close'}
+              {'Delete'}
             </button>
-            {info?.callback !== undefined && (
-              <button
-                onClick={() => {
-                  info.callback!();
-                  closeDialog();
-                }}
-                className="btn btn-error ml-2"
-              >
-                {'Delete'}
-              </button>
-            )}
-          </form>
-        </div>
-      </motion.div>
-    </motion.div>
+          )}
+        </form>
+      </div>
+    </DialogModal>
   );
 }
 

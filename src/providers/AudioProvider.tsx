@@ -44,7 +44,6 @@ interface AudioContextType {
   toggleLoop: (status?: boolean) => void;
   togglePlaying: (status?: boolean) => void;
   removeFeedback: (id: string) => void;
-  openInputModal: (timestamp?: number) => void;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -65,7 +64,6 @@ export default function AudioProvider({
   const [version, setVersion] = useState<(Version & { index: number }) | null>(
     null
   );
-  const [inputOpen, setInputOpen] = useState<number>(-1);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -113,10 +111,6 @@ export default function AudioProvider({
         feedback: prev.feedback.filter((f) => f.id !== id),
       };
     });
-  }, []);
-
-  const openInputModal = useCallback((timestamp?: number) => {
-    setInputOpen(timestamp || 1);
   }, []);
 
   const addFeedback = useCallback(
@@ -209,13 +203,11 @@ export default function AudioProvider({
     togglePlaying,
     toggleLoop,
     removeFeedback,
-    openInputModal,
   };
 
   return (
     <>
       <AudioContext.Provider value={value}>{children}</AudioContext.Provider>
-      <FeedbackInputModal isVisible={inputOpen !== -1} />
     </>
   );
 }
