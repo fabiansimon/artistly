@@ -1,8 +1,12 @@
-import { formatSeconds } from '@/lib/utils';
+import {
+  formatSeconds,
+  formattedTimeToNumber,
+  timestampIndex,
+} from '@/lib/utils';
 import { Comment, MenuOption } from '@/types';
 import { Delete01Icon } from 'hugeicons-react';
 import DropDown from './Dropdown';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 export default function CommentTile({
   comment,
@@ -32,7 +36,41 @@ export default function CommentTile({
     [onDelete, id]
   );
 
-  const includesTimestamp = useMemo(() => {}, [text, timestamp]);
+  const timestampSpan = useCallback(
+    (timestamp: number) => {
+      return (
+        <p
+          onClick={() => onTimestamp(timestamp)}
+          className="text-sm cursor-pointer text-blue-400 font-normal -mt-3"
+        >
+          @{formatSeconds(timestamp)}
+        </p>
+      );
+    },
+    [onTimestamp]
+  );
+
+  const textParts = useMemo(() => {
+    const output: { value: string | number; isTime: boolean }[] = [];
+
+    const index = timestampIndex(text);
+    if (index === -1) {
+      timestamp != null && output.push({ value: timestamp, isTime: true });
+      output.push({ value: ` ${text}`, isTime: false });
+    } else {
+      output.push({ value: text.substring(0, index), isTime: false });
+      output.push({
+        value: formattedTimeToNumber(text.substring(index + 1, index + 6)),
+        isTime: true,
+      });
+      output.push({
+        value: text.substring(index + 6, text.length),
+        isTime: false,
+      });
+    }
+
+    return output;
+  }, [text, timestamp]);
 
   return (
     <div
@@ -41,16 +79,22 @@ export default function CommentTile({
     >
       <article className="prose">
         <p className="text-xs text-white/30">fabian.simon98@gmail.com</p>
-        <span className="flex">
-          {timestamp != null && (
-            <p
-              onClick={() => onTimestamp(timestamp)}
-              className="text-sm cursor-pointer text-blue-400 font-normal -mt-3 mr-1"
-            >
-              @{formatSeconds(timestamp)}
-            </p>
-          )}
-          <h3 className="text-sm text-white font-normal -mt-3">{text}</h3>
+        <span
+          className="flex"
+          style={{ whiteSpace: 'pre' }}
+        >
+          {textParts.map(({ value, isTime }, index) => {
+            if (isTime)
+              return <div key={index}>{timestampSpan(value as number)}</div>;
+            return (
+              <h3
+                key={index}
+                className="text-sm text-white font-normal -mt-3"
+              >
+                {value}
+              </h3>
+            );
+          })}
         </span>
       </article>
       <DropDown options={options} />
