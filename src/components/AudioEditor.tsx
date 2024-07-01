@@ -1,4 +1,4 @@
-import { cn, formatSeconds, ordinalString } from '@/lib/utils';
+import { calculateRange, cn, formatSeconds, ordinalString } from '@/lib/utils';
 import { Comment } from '@/types';
 import { useMemo, useState } from 'react';
 import WaveContainer from './WaveContainer';
@@ -26,6 +26,7 @@ export default function AudioEditor({
     version,
     settings: { looping },
     jumpTo,
+    setRange,
   } = useAudioContext();
 
   const info = useMemo(() => {
@@ -96,6 +97,9 @@ export default function AudioEditor({
           <WaveContainer amplifyBy={200} />
           <CommentsSection
             onClick={jumpTo}
+            onLoop={(timestamp) =>
+              setRange(calculateRange(file?.duration!, timestamp, 4))
+            }
             comments={comments}
             duration={audioRef.current?.duration || 10}
           />

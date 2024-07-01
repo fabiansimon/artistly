@@ -121,4 +121,15 @@ export function timestampIndex(string: string) {
   return REGEX.timestamp.test(rawTime) ? index : -1;
 }
 
+export function calculateRange(
+  duration: number,
+  timestamp: number,
+  buffer: number
+) {
+  return {
+    begin: Math.max(timestamp - buffer, 0),
+    end: Math.min(timestamp + buffer, duration),
+  };
+}
+
 export const _ = undefined;

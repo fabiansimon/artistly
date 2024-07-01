@@ -1,16 +1,19 @@
 import { cn, formatSeconds } from '@/lib/utils';
 import { Comment } from '@/types';
 import { motion } from 'framer-motion';
+import { ArrowReloadHorizontalIcon } from 'hugeicons-react';
 import { useState } from 'react';
 
 export default function CommentsSection({
   comments,
   duration,
   onClick,
+  onLoop,
 }: {
   comments: Comment[];
   duration: number;
   onClick: (timestamp: number) => void;
+  onLoop: (timestamp: number) => void;
 }) {
   return (
     <div className="flex w-full mt-3 relative">
@@ -23,6 +26,7 @@ export default function CommentsSection({
             onClick={() => onClick(timestamp!)}
             style={{ left: `${offset}%` }}
             key={comment.id}
+            onLoop={onLoop}
             comment={comment}
           />
         );
@@ -33,11 +37,13 @@ export default function CommentsSection({
 
 function CommentTile({
   comment,
+  onLoop,
   style,
   onClick,
 }: {
   comment: Comment;
   style: React.CSSProperties;
+  onLoop: (timestamp: number) => void;
   onClick: () => void;
 }) {
   const [hovered, setHovered] = useState<boolean>(false);
@@ -57,11 +63,28 @@ function CommentTile({
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral pointer-events-auto rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
+          className="bg-neutral flex pointer-events-auto rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}
           </p>
+          <motion.div
+            animate={hovered ? 'expanded' : 'hidden'}
+            variants={{
+              expanded: { width: 'auto', marginRight: 6 },
+              hidden: { width: 0 },
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onLoop(timestamp!);
+            }}
+            className="flex items-center justify-center ml-[1px]"
+          >
+            <ArrowReloadHorizontalIcon
+              className="text-white/50 hover:text-white"
+              size={14}
+            />
+          </motion.div>
         </div>
       </div>
       <motion.div
