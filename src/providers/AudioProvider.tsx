@@ -159,20 +159,6 @@ export default function AudioProvider({
     [version, addComment, removeComment]
   );
 
-  const togglePlaying = useCallback((status?: boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      playing: status || !prev.playing,
-    }));
-  }, []);
-
-  const toggleLoop = useCallback((status?: boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      looping: status || !prev.looping,
-    }));
-  }, []);
-
   const jumpTo = useCallback(
     (timestamp: number) => {
       if (!audioRef.current) return;
@@ -180,8 +166,39 @@ export default function AudioProvider({
       audioRef.current.currentTime = Math.min(duration, timestamp);
       if (!settings.playing) togglePlaying(true);
     },
-    [settings.playing, togglePlaying]
+    [settings.playing, setSettings]
   );
+
+  const outOfBoundsCheck = useCallback(() => {
+    const { begin, end } = range;
+    if (time < begin || time > end) jumpTo(begin);
+  }, [range, time, jumpTo]);
+
+  const togglePlaying = useCallback(
+    (status?: boolean) => {
+      outOfBoundsCheck();
+      setSettings((prev) => ({
+        ...prev,
+        playing: status || !prev.playing,
+      }));
+    },
+    [outOfBoundsCheck, setSettings]
+  );
+
+  const toggleLoop = useCallback(
+    (status?: boolean) => {
+      outOfBoundsCheck();
+      setSettings((prev) => ({
+        ...prev,
+        looping: status || !prev.looping,
+      }));
+    },
+    [outOfBoundsCheck, setSettings]
+  );
+
+  useEffect(() => {
+    outOfBoundsCheck();
+  }, [settings.playing, outOfBoundsCheck]);
 
   const value = {
     settings,
