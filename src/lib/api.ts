@@ -1,5 +1,5 @@
 import ToastController from '@/controllers/ToastController';
-import { Project } from '@/types';
+import { Pagination, Project } from '@/types';
 import axios from 'axios';
 
 const _axios = axios.create({
@@ -31,6 +31,12 @@ function handleError({
   ToastController.showErrorToast(errorTitle, errorDescription);
 }
 
+function paginationParams(pagination?: Pagination) {
+  if (!pagination) return '';
+  const { limit, page } = pagination;
+  return `?page=${page}&limit=${limit}`;
+}
+
 export async function fetchProject(projectId: string) {
   try {
     const res = await _axios.get(`api/project/${projectId}`);
@@ -48,7 +54,6 @@ export async function uploadTrack(data: FormData) {
         'Content-Type': 'multipart/form-data',
       },
     });
-
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'uploadTrack' });
@@ -84,6 +89,23 @@ export async function deleteFeedback({ id }: { id: string }) {
     return res.status;
   } catch (error) {
     handleError({ error, callName: 'deleteFeedback' });
+    throw error;
+  }
+}
+
+export async function getUserProjects({
+  pagination,
+}: {
+  pagination?: Pagination;
+}) {
+  console.log(`/api/projects${paginationParams(pagination)}`);
+  try {
+    const res = await _axios.get(
+      `/api/projects${paginationParams(pagination)}`
+    );
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'getUserProjects' });
     throw error;
   }
 }
