@@ -1,7 +1,5 @@
 'use client';
 
-import FeedbackInputModal from '@/components/FeedbackInputModal';
-import Modal from '@/components/Modal';
 import { deleteFeedback, uploadFeeback } from '@/lib/api';
 import { generateId } from '@/lib/utils';
 import {
