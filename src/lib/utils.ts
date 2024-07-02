@@ -132,4 +132,19 @@ export function calculateRange(
   };
 }
 
+export function getReadableCurrentDate() {
+  const now = new Date();
+  const options = {
+    weekday: 'long' as 'long',
+    year: 'numeric' as 'numeric',
+    month: 'long' as 'long',
+    day: 'numeric' as 'numeric',
+    hour: '2-digit' as '2-digit',
+    minute: '2-digit' as '2-digit',
+    second: '2-digit' as '2-digit',
+    hour12: true,
+  };
+  return now.toLocaleDateString('en-US', options);
+}
+
 export const _ = undefined;

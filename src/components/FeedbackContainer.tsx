@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from 'react';
 import EmptyContainer from './EmptyContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import CommentTile from './CommentTile';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import FeedbackSummaryPDF from './FeedbackSummaryPDF';
 
 enum FilterState {
   GENERAL,
@@ -23,7 +25,7 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
-  const { jumpTo, removeFeedback } = useAudioContext();
+  const { jumpTo, removeFeedback, project, version } = useAudioContext();
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
 
   const feedback = useMemo(() => {
@@ -43,10 +45,20 @@ export default function FeedbackContainer({
         <article className="prose">
           <h4 className="text-white">Feedback</h4>
         </article>
-        <button className={cn('btn btn-neutral btn-sm')}>
-          <Download04Icon size={16} />
-          Download Feedback
-        </button>
+        <PDFDownloadLink
+          document={
+            <FeedbackSummaryPDF
+              title={project?.title!}
+              comments={[...timestampComments, ...generalComments]}
+            />
+          }
+          fileName={`Feedback ${project?.title}, version: ${version?.title}`}
+        >
+          <button className={cn('btn btn-neutral btn-sm')}>
+            <Download04Icon size={16} />
+            Download Feedback
+          </button>
+        </PDFDownloadLink>
       </div>
       <div
         role="tablist"

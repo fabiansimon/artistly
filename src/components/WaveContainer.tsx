@@ -22,6 +22,8 @@ export default function WaveContainer({
 
   const AMPLIFY_BY = amplifyBy || 100;
 
+  const emptyWave = file?.intervalPeaks.length === 0;
+
   const { percentage, clipPath } = useMemo(() => {
     if (!audioRef.current) return { percentage: 0, clipPath: '' };
     let percentage = (time / audioRef.current.duration) * 100;
@@ -30,6 +32,10 @@ export default function WaveContainer({
       percentage,
     };
   }, [time, audioRef]);
+
+  useEffect(() => {
+    if (emptyWave) populateWave();
+  }, [emptyWave]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -45,6 +51,10 @@ export default function WaveContainer({
       };
     }
   }, []);
+
+  const populateWave = () => {
+    console.log('now');
+  };
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (simple || !audioRef.current) return;
@@ -68,7 +78,7 @@ export default function WaveContainer({
   };
 
   return (
-    <div className="flex flex-grow w-fullbg-red-500">
+    <div className="flex flex-grow w-full">
       <audio
         loop={settings.looping}
         onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
@@ -77,41 +87,49 @@ export default function WaveContainer({
       >
         Your browser does not support the audio element.
       </audio>
-      <div
-        onMouseEnter={() => setCursorVisible(true)}
-        onMouseLeave={() => setCursorVisible(false)}
-        onClick={handleClick}
-        className={cn('relative w-full', className)}
-      >
-        <div className="top-0 flex w-full left-0 items-center space-x-1">
-          {file?.intervalPeaks.map((peak, index) => (
-            <div
-              key={index}
-              style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
-              className={cn('flex-grow bg-slate-50 rounded-full', 'opacity-30')}
-            />
-          ))}
-        </div>
+      {emptyWave && (
+        <div className="skeleton flex flex-grow h-14 min-w-full"></div>
+      )}
+      {emptyWave && (
         <div
-          style={{ clipPath }}
-          className="absolute top-0 flex w-full left-0 items-center space-x-1"
+          onMouseEnter={() => setCursorVisible(true)}
+          onMouseLeave={() => setCursorVisible(false)}
+          onClick={handleClick}
+          className={cn('relative w-full', className)}
         >
-          {file?.intervalPeaks.map((peak, index) => (
-            <div
-              key={index}
-              style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
-              className={cn('flex-grow bg-slate-50 rounded-full')}
-            />
-          ))}
+          <div className="top-0 flex w-full left-0 items-center space-x-1">
+            {file?.intervalPeaks.map((peak, index) => (
+              <div
+                key={index}
+                style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
+                className={cn(
+                  'flex-grow bg-slate-50 rounded-full',
+                  'opacity-30'
+                )}
+              />
+            ))}
+          </div>
+          <div
+            style={{ clipPath }}
+            className="absolute top-0 flex w-full left-0 items-center space-x-1"
+          >
+            {file?.intervalPeaks.map((peak, index) => (
+              <div
+                key={index}
+                style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
+                className={cn('flex-grow bg-slate-50 rounded-full')}
+              />
+            ))}
+            {!simple && (
+              <CursorLine
+                style={{ left: `${percentage}%` }}
+                cursorVisible={cursorVisible}
+                time={time}
+              />
+            )}
+          </div>
         </div>
-        {!simple && (
-          <CursorLine
-            style={{ left: `${percentage}%` }}
-            cursorVisible={cursorVisible}
-            time={time}
-          />
-        )}
-      </div>
+      )}
     </div>
   );
 }
