@@ -83,7 +83,7 @@ export default function WaveContainer({
         loop={settings.looping}
         onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
         ref={audioRef}
-        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/4894cdd8-8cca-4bfd-9adb-0e6fa919358e?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy80ODk0Y2RkOC04Y2NhLTRiZmQtOWFkYi0wZTZmYTkxOTM1OGUiLCJpYXQiOjE3MTk1ODE1MjgsImV4cCI6MTc1MTExNzUyOH0.v8MM5a8gWUvXlj91FTQWubDzVO1II5LMGq9e-w5aqbM&t=2024-06-28T13%3A32%3A08.817Z"
+        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/dadbf213-b8c7-486b-a15d-e2d5b67d9803?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy9kYWRiZjIxMy1iOGM3LTQ4NmItYTE1ZC1lMmQ1YjY3ZDk4MDMiLCJpYXQiOjE3MTk5MjQwNDQsImV4cCI6MTc1MTQ2MDA0NH0.8d-y6k_CY0dsi7l5FDueq7v3LCRgT6XjMxeFrRTC20s&t=2024-07-02T12%3A40%3A44.294Z"
       >
         Your browser does not support the audio element.
       </audio>
