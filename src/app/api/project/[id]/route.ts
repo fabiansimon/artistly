@@ -2,6 +2,7 @@ import { Project } from '@/types';
 import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
+import { AxiosError } from 'axios';
 
 export async function GET(
   _: NextRequest,
@@ -29,8 +30,10 @@ export async function GET(
     };
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.error('Error fetching project:', error.message);
-    return NextResponse.json({ error: 'Internal Server Error', status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({
+      error,
+      status: 500,
+    });
   }
 }

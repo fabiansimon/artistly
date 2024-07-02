@@ -1,4 +1,4 @@
-import { cn, formatSeconds, ordinalString } from '@/lib/utils';
+import { calculateRange, cn, formatSeconds, ordinalString } from '@/lib/utils';
 import { Comment } from '@/types';
 import { useMemo, useState } from 'react';
 import WaveContainer from './WaveContainer';
@@ -9,7 +9,6 @@ import {
   Time04Icon,
 } from 'hugeicons-react';
 import { useAudioContext } from '@/providers/AudioProvider';
-import { motion } from 'framer-motion';
 import CommentsSection from './CommentsSection';
 import RangeIndicator from './RangeIndicator';
 
@@ -27,6 +26,8 @@ export default function AudioEditor({
     version,
     settings: { looping },
     jumpTo,
+    setRange,
+    setSettings,
   } = useAudioContext();
 
   const info = useMemo(() => {
@@ -40,7 +41,7 @@ export default function AudioEditor({
             className="text-white/60"
           />
         ),
-        title: `${feedback.length} comments`,
+        title: `${feedback?.length} comments`,
       },
       {
         icon: (
@@ -97,6 +98,10 @@ export default function AudioEditor({
           <WaveContainer amplifyBy={200} />
           <CommentsSection
             onClick={jumpTo}
+            onLoop={(timestamp) => {
+              setSettings({ playing: true, looping: true });
+              setRange(calculateRange(file?.duration!, timestamp, 4));
+            }}
             comments={comments}
             duration={audioRef.current?.duration || 10}
           />

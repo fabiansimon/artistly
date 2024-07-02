@@ -112,3 +112,8 @@ export interface MenuOption {
   confirm?: boolean;
   onClick: (args?: any) => any | void;
 }
+
+export interface Pagination {
+  page: number;
+  limit: number;
+}

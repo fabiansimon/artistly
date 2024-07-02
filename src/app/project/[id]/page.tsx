@@ -1,32 +1,38 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import ToastController from '@/controllers/ToastController';
+import { useEffect, useMemo } from 'react';
 import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
-import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
-import VersionControl from '@/components/VersionControl';
-import AudioControls from '@/components/AudioControls';
 import { useParams } from 'next/navigation';
 import AnimatedText from '@/components/AnimatedText';
+import VersionControl from '@/components/VersionControl';
+import AudioEditor from '@/components/AudioEditor';
+import AudioControls from '@/components/AudioControls';
+import { useRouter } from 'next/navigation';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
     useAudioContext();
+
   const { id } = useParams();
 
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const { timestampComments, generalComments } = useMemo(() => {
-    if (!version) return { timestampComments: [], generalComments: [] };
+    if (!version?.feedback)
+      return { timestampComments: [], generalComments: [] };
     const { feedback } = version;
     return {
       timestampComments: feedback.filter((f) => f.timestamp),
       generalComments: feedback.filter((f) => !f.timestamp),
     };
   }, [version]);
+
+  const handleError = () => {
+    router.push('/');
+  };
 
   useEffect(() => {
     if (file) return;
@@ -40,20 +46,17 @@ function ProjectPage() {
     (async () => {
       try {
         const res = await fetchProject(id as string);
+        console.log(res);
         setProject(res);
         setVersion({ ...res.versions[0], index: 1 });
-      } catch (error: any) {
+      } catch (error) {
         console.error(error.message);
-        ToastController.showErrorToast('Something went wrong', error.message);
+        handleError();
       }
     })();
   }, [id, setProject, setVersion]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!project) {
+  if (!project || !version) {
     return (
       <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
         <span className="loading loading-ring loading-sm"></span>
