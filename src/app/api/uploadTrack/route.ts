@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
       version,
     });
   } catch (error) {
-    console.error('Error handling upload:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

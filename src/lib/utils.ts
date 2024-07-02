@@ -1,5 +1,6 @@
 import { REGEX } from '@/constants/regex';
-import { AudioFile } from '@/types';
+import { SERVER_PARAMS } from '@/constants/serverParams';
+import { AudioFile, Pagination } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
@@ -145,6 +146,32 @@ export function getReadableCurrentDate() {
     hour12: true,
   };
   return now.toLocaleDateString('en-US', options);
+}
+
+export function getPaginationRange(pagination?: Pagination): [number, number] {
+  let start = 0;
+  let end = SERVER_PARAMS.default_limit;
+
+  if (pagination) {
+    const { limit, page } = pagination;
+    start = (page - 1) * limit;
+    end = start + limit - 1;
+  }
+  return [start, end];
+}
+
+export function convertPaginationParam(
+  params: URLSearchParams
+): Pagination | undefined {
+  const limit = params.get('limit');
+  const page = params.get('page');
+
+  if (!limit || !page) return;
+
+  return {
+    limit: parseInt(limit),
+    page: parseInt(page),
+  };
 }
 
 export const _ = undefined;

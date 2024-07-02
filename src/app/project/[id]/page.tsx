@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import ToastController from '@/controllers/ToastController';
 import { fetchProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import FeedbackContainer from '@/components/FeedbackContainer';
@@ -11,11 +10,15 @@ import AnimatedText from '@/components/AnimatedText';
 import VersionControl from '@/components/VersionControl';
 import AudioEditor from '@/components/AudioEditor';
 import AudioControls from '@/components/AudioControls';
+import { useRouter } from 'next/navigation';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
     useAudioContext();
+
   const { id } = useParams();
+
+  const router = useRouter();
 
   const { timestampComments, generalComments } = useMemo(() => {
     if (!version?.feedback)
@@ -26,6 +29,10 @@ function ProjectPage() {
       generalComments: feedback.filter((f) => !f.timestamp),
     };
   }, [version]);
+
+  const handleError = () => {
+    router.push('/');
+  };
 
   useEffect(() => {
     if (file) return;
@@ -39,16 +46,17 @@ function ProjectPage() {
     (async () => {
       try {
         const res = await fetchProject(id as string);
+        console.log(res);
         setProject(res);
         setVersion({ ...res.versions[0], index: 1 });
-      } catch (error: any) {
+      } catch (error) {
         console.error(error.message);
-        ToastController.showErrorToast('Something went wrong', error.message);
+        handleError();
       }
     })();
   }, [id, setProject, setVersion]);
 
-  if (!project) {
+  if (!project || !version) {
     return (
       <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
         <span className="loading loading-ring loading-sm"></span>

@@ -42,11 +42,11 @@ export default function UploadPage() {
     []
   );
 
-  const addrawFile = (rawFile: File) => {
+  const addFile = (rawFile: File) => {
     if (!rawFile.type.includes('audio')) {
       ToastController.showErrorToast(
         'Wrong format.',
-        'This service is only made for audio rawFiles.'
+        'This service is only made for audio files.'
       );
       return;
     }
@@ -57,13 +57,13 @@ export default function UploadPage() {
   const handlerawFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const rawFile = e.target.files[0];
-    addrawFile(rawFile);
+    addFile(rawFile);
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     handleDragging(e, false);
     const rawFile = e.dataTransfer.files[0];
-    addrawFile(rawFile);
+    addFile(rawFile);
   };
 
   return (
