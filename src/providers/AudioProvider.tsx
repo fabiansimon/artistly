@@ -171,8 +171,8 @@ export default function AudioProvider({
 
   const outOfBoundsCheck = useCallback(() => {
     const { begin, end } = range;
-    if (time < begin || time > end) jumpTo(begin);
-  }, [range, time, jumpTo]);
+    if (settings.looping && (time < begin || time > end)) jumpTo(begin);
+  }, [range, time, jumpTo, settings]);
 
   const togglePlaying = useCallback(
     (status?: boolean) => {

@@ -27,6 +27,7 @@ export default function AudioEditor({
     settings: { looping },
     jumpTo,
     setRange,
+    setSettings,
   } = useAudioContext();
 
   const info = useMemo(() => {
@@ -97,9 +98,10 @@ export default function AudioEditor({
           <WaveContainer amplifyBy={200} />
           <CommentsSection
             onClick={jumpTo}
-            onLoop={(timestamp) =>
-              setRange(calculateRange(file?.duration!, timestamp, 4))
-            }
+            onLoop={(timestamp) => {
+              setSettings({ playing: true, looping: true });
+              setRange(calculateRange(file?.duration!, timestamp, 4));
+            }}
             comments={comments}
             duration={audioRef.current?.duration || 10}
           />
