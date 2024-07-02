@@ -98,7 +98,6 @@ export async function getUserProjects({
 }: {
   pagination?: Pagination;
 }) {
-  console.log(`/api/projects${paginationParams(pagination)}`);
   try {
     const res = await _axios.get(
       `/api/projects${paginationParams(pagination)}`

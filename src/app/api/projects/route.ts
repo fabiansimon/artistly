@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     const collabProjects = await fetchCollabProjects(userId, pagination);
     const authorProjects = await fetchAuthorProjects(userId, pagination);
 
-    console.log(collabProjects);
     const data = {
       authorProjects,
       collabProjects,
@@ -22,7 +21,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error: unknown) {
-    console.log(error);
     return NextResponse.json({
       error,
       status: 500,
