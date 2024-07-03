@@ -1,4 +1,3 @@
-import multiparty from 'multiparty';
 import { storeFile } from '../controllers/fileController';
 import { createProject } from '../controllers/projectController';
 import { createVersion } from '../controllers/versionController';
