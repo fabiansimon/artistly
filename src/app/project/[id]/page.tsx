@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { fetchProject } from '@/lib/api';
+import { fetchProject, joinCollabProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
@@ -11,6 +11,8 @@ import VersionControl from '@/components/VersionControl';
 import AudioEditor from '@/components/AudioEditor';
 import AudioControls from '@/components/AudioControls';
 import { useRouter } from 'next/navigation';
+import DialogController from '@/controllers/DialogController';
+import ToastController from '@/controllers/ToastController';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion, setFile } =
@@ -34,6 +36,15 @@ function ProjectPage() {
     router.push('/');
   };
 
+  const handleJoin = async () => {
+    try {
+      const res = await joinCollabProject({ id: id as string });
+      console.log(res);
+    } catch (error) {
+      ToastController.showErrorToast();
+    }
+  };
+
   useEffect(() => {
     if (file) return;
     const cachedAudio = LocalStorage.fetchAudioFile();
@@ -46,10 +57,14 @@ function ProjectPage() {
     (async () => {
       try {
         const res = await fetchProject(id as string);
-        console.log(res);
         setProject(res);
         setVersion({ ...res.versions[0], index: 1 });
       } catch (error) {
+        DialogController.showDialog(
+          "You've been invited to join.",
+          'Accept the invitation to join this project.',
+          handleJoin
+        );
         console.error(error.message);
         handleError();
       }
