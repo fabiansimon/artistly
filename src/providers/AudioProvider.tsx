@@ -1,6 +1,7 @@
 'use client';
 
 import { deleteFeedback, uploadFeeback } from '@/lib/api';
+import { fetchAudioFile, storeAudioFile } from '@/lib/audioHelpers';
 import { generateId } from '@/lib/utils';
 import {
   AudioFile,
@@ -64,6 +65,20 @@ export default function AudioProvider({
   );
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (!version) return;
+    togglePlaying();
+    (async () => {
+      const { id, file_url } = version;
+      const cached = await fetchAudioFile(id);
+      if (cached) return setFile(cached);
+
+      const data = await storeAudioFile(file_url, id);
+      if (!data) return;
+      setFile(data);
+    })();
+  }, [version]);
 
   useEffect(() => {
     const { playing } = settings;
@@ -161,7 +176,7 @@ export default function AudioProvider({
     (timestamp: number) => {
       if (!audioRef.current) return;
       const duration = audioRef.current.duration;
-      audioRef.current.currentTime = Math.min(duration, timestamp);
+      audioRef.current.currentTime = Math.min(duration, timestamp || 1);
       if (!settings.playing) togglePlaying(true);
     },
     [settings.playing, setSettings]
