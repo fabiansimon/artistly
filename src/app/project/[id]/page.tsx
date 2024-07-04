@@ -15,8 +15,7 @@ import DialogController from '@/controllers/DialogController';
 import ToastController from '@/controllers/ToastController';
 
 function ProjectPage() {
-  const { version, file, project, setProject, setVersion, setFile } =
-    useAudioContext();
+  const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
 
@@ -31,12 +30,6 @@ function ProjectPage() {
   }, [version]);
 
   useEffect(() => {
-    if (file) return;
-    const cachedAudio = LocalStorage.fetchAudioFile();
-    setFile(cachedAudio);
-  }, [file, setFile]);
-
-  useEffect(() => {
     if (!id) return;
 
     (async () => {
@@ -46,7 +39,6 @@ function ProjectPage() {
         setVersion({ ...res.versions[0], index: 1 });
       } catch (error) {
         console.error(error.message);
-        handleError();
       }
     })();
   }, [id, setProject, setVersion]);

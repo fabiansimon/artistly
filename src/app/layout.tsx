@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth';
 import NextAuthProvider from '@/providers/NextAuthProvider';
 import AudioProvider from '@/providers/AudioProvider';
 import Dialog from '@/components/Dialog';
+import NavBar from '@/components/NavBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         {/* <NextAuthProvider session={session}> */}
         <AudioProvider>
+          {/* <NavBar /> */}
           <main className="flex min-h-screen flex-col items-center justify-between">
             {children}
             <Toast />

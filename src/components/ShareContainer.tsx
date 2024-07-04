@@ -13,7 +13,6 @@ import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
 import { useRouter } from 'next/navigation';
-import { analyzeAudio } from '@/lib/utils';
 
 export default function ShareContainer({
   audioFile,
@@ -72,9 +71,6 @@ export default function ShareContainer({
     /*
     DEBUG PURPOSES
     */
-
-    const data = await analyzeAudio(file!);
-    LocalStorage.saveAudioFile(data);
 
     try {
       const res = await uploadTrack(form);

@@ -1,7 +1,6 @@
 'use client';
 
 import ToastController from '@/controllers/ToastController';
-import { analyzeAudio, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -13,6 +12,8 @@ import {
 } from 'react';
 import ShareContainer from '@/components/ShareContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { analyzeAudio } from '@/lib/audioHelpers';
+import { cn } from '@/lib/utils';
 
 const transition = {
   duration: 500,

@@ -13,7 +13,7 @@ export default function VersionControl() {
         <p className="font-medium text-sm text-white/70">{'Versions'}</p>
       </article>
 
-      <div className="flex border rounded-md border-neutral-800 max-w-16 overflow-hidden flex-col overflow-y-scroll scrollbar-hide max-h-20">
+      <div className="flex border rounded-md border-neutral-800 max-w-16 flex-col overflow-y-scroll scrollbar-hide max-h-20">
         {versions.map((v, i) => {
           const { title, id } = v;
           const isLast = i === versions.length - 1;

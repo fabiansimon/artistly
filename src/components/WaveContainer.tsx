@@ -16,7 +16,7 @@ export default function WaveContainer({
   className,
   amplifyBy,
 }: WaveContainerProps) {
-  const { time, settings, file, audioRef, setTime, setSettings } =
+  const { time, settings, file, version, audioRef, setTime, setSettings } =
     useAudioContext();
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
@@ -34,10 +34,6 @@ export default function WaveContainer({
   }, [time, audioRef]);
 
   useEffect(() => {
-    if (emptyWave) populateWave();
-  }, [emptyWave]);
-
-  useEffect(() => {
     const updateTime = () => {
       if (!audioRef.current) return;
       setTime(audioRef.current.currentTime);
@@ -51,10 +47,6 @@ export default function WaveContainer({
       };
     }
   }, []);
-
-  const populateWave = () => {
-    console.log('now');
-  };
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (simple || !audioRef.current) return;
@@ -71,7 +63,7 @@ export default function WaveContainer({
 
   const updateTime = (timestamp: number) => {
     if (!audioRef.current) return;
-    const duration = audioRef.current?.duration || 0;
+    const duration = audioRef.current.duration;
     const time = Math.min(duration, timestamp);
     audioRef.current.currentTime = time;
     setTime(time);
@@ -83,14 +75,14 @@ export default function WaveContainer({
         loop={settings.looping}
         onEnded={() => setSettings((prev) => ({ ...prev, playing: false }))}
         ref={audioRef}
-        src="https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/dadbf213-b8c7-486b-a15d-e2d5b67d9803?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy9kYWRiZjIxMy1iOGM3LTQ4NmItYTE1ZC1lMmQ1YjY3ZDk4MDMiLCJpYXQiOjE3MTk5MjQwNDQsImV4cCI6MTc1MTQ2MDA0NH0.8d-y6k_CY0dsi7l5FDueq7v3LCRgT6XjMxeFrRTC20s&t=2024-07-02T12%3A40%3A44.294Z"
+        src={version?.file_url}
       >
         Your browser does not support the audio element.
       </audio>
       {emptyWave && (
         <div className="skeleton flex flex-grow h-14 min-w-full"></div>
       )}
-      {emptyWave && (
+      {!emptyWave && (
         <div
           onMouseEnter={() => setCursorVisible(true)}
           onMouseLeave={() => setCursorVisible(false)}
@@ -120,14 +112,14 @@ export default function WaveContainer({
                 className={cn('flex-grow bg-slate-50 rounded-full')}
               />
             ))}
-            {!simple && (
-              <CursorLine
-                style={{ left: `${percentage}%` }}
-                cursorVisible={cursorVisible}
-                time={time}
-              />
-            )}
           </div>
+          {!simple && (
+            <CursorLine
+              style={{ left: `${percentage}%` }}
+              cursorVisible={cursorVisible}
+              time={time}
+            />
+          )}
         </div>
       )}
     </div>
