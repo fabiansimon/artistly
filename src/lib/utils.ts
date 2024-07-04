@@ -133,19 +133,26 @@ export function calculateRange(
   };
 }
 
-export function getReadableCurrentDate() {
-  const now = new Date();
-  const options = {
-    weekday: 'long' as 'long',
+export function getReadableDate(date?: Date, short: boolean = false) {
+  const now = date ? new Date(date) : new Date();
+
+  const shortOptions = {
     year: 'numeric' as 'numeric',
-    month: 'long' as 'long',
+    month: 'short' as 'short',
+    day: 'numeric' as 'numeric',
+  };
+
+  const options = {
+    weekday: 'short' as 'short',
+    year: 'numeric' as 'numeric',
+    month: 'short' as 'short',
     day: 'numeric' as 'numeric',
     hour: '2-digit' as '2-digit',
     minute: '2-digit' as '2-digit',
     second: '2-digit' as '2-digit',
     hour12: true,
   };
-  return now.toLocaleDateString('en-US', options);
+  return now.toLocaleDateString('en-US', short ? shortOptions : options);
 }
 
 export function getPaginationRange(pagination?: Pagination): [number, number] {

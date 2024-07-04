@@ -11,7 +11,6 @@ export async function POST(
   try {
     const { id: projectId } = params;
     const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
-
     if (!projectId || !userId)
       return NextResponse.json(
         { error: 'Project ID and User ID are required.' },
@@ -19,12 +18,7 @@ export async function POST(
       );
 
     const exists = await projectIncludesUser(projectId, userId);
-
-    if (exists)
-      return NextResponse.json(
-        { error: 'User already added.' },
-        { status: 400 }
-      );
+    if (exists) return NextResponse.json({ status: 204 });
 
     await joinCollabProject(projectId, userId);
 
