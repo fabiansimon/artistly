@@ -66,6 +66,7 @@ export async function fetchCollabProjects(
   return data.map((collab) => collab.projects);
 }
 export async function projectIncludesUser(projectId: string, userId: string) {
+  console.log(projectId, userId);
   const { data, error } = await supabase
     .from('collaborators')
     .select('*')

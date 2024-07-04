@@ -74,7 +74,7 @@ export default function UploadPage() {
       onDrop={handleDrop}
       className="flex flex-grow items-center justify-center h-full w-full"
     >
-      <div className={'flex'}>
+      <div className="w-full flex-grow">
         {!rawFile || !file ? (
           <InitContainer onFile={handlerawFileChange} />
         ) : (

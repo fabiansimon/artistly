@@ -1,4 +1,4 @@
-import { formatSeconds, getReadableCurrentDate } from '@/lib/utils';
+import { formatSeconds, getReadableDate } from '@/lib/utils';
 import { Comment } from '@/types';
 import {
   Document,
@@ -20,7 +20,7 @@ export default function FeedbackSummaryPDF({
     <Document>
       <Page style={styles.body}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.date}>{getReadableCurrentDate()}</Text>
+        <Text style={styles.date}>{getReadableDate()}</Text>
         <Text style={styles.subtitle}>Feedback</Text>
         <View style={{ rowGap: 6, marginTop: 14 }}>
           <View style={{ ...styles.row, marginBottom: 8 }}>

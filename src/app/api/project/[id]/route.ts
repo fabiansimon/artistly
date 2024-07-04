@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = 'd22bd5f3-48b0-4db8-bf3f-4e875fd57dfa';
+    const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
 
     const { id } = params;
     if (!userId || !id) {

@@ -7,4 +7,8 @@ export default class DialogController {
     desciption?: string,
     callback?: (args?: any) => any | void
   ) => this.ref.current?.showDialog(title, desciption, callback);
+
+  static showCustomDialog = (children: React.ReactNode) =>
+    this.ref.current?.showCustomDialog(children);
+  static closeDialog = () => this.ref.current?.closeDialog();
 }

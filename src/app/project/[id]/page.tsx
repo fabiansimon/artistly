@@ -20,8 +20,6 @@ function ProjectPage() {
 
   const { id } = useParams();
 
-  const router = useRouter();
-
   const { timestampComments, generalComments } = useMemo(() => {
     if (!version?.feedback)
       return { timestampComments: [], generalComments: [] };
@@ -31,19 +29,6 @@ function ProjectPage() {
       generalComments: feedback.filter((f) => !f.timestamp),
     };
   }, [version]);
-
-  const handleError = () => {
-    router.push('/');
-  };
-
-  const handleJoin = async () => {
-    try {
-      const res = await joinCollabProject({ id: id as string });
-      console.log(res);
-    } catch (error) {
-      ToastController.showErrorToast();
-    }
-  };
 
   useEffect(() => {
     if (file) return;
@@ -60,11 +45,6 @@ function ProjectPage() {
         setProject(res);
         setVersion({ ...res.versions[0], index: 1 });
       } catch (error) {
-        DialogController.showDialog(
-          "You've been invited to join.",
-          'Accept the invitation to join this project.',
-          handleJoin
-        );
         console.error(error.message);
         handleError();
       }
