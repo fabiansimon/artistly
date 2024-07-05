@@ -1,9 +1,14 @@
 'use client';
 
+import BackButton from '@/components/BackButton';
+import Container from '@/components/Container';
 import { PlayButton } from '@/components/PlayButton';
+import { route, ROUTES } from '@/constants/routes';
 import ToastController from '@/controllers/ToastController';
 import { getUserProjects } from '@/lib/api';
+import { cn, getReadableDate } from '@/lib/utils';
 import { Project } from '@/types';
+import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -39,58 +44,68 @@ export default function ProjectsListPage() {
   }, []);
 
   return (
-    <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <div className="flex flex-col items-center w-full space-x-6 px-10 mt-4 justify-center">
+    <Container>
+      <div className="flex space-x-2 items-center mb-2">
+        <Rocket01Icon size={18} />
         <article className="prose">
-          <h3 className="text-white">{'Collabs'}</h3>
+          <h3 className="text-[18px] text-white">{'Collabs'}</h3>
         </article>
-        {collabs.map(({ id, title, collaborators }) => (
-          <div
-            // onClick={() => router.push(`/project/${id}`)}
-            key={id}
-            className="carousel-item cursor-pointer"
-          >
-            <div className="card bg-neutral-700/40 w-96 shadow-xl items-center space-y-3 py-4">
-              <article className="prose">
-                <h4 className="text-white">{title}</h4>
-              </article>
-              <PlayButton
-                src={audioUrl}
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-                className="mx-auto"
-              />
-            </div>
-          </div>
+      </div>
+      <div className="">
+        {collabs.map((collab) => (
+          <ProjectTile
+            onClick={() => router.push(route(ROUTES.project, collab.id))}
+            key={collab.id}
+            project={collab}
+          />
         ))}
       </div>
-      <div className="flex flex-col items-center w-full space-x-6 px-10 mt-4 justify-center">
+      <div className="flex space-x-2 items-center mb-2 mt-4">
+        <MusicNote01Icon size={18} />
         <article className="prose">
-          <h3 className="text-white">{'Collabs'}</h3>
+          <h3 className="text-[18px] text-white">{'Authored'}</h3>
         </article>
-        {authored.map(({ id, title, collaborators }) => (
-          <div
-            // onClick={() => router.push(`/project/${id}`)}
-            key={id}
-            className="carousel-item cursor-pointer"
-          >
-            <div className="card bg-neutral-700/40 w-96 shadow-xl items-center space-y-3 py-4">
-              <article className="prose">
-                <h4 className="text-white">{title}</h4>
-              </article>
-              <PlayButton
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-                className="mx-auto"
-              />
-            </div>
-          </div>
+      </div>
+      <div className="">
+        {authored.map((collab) => (
+          <ProjectTile
+            onClick={() => router.push(route(ROUTES.project, collab.id))}
+            key={collab.id}
+            project={collab}
+          />
         ))}
+      </div>
+    </Container>
+  );
+}
+
+function ProjectTile({
+  project,
+  className,
+  onClick,
+}: {
+  project: Project;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const { title, versions, created_at } = project;
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        'flex w-full cursor-pointer p-2 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
+        className
+      )}
+    >
+      <article className="prose">
+        <p className="text-sm font-medium text-white">{title}</p>
+        <p className="text-xs text-white/50 -mt-4">
+          {getReadableDate(created_at, true)}
+        </p>
+      </article>
+      <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
+        <p className="text-xs text-white/50 mx-2">{`${versions.length} Versions`}</p>
       </div>
     </div>
   );
 }
-
-function ProjectCard() {}

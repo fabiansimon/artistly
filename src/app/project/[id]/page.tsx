@@ -13,6 +13,8 @@ import AudioControls from '@/components/AudioControls';
 import { useRouter } from 'next/navigation';
 import DialogController from '@/controllers/DialogController';
 import ToastController from '@/controllers/ToastController';
+import BackButton from '@/components/BackButton';
+import Container from '@/components/Container';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion } = useAudioContext();
@@ -43,37 +45,42 @@ function ProjectPage() {
     })();
   }, [id, setProject, setVersion]);
 
-  if (!project || !version) {
-    return (
-      <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
-        <span className="loading loading-ring loading-sm"></span>
-        <AnimatedText
-          className="mt-2"
-          strings={[
-            'Fetching Audio',
-            'Gathering Data',
-            'Searching for new Versions',
-          ]}
-        />
-      </div>
-    );
-  }
+  const empty = !project || !version;
 
   return (
-    <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
-        <VersionControl />
-        <AudioEditor
-          className="max-w-screen-md"
-          comments={timestampComments}
-        />
-        <AudioControls />
-      </div>
-      <FeedbackContainer
-        generalComments={generalComments}
-        timestampComments={timestampComments}
-      />
-    </div>
+    <Container>
+      {empty && (
+        <div className="flex w-full h-full items-center justify-center">
+          <div>
+            <span className="loading loading-ring loading-sm"></span>
+            <AnimatedText
+              className="mt-2"
+              strings={[
+                'Fetching Audio',
+                'Gathering Data',
+                'Searching for new Versions',
+              ]}
+            />
+          </div>
+        </div>
+      )}
+      {!empty && (
+        <>
+          <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
+            <VersionControl />
+            <AudioEditor
+              className="max-w-screen-md"
+              comments={timestampComments}
+            />
+            <AudioControls />
+          </div>
+          <FeedbackContainer
+            generalComments={generalComments}
+            timestampComments={timestampComments}
+          />
+        </>
+      )}
+    </Container>
   );
 }
 

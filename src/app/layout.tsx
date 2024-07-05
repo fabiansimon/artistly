@@ -23,19 +23,18 @@ export default async function RootLayout({
   // const session = await getServerSession();
 
   return (
-    <html
-      lang="en"
-      data-theme="sunset"
-    >
+    <html lang="en">
       <body className={inter.className}>
         {/* <NextAuthProvider session={session}> */}
         <AudioProvider>
-          {/* <NavBar /> */}
-          <main className="flex min-h-screen flex-col items-center justify-between">
-            {children}
-            <Toast />
-            <Dialog />
-          </main>
+          <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
+            <NavBar />
+            <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
+              {children}
+              <Toast />
+              <Dialog />
+            </main>
+          </div>
         </AudioProvider>
         {/* </NextAuthProvider> */}
       </body>

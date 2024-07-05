@@ -179,7 +179,7 @@ export default function AudioProvider({
       audioRef.current.currentTime = Math.min(duration, timestamp || 1);
       if (!settings.playing) togglePlaying(true);
     },
-    [settings.playing, setSettings]
+    [settings.playing, setSettings, audioRef]
   );
 
   const outOfBoundsCheck = useCallback(() => {

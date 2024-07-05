@@ -117,3 +117,15 @@ export interface Pagination {
   page: number;
   limit: number;
 }
+
+export interface NavOption {
+  title: string;
+  route?: string;
+  onClick?: () => void;
+  icon: React.ReactNode;
+}
+
+export interface Navigation {
+  title: string;
+  options: NavOption[];
+}

@@ -1,8 +1,10 @@
+import { BREAKPOINTS } from '@/constants/breakpoints';
 import { useEffect, useState } from 'react';
 
 interface WindowSize {
   width: number;
   height: number;
+  isSmall: boolean;
 }
 
 function getWindowSize(): WindowSize {
@@ -10,6 +12,7 @@ function getWindowSize(): WindowSize {
   return {
     width,
     height,
+    isSmall: width < BREAKPOINTS.md,
   };
 }
 
@@ -18,8 +21,7 @@ function useWindowSize(): WindowSize {
 
   useEffect(() => {
     const handleResize = () => {
-      const { width, height } = getWindowSize();
-      setWindowSize({ width, height });
+      setWindowSize(getWindowSize());
     };
 
     window.addEventListener('resize', handleResize);
