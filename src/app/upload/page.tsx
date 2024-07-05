@@ -109,22 +109,22 @@ function InitContainer({
 }) {
   return (
     <div className="flex items-center flex-col">
-      <Image
+      {/* <Image
         width={60}
         height={60}
         src={'/music_icon.png'}
         alt="Music Icon"
-      />
+      /> */}
       <article className="prose text-center">
-        <h3 className="text-white">{'Import your Masterpiece'}</h3>
-        <p className="-mt-3 text-white/70">
+        <h3 className="text-white text-sm">{'Import your Masterpiece'}</h3>
+        <p className="-mt-2 text-white/70 text-sm">
           {"We will handle it with care, don't worry"}
         </p>
       </article>
       <input
         type="file"
         onChange={onFile}
-        className="file-input file-input-bordered file-input-md w-full max-w-xs mt-4"
+        className="file-input file-input-bordered scale-90  w-full max-w-xs mt-4 bg-neutral-900"
       />
     </div>
   );

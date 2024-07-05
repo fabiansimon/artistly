@@ -1,26 +1,124 @@
-import { IcoIcon, PlayIcon, PresentationBarChart01Icon } from 'hugeicons-react';
+'use client';
+
+import { route, ROUTES } from '@/constants/routes';
+import useWindowSize from '@/hooks/useWindowSize';
+import { cn } from '@/lib/utils';
+import { Navigation, NavOption } from '@/types';
+import {
+  Home06Icon,
+  MusicNote03Icon,
+  Settings02Icon,
+  UserIcon,
+} from 'hugeicons-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-function NavBar(): JSX.Element {
-  const linkData = useMemo(() => {
-    return [
+function NavBar({ className }: { className?: string }): JSX.Element {
+  const { isSmall } = useWindowSize();
+  const path = usePathname();
+
+  const options: Navigation[] = useMemo(
+    () => [
       {
-        title: 'Upload',
-        icon: <PlayIcon />,
+        title: 'Projects',
+        options: [
+          {
+            title: 'Home',
+            route: route(ROUTES.home),
+            icon: <Home06Icon size={16} />,
+          },
+          {
+            title: 'Projects',
+            route: route(ROUTES.projects),
+            icon: <MusicNote03Icon size={16} />,
+          },
+        ],
       },
       {
-        title: 'Leaderboard',
-        icon: <PresentationBarChart01Icon />,
+        title: 'Profile',
+        options: [
+          {
+            title: 'Settings',
+            icon: <Settings02Icon size={16} />,
+            onClick: () => console.log('hello'),
+          },
+          {
+            title: 'Projects',
+            icon: <UserIcon size={16} />,
+            onClick: () => console.log('hello'),
+          },
+        ],
       },
-      {
-        title: 'Create',
-        icon: <IcoIcon />,
-      },
-    ];
-  }, []);
+    ],
+    []
+  );
 
   return (
-    <nav className="bg-neutral-900/50 left-0 right-0 top-0 z-20 h-20 backdrop-blur-sm justify-center items-center fixed"></nav>
+    <nav
+      className={cn(
+        'rounded-md bg-neutral-900 px-1 border border-neutral-800/70 md:w-64',
+        className
+      )}
+    >
+      {options.map((option, index) => {
+        const { options, title } = option;
+        return (
+          <div key={index}>
+            {!isSmall && (
+              <p className="text-sm text-white/60 ml-2 mt-6">{title}</p>
+            )}
+            <div className="mx-3 mt-2 space-y-2 md:space-y-0">
+              {options.map((o, i) => (
+                <MenuItem
+                  active={o.route === path}
+                  key={i}
+                  option={o}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
+function MenuItem({
+  option,
+  className,
+  active,
+}: {
+  option: NavOption;
+  className?: string;
+  active: boolean;
+}) {
+  const router = useRouter();
+  const { isSmall } = useWindowSize();
+  const { title, icon, onClick, route } = option;
+
+  const handleClick = () => {
+    if (onClick) return onClick();
+    if (route) router.push(route);
+  };
+
+  return (
+    <div
+      onClick={handleClick}
+      className={cn(
+        'flex rounded-lg p-2 cursor-pointer space-x-2 items-center',
+        className,
+        active
+          ? 'bg-neutral-800/60 transition-opacity duration-100'
+          : 'opacity-25 hover:opacity-100 transition-opacity duration-100'
+      )}
+    >
+      {icon}
+      {!isSmall && (
+        <article className="prose">
+          <p className="text text-white text-sm">{title}</p>
+        </article>
+      )}
+    </div>
   );
 }
 

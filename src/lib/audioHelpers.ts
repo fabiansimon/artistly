@@ -52,10 +52,12 @@ export async function fetchAudioFile(id: string) {
 
 export async function downloadAudio(url: string, name: string) {
   try {
+    console.log(url);
     const response = await axios.get(url, { responseType: 'blob' });
     const blob = response.data;
     return new File([blob], name, { type: 'audio/mpeg' });
   } catch (error) {
+    console.log(error);
     throw new Error(error.message);
   }
 }
