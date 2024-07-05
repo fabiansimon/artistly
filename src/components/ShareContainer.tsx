@@ -127,11 +127,11 @@ export default function ShareContainer({
     return <span className="loading loading-ring loading-sm"></span>;
 
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center mx-auto">
+    <div className="flex flex-col w-full max-w-screen-md items-center">
       <article className="prose mb-4">
-        <h3 className="text-white">Upload Track</h3>
+        <h3 className="text-white text-sm">Upload Track</h3>
       </article>
-      <div className="flex flex-grow flex-col justify-center bg-neutral rounded-xl items-center space-y-4 px-4 py-4 w-full">
+      <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
             size={18}

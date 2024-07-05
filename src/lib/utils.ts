@@ -112,4 +112,8 @@ export function convertPaginationParam(
   };
 }
 
+export function pluralize(amount: number, post: string) {
+  return `${amount || 'no'} ${post}${amount > 1 || amount === 0 ? 's' : ''}`;
+}
+
 export const _ = undefined;

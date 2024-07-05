@@ -5,18 +5,24 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { cn } from '@/lib/utils';
 import { Navigation, NavOption } from '@/types';
 import {
+  AddCircleIcon,
   Home06Icon,
   MusicNote03Icon,
   Settings02Icon,
   UserIcon,
 } from 'hugeicons-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import DialogController from '@/controllers/DialogController';
+import UploadContainer from './UploadContainer';
 
 function NavBar({ className }: { className?: string }): JSX.Element {
   const { isSmall } = useWindowSize();
   const path = usePathname();
 
+  useEffect(() => {
+    DialogController.showCustomDialog(<UploadContainer />);
+  }, []);
   const options: Navigation[] = useMemo(
     () => [
       {
@@ -31,6 +37,17 @@ function NavBar({ className }: { className?: string }): JSX.Element {
             title: 'Projects',
             route: route(ROUTES.projects),
             icon: <MusicNote03Icon size={16} />,
+          },
+          {
+            title: 'Upload',
+            icon: (
+              <AddCircleIcon
+                size={14}
+                className="text-white"
+              />
+            ),
+            onClick: () =>
+              DialogController.showCustomDialog(<UploadContainer />),
           },
         ],
       },
@@ -56,7 +73,7 @@ function NavBar({ className }: { className?: string }): JSX.Element {
   return (
     <nav
       className={cn(
-        'rounded-md bg-neutral-900 px-1 border border-neutral-800/70 md:w-64',
+        'rounded-md bg-neutral-900 px-1 border border-neutral-800/70 md:min-w-64',
         className
       )}
     >
