@@ -67,7 +67,10 @@ function Dialog(): JSX.Element {
   );
 
   return (
-    <DialogModal isVisible={isVisible}>
+    <DialogModal
+      onRequestClose={closeDialog}
+      isVisible={isVisible}
+    >
       {!content && (
         <>
           <article className="prose">

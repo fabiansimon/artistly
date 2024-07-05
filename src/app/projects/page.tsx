@@ -1,16 +1,14 @@
 'use client';
 
-import BackButton from '@/components/BackButton';
 import Container from '@/components/Container';
-import { PlayButton } from '@/components/PlayButton';
 import { route, ROUTES } from '@/constants/routes';
 import ToastController from '@/controllers/ToastController';
 import { getUserProjects } from '@/lib/api';
-import { cn, getReadableDate } from '@/lib/utils';
+import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { Project } from '@/types';
 import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ProjectMix {
   collabs: Project[];
@@ -36,6 +34,7 @@ export default function ProjectsListPage() {
         const { authorProjects, collabProjects } = await getUserProjects({
           pagination: { limit: 10, page: 1 },
         });
+        console.log(authorProjects);
         setProjects({ authored: authorProjects, collabs: collabProjects });
       } catch (error) {
         ToastController.showErrorToast('Oh no.', error.message);
@@ -104,7 +103,9 @@ function ProjectTile({
         </p>
       </article>
       <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
-        <p className="text-xs text-white/50 mx-2">{`${versions.length} Versions`}</p>
+        <p className="text-xs text-white/50 mx-2">
+          {pluralize(versions.length, 'version')}
+        </p>
       </div>
     </div>
   );
