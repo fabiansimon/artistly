@@ -8,6 +8,19 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      neutral: {
+        50: '#f6f6f6',
+        100: '#e7e7e7',
+        200: '#d1d1d1',
+        300: '#b0b0b0',
+        400: '#888888',
+        500: '#6d6d6d',
+        600: '#5d5d5d',
+        700: '#4f4f4f',
+        800: '#454545',
+        900: '#121212',
+        950: '#0d0d0d',
+      },
       boxShadow: {
         simple: '-20px 22px 0px -15px rgba(0,0,0,1)',
       },
@@ -19,9 +32,7 @@ const config: Config = {
     },
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui')],
-  daisyui: {
-    themes: ['light', 'dark', 'synthwave', 'cyberpunk', 'sunset'],
-  },
+  daisyui: {},
 };
 
 export default config;

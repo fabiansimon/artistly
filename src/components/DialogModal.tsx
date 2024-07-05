@@ -39,7 +39,7 @@ function DialogModal({
         transition={{ duration: 0.08 }}
         animate={isVisible ? 'visible' : 'hidden'}
         variants={{ visible: { scale: 1 }, hidden: { scale: 0.7 } }}
-        className={cn('modal-box mx-auto', contentClassName)}
+        className={cn('modal-box mx-auto bg-neutral-900', contentClassName)}
       >
         {children}
       </motion.div>

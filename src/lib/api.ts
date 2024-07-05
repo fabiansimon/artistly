@@ -47,6 +47,16 @@ export async function fetchProject(projectId: string) {
   }
 }
 
+export async function fetchInvitation(projectId: string) {
+  try {
+    const res = await _axios.get(`api/invitation/${projectId}`);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'fetchInvitation' });
+    throw error;
+  }
+}
+
 export async function uploadTrack(data: FormData) {
   try {
     const res = await _axios.post('/api/uploadTrack', data, {
@@ -102,6 +112,18 @@ export async function getUserProjects({
     const res = await _axios.get(
       `/api/projects${paginationParams(pagination)}`
     );
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'getUserProjects' });
+    throw error;
+  }
+}
+
+export async function joinCollabProject({ id }: { id: string }) {
+  console.log(`/api/join/${id}`);
+  try {
+    const res = await _axios.post(`/api/join/${id}`);
+    console.log(res);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'getUserProjects' });

@@ -1,5 +1,5 @@
 import { REGEX } from '@/constants/regex';
-import { cn, formatSeconds } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Comment, Input } from '@/types';
 import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';

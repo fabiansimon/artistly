@@ -1,11 +1,14 @@
 'use client';
 
-import { PlayButton } from '@/components/AudioPlayer';
+import Container from '@/components/Container';
+import { route, ROUTES } from '@/constants/routes';
 import ToastController from '@/controllers/ToastController';
 import { getUserProjects } from '@/lib/api';
+import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { Project } from '@/types';
+import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ProjectMix {
   collabs: Project[];
@@ -19,19 +22,7 @@ export default function ProjectsListPage() {
     authored: [],
   });
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(audioRef);
-    if (!audioRef.current) return;
-    if (!audioUrl) {
-      audioRef.current?.pause();
-      return;
-    }
-
-    audioRef.current.play();
-  }, [audioUrl]);
 
   const handlePlay = (audioUrl: string) => {
     setAudioUrl((prev) => (prev ? '' : audioUrl));
@@ -43,6 +34,7 @@ export default function ProjectsListPage() {
         const { authorProjects, collabProjects } = await getUserProjects({
           pagination: { limit: 10, page: 1 },
         });
+        console.log(authorProjects);
         setProjects({ authored: authorProjects, collabs: collabProjects });
       } catch (error) {
         ToastController.showErrorToast('Oh no.', error.message);
@@ -51,70 +43,70 @@ export default function ProjectsListPage() {
   }, []);
 
   return (
-    <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <audio
-        loop={true}
-        ref={audioRef}
-        src={audioUrl}
-      >
-        Your browser does not support the audio element.
-      </audio>
-      <div className="flex flex-col items-center w-full space-x-6 px-10 mt-4 justify-center">
+    <Container>
+      <div className="flex space-x-2 items-center mb-2">
+        <Rocket01Icon size={18} />
         <article className="prose">
-          <h3 className="text-white">{'Collabs'}</h3>
+          <h3 className="text-[18px] text-white">{'Collabs'}</h3>
         </article>
-        {collabs.map(({ id, title, collaborators }) => (
-          <div
-            // onClick={() => router.push(`/project/${id}`)}
-            key={id}
-            className="carousel-item cursor-pointer"
-          >
-            <div className="card bg-neutral-700/40 w-96 shadow-xl items-center space-y-3 py-4">
-              <article className="prose">
-                <h4 className="text-white">{title}</h4>
-              </article>
-              <PlayButton
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handlePlay(
-                    'https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/dadbf213-b8c7-486b-a15d-e2d5b67d9803?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy9kYWRiZjIxMy1iOGM3LTQ4NmItYTE1ZC1lMmQ1YjY3ZDk4MDMiLCJpYXQiOjE3MTk5MjQwNDQsImV4cCI6MTc1MTQ2MDA0NH0.8d-y6k_CY0dsi7l5FDueq7v3LCRgT6XjMxeFrRTC20s&t=2024-07-02T12%3A40%3A44.294Z'
-                  );
-                }}
-                className="mx-auto"
-              />
-            </div>
-          </div>
+      </div>
+      <div className="">
+        {collabs.map((collab) => (
+          <ProjectTile
+            onClick={() => router.push(route(ROUTES.project, collab.id))}
+            key={collab.id}
+            project={collab}
+          />
         ))}
       </div>
-      <div className="flex flex-col items-center w-full space-x-6 px-10 mt-4 justify-center">
+      <div className="flex space-x-2 items-center mb-2 mt-4">
+        <MusicNote01Icon size={18} />
         <article className="prose">
-          <h3 className="text-white">{'Collabs'}</h3>
+          <h3 className="text-[18px] text-white">{'Authored'}</h3>
         </article>
-        {authored.map(({ id, title, collaborators }) => (
-          <div
-            // onClick={() => router.push(`/project/${id}`)}
-            key={id}
-            className="carousel-item cursor-pointer"
-          >
-            <div className="card bg-neutral-700/40 w-96 shadow-xl items-center space-y-3 py-4">
-              <article className="prose">
-                <h4 className="text-white">{title}</h4>
-              </article>
-              <PlayButton
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handlePlay(
-                    'https://oubmdyvsxvckiwvnxwty.supabase.co/storage/v1/object/sign/artistly_bucket/uploads/db5e8ab2-357c-4835-9667-e9e8ae5528e9?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcnRpc3RseV9idWNrZXQvdXBsb2Fkcy9kYjVlOGFiMi0zNTdjLTQ4MzUtOTY2Ny1lOWU4YWU1NTI4ZTkiLCJpYXQiOjE3MTk5MjQzNTksImV4cCI6MTc1MTQ2MDM1OX0.Qd_o6nN-n1rE0b6glpN9Zh3hR7rh2UU-wt5rl4tsYXQ&t=2024-07-02T12%3A45%3A59.381Z'
-                  );
-                }}
-                className="mx-auto"
-              />
-            </div>
-          </div>
+      </div>
+      <div className="">
+        {authored.map((collab) => (
+          <ProjectTile
+            onClick={() => router.push(route(ROUTES.project, collab.id))}
+            key={collab.id}
+            project={collab}
+          />
         ))}
+      </div>
+    </Container>
+  );
+}
+
+function ProjectTile({
+  project,
+  className,
+  onClick,
+}: {
+  project: Project;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const { title, versions, created_at } = project;
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        'flex w-full cursor-pointer p-2 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
+        className
+      )}
+    >
+      <article className="prose">
+        <p className="text-sm font-medium text-white">{title}</p>
+        <p className="text-xs text-white/50 -mt-4">
+          {getReadableDate(created_at, true)}
+        </p>
+      </article>
+      <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
+        <p className="text-xs text-white/50 mx-2">
+          {pluralize(versions.length, 'version')}
+        </p>
       </div>
     </div>
   );
 }
-
-function ProjectCard() {}

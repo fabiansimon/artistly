@@ -1,5 +1,5 @@
 import { AudioFile, InputData } from '@/types';
-import { dataURLToBlob, fileToBase64 } from './utils';
+import { dataURLToBlob, fileToBase64 } from './audioHelpers';
 
 const KEYS = {
   audioFile: 'audioFile',

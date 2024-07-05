@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { fetchProject } from '@/lib/api';
+import { fetchProject, joinCollabProject } from '@/lib/api';
 import { LocalStorage } from '@/lib/localStorage';
 import FeedbackContainer from '@/components/FeedbackContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
@@ -11,14 +11,15 @@ import VersionControl from '@/components/VersionControl';
 import AudioEditor from '@/components/AudioEditor';
 import AudioControls from '@/components/AudioControls';
 import { useRouter } from 'next/navigation';
+import DialogController from '@/controllers/DialogController';
+import ToastController from '@/controllers/ToastController';
+import BackButton from '@/components/BackButton';
+import Container from '@/components/Container';
 
 function ProjectPage() {
-  const { version, file, project, setProject, setVersion, setFile } =
-    useAudioContext();
+  const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
-
-  const router = useRouter();
 
   const { timestampComments, generalComments } = useMemo(() => {
     if (!version?.feedback)
@@ -30,63 +31,56 @@ function ProjectPage() {
     };
   }, [version]);
 
-  const handleError = () => {
-    router.push('/');
-  };
-
-  useEffect(() => {
-    if (file) return;
-    const cachedAudio = LocalStorage.fetchAudioFile();
-    setFile(cachedAudio);
-  }, [file, setFile]);
-
   useEffect(() => {
     if (!id) return;
 
     (async () => {
       try {
         const res = await fetchProject(id as string);
-        console.log(res);
         setProject(res);
         setVersion({ ...res.versions[0], index: 1 });
       } catch (error) {
         console.error(error.message);
-        handleError();
       }
     })();
   }, [id, setProject, setVersion]);
 
-  if (!project || !version) {
-    return (
-      <div className="flex flex-col flex-grow w-full h-full content-center items-center justify-center">
-        <span className="loading loading-ring loading-sm"></span>
-        <AnimatedText
-          className="mt-2"
-          strings={[
-            'Fetching Audio',
-            'Gathering Data',
-            'Searching for new Versions',
-          ]}
-        />
-      </div>
-    );
-  }
+  const empty = !project || !version;
 
   return (
-    <div className="flex items-center flex-grow h-full w-full flex-col fixed py-10">
-      <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
-        <VersionControl />
-        <AudioEditor
-          className="max-w-screen-md"
-          comments={timestampComments}
-        />
-        <AudioControls />
-      </div>
-      <FeedbackContainer
-        generalComments={generalComments}
-        timestampComments={timestampComments}
-      />
-    </div>
+    <Container>
+      {empty && (
+        <div className="flex w-full h-full items-center justify-center">
+          <div>
+            <span className="loading loading-ring loading-sm"></span>
+            <AnimatedText
+              className="mt-2"
+              strings={[
+                'Fetching Audio',
+                'Gathering Data',
+                'Searching for new Versions',
+              ]}
+            />
+          </div>
+        </div>
+      )}
+      {!empty && (
+        <>
+          <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
+            <VersionControl />
+            <AudioEditor
+              className="max-w-screen-md"
+              comments={timestampComments}
+            />
+            <AudioControls />
+          </div>
+          <FeedbackContainer
+            generalComments={generalComments}
+            timestampComments={timestampComments}
+          />
+        </>
+      )}
+    </Container>
   );
 }
 

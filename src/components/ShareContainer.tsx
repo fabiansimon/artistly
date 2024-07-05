@@ -13,7 +13,6 @@ import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
 import { useRouter } from 'next/navigation';
-import { analyzeAudio } from '@/lib/utils';
 
 export default function ShareContainer({
   audioFile,
@@ -73,9 +72,6 @@ export default function ShareContainer({
     DEBUG PURPOSES
     */
 
-    const data = await analyzeAudio(file!);
-    LocalStorage.saveAudioFile(data);
-
     try {
       const res = await uploadTrack(form);
       router.push(`/project/${res.project.id}`);
@@ -131,11 +127,11 @@ export default function ShareContainer({
     return <span className="loading loading-ring loading-sm"></span>;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col w-full max-w-screen-md items-center">
       <article className="prose mb-4">
-        <h3 className="text-white">Upload Track</h3>
+        <h3 className="text-white text-sm">Upload Track</h3>
       </article>
-      <div className="flex flex-col w-full justify-center bg-neutral rounded-xl items-center space-y-4 px-4 py-4">
+      <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
             size={18}
