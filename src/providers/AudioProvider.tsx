@@ -183,6 +183,7 @@ export default function AudioProvider({
   );
 
   const outOfBoundsCheck = useCallback(() => {
+    if (!range) return;
     const { begin, end } = range;
     if (settings.looping && (time < begin || time > end)) jumpTo(begin);
   }, [range, time, jumpTo, settings]);
