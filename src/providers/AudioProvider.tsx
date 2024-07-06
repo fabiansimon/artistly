@@ -91,7 +91,7 @@ export default function AudioProvider({
       if (!project) return;
       const { versions } = project;
       const index = versions.findIndex((v: Version) => v.id === id);
-      setVersion({ ...project?.versions[index], index: index + 1 });
+      setVersion({ ...project?.versions[index], index });
     },
     [project]
   );

@@ -21,7 +21,7 @@ function NavBar({ className }: { className?: string }): JSX.Element {
   const path = usePathname();
 
   useEffect(() => {
-    DialogController.showCustomDialog(<UploadContainer />);
+    // DialogController.showCustomDialog(<UploadContainer />);
   }, []);
   const options: Navigation[] = useMemo(
     () => [

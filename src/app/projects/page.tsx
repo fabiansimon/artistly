@@ -1,49 +1,35 @@
 'use client';
 
+import AnimatedText from '@/components/AnimatedText';
 import Container from '@/components/Container';
+import LoadingView from '@/components/LoadingView';
 import { route, ROUTES } from '@/constants/routes';
-import ToastController from '@/controllers/ToastController';
-import { getUserProjects } from '@/lib/api';
 import { cn, getReadableDate, pluralize } from '@/lib/utils';
+import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Project } from '@/types';
 import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-interface ProjectMix {
-  collabs: Project[];
-  authored: Project[];
-}
 
 export default function ProjectsListPage() {
-  const [audioUrl, setAudioUrl] = useState<string>('');
-  const [{ collabs, authored }, setProjects] = useState<ProjectMix>({
-    collabs: [],
-    authored: [],
-  });
+  const {
+    projects: { data, refetch, isLoading },
+  } = useDataLayerContext();
 
   const router = useRouter();
 
-  const handlePlay = (audioUrl: string) => {
-    setAudioUrl((prev) => (prev ? '' : audioUrl));
-  };
+  if (isLoading || !data)
+    return (
+      <LoadingView
+        strings={[
+          'Fetching authored projects',
+          'Searching for authored projects',
+        ]}
+      />
+    );
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { authorProjects, collabProjects } = await getUserProjects({
-          pagination: { limit: 10, page: 1 },
-        });
-        console.log(authorProjects);
-        setProjects({ authored: authorProjects, collabs: collabProjects });
-      } catch (error) {
-        ToastController.showErrorToast('Oh no.', error.message);
-      }
-    })();
-  }, []);
-
+  const { collabs, authored } = data.content;
   return (
-    <Container>
+    <Container onRefresh={refetch}>
       <div className="flex space-x-2 items-center mb-2">
         <Rocket01Icon size={18} />
         <article className="prose">

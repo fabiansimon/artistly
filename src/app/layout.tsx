@@ -7,6 +7,7 @@ import NextAuthProvider from '@/providers/NextAuthProvider';
 import AudioProvider from '@/providers/AudioProvider';
 import Dialog from '@/components/Dialog';
 import NavBar from '@/components/NavBar';
+import DataLayerProvider from '@/providers/DataLayerProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,14 +28,16 @@ export default async function RootLayout({
       <body className={inter.className}>
         {/* <NextAuthProvider session={session}> */}
         <AudioProvider>
-          <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
-            <NavBar />
-            <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
-              {children}
-              <Toast />
-              <Dialog />
-            </main>
-          </div>
+          <DataLayerProvider>
+            <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
+              <NavBar />
+              <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
+                {children}
+                <Toast />
+                <Dialog />
+              </main>
+            </div>
+          </DataLayerProvider>
         </AudioProvider>
         {/* </NextAuthProvider> */}
       </body>

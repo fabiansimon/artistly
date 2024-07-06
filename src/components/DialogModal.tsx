@@ -28,7 +28,7 @@ function DialogModal({
         hidden: { opacity: 0 },
       }}
       className={cn(
-        'fixed w-full h-full z-20 top-0 left-0 right-0 bottom-0 bg-black/50 content-center justify-center items-center',
+        'fixed w-full h-full z-9 top-0 left-0 right-0 bottom-0 bg-black/50 content-center justify-center items-center',
         !isVisible && 'pointer-events-none',
         className
       )}

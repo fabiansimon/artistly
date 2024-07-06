@@ -1,28 +1,19 @@
 import { AudioFile, InputData, InputType } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Cancel01Icon,
-  Mail01Icon,
-  MehIcon,
-  PencilEdit02Icon,
-} from 'hugeicons-react';
+import { PencilEdit02Icon } from 'hugeicons-react';
 import { LocalStorage } from '@/lib/localStorage';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
-import AudioPlayer from './AudioPlayer';
 import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
 import { useRouter } from 'next/navigation';
+import { PlayButton } from './PlayButton';
 
-export default function ShareContainer({
-  audioFile,
-}: {
-  audioFile?: AudioFile;
-}) {
+export default function VersionInput() {
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<InputData>({
-    file: audioFile?.file,
-    title: audioFile?.name || '',
+    file: undefined,
+    title: '',
     description: '',
     emailList: new Set<string>(),
     email: '',
@@ -39,11 +30,11 @@ export default function ShareContainer({
     );
   }, [inputData]);
 
-  useEffect(() => {
-    if (!audioFile) return;
-    const { name: title, file } = audioFile;
-    setInputData((prev) => ({ ...prev, file, title }));
-  }, [audioFile]);
+  // useEffect(() => {
+  //   if (!audioFile) return;
+  //   const { name: title, file } = audioFile;
+  //   setInputData((prev) => ({ ...prev, file, title }));
+  // }, [audioFile]);
 
   useEffect(() => {
     const cachedInput = LocalStorage.fetchInputData();
@@ -69,8 +60,8 @@ export default function ShareContainer({
     form.append('tracks', file!);
 
     /*
-    DEBUG PURPOSES
-    */
+      DEBUG PURPOSES
+      */
 
     try {
       const res = await uploadTrack(form);
@@ -123,15 +114,12 @@ export default function ShareContainer({
     });
   };
 
-  if (audioFile === undefined)
-    return <span className="loading loading-ring loading-sm"></span>;
-
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center">
+    <div className="flex flex-col w-full items-center">
       <article className="prose mb-4">
-        <h3 className="text-white text-sm">Upload Track</h3>
+        <h3 className="text-white text-sm text-center">Upload Version</h3>
       </article>
-      <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
+      <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full mb-4">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
             size={18}
@@ -142,8 +130,8 @@ export default function ShareContainer({
               handleInput(InputType.TITLE, value)
             }
             type="text"
-            className="grow max-w-xs bg-transparent text-center"
-            placeholder="Title"
+            className="grow text-sm max-w-xs bg-transparent text-center"
+            placeholder="v1.0"
             value={inputData.title}
           />
         </label>
@@ -153,95 +141,21 @@ export default function ShareContainer({
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea textarea-bordered bg-transparent w-full max-h-44"
-          placeholder="Add some feedback notes (optional)"
+          className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
+          placeholder="Add some version notes (optional)"
         ></textarea>
-
-        <AudioPlayer className="py-4" />
-
-        <div className="w-full flex flex-col space-y-1">
-          <article className="prose text-left text-white">
-            <p>{'Share with'}</p>
-          </article>
-          {inputData.emailList.size > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {Array.from(inputData.emailList).map((email, index) => (
-                <CollaboratorContainer
-                  key={index}
-                  email={email}
-                  onDelete={() => removeEmail(email)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center space-x-[5.5px]">
-              <MehIcon
-                size={16}
-                className="text-white/40"
-              />
-              <article>
-                <p className="prose-sm text-white/40 ">no one added yet</p>
-              </article>
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-4 w-full flex-col md:flex-row">
-          <label className="input input-bordered flex items-center gap-2 flex-grow">
-            <Mail01Icon size={18} />
-            <input
-              onInput={({ currentTarget: { value } }) =>
-                handleInput(InputType.EMAIL, value)
-              }
-              value={inputData.email}
-              type="text"
-              className="grow"
-              placeholder="Email"
-            />
-          </label>
-          <button
-            disabled={inputData.email.trim().length === 0}
-            onClick={() => handleInput(InputType.ADD_EMAIL)}
-            className="btn btn-outline btn-primary text-white flex-grow"
-          >
-            {'Add Collborator'}
-          </button>
-        </div>
       </div>
+
+      <PlayButton />
 
       <button
         disabled={!inputValid}
-        onClick={handleSubmit}
         className="btn btn-active btn-primary text-white mt-4 w-full"
       >
-        {loading ? (
-          <span className="loading loading-spinner"></span>
-        ) : (
-          <article className="prose text-white">
-            <p>{'Share'}</p>
-          </article>
-        )}
+        <article className="prose text-white">
+          <p>{'Create'}</p>
+        </article>
       </button>
-    </div>
-  );
-}
-
-function CollaboratorContainer({
-  email,
-  onDelete,
-}: {
-  email: string;
-  onDelete: () => void;
-}) {
-  return (
-    <div
-      onClick={onDelete}
-      className="flex bg-primary/10 rounded-md px-2 py-1 items-center space-x-2"
-    >
-      <article className="prose">
-        <p className="prose-sm text-white/70">{email}</p>
-      </article>
-      <Cancel01Icon size={16} />
     </div>
   );
 }
