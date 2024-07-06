@@ -107,11 +107,11 @@ export default function RangeIndicator({ className }: { className?: string }) {
             style={{ right: `${thumbRight}%`, left: `${thumbLeft}%` }}
           />
           <div
-            className="absolute z-30 w-1 h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px] -ml-1"
+            className="absolute z-30 w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px] -ml-[1px]"
             style={{ left: `${thumbLeft}%` }}
           />
           <div
-            className="absolute z-30 w-1 h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px]"
+            className="absolute z-30 w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px]"
             style={{ right: `${thumbRight}%` }}
           />
         </div>

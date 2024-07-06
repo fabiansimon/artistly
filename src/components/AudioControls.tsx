@@ -1,13 +1,13 @@
-import useKeyShortcut from '@/hooks/useKeyShortcut';
 import { cn } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
 import {
+  ArrowLeft03Icon,
   ArrowReloadHorizontalIcon,
   PauseIcon,
   PlayIcon,
 } from 'hugeicons-react';
 
-export default function AudioControls() {
+export default function AudioControls({ className }: { className?: string }) {
   const {
     settings: { looping, playing },
     toggleLoop,
@@ -15,40 +15,41 @@ export default function AudioControls() {
   } = useAudioContext();
 
   return (
-    <div className="flex flex-col w-32 pl-4">
-      <div className="flex w-full">
-        <button
-          onClick={() => toggleLoop()}
-          className={cn(
-            'btn flex-row btn-primary flex-grow rounded-b-none btn-sm',
-            !looping && 'btn-outline'
-          )}
-        >
-          <ArrowReloadHorizontalIcon size={16} />
-          Loop
-        </button>
+    <div
+      className={cn(
+        'flex items-center justify-items-center space-x-4',
+        className
+      )}
+    >
+      <div
+        onClick={() => console.log('first')}
+        className="cursor-pointer"
+      >
+        <ArrowLeft03Icon size={16} />
       </div>
-      <div className="flex w-full">
-        <button
-          onClick={() => togglePlaying()}
-          className={cn(
-            'btn flex-row btn-primary flex-grow rounded-t-none -mt-[1px] btn-sm',
-            !playing && 'btn-outline'
-          )}
-        >
-          {playing ? (
-            <PauseIcon
-              size={16}
-              className="swap-off fill-current"
-            />
-          ) : (
-            <PlayIcon
-              size={16}
-              className="swap-on fill-current"
-            />
-          )}
-          {playing ? 'Pause' : 'Play'}
-        </button>
+      <button
+        onClick={() => togglePlaying()}
+        className={cn(
+          'rounded-full w-8 h-8 items-center justify-center flex bg-white '
+        )}
+      >
+        {playing ? (
+          <PauseIcon
+            size={16}
+            className="swap-off fill-current text-black"
+          />
+        ) : (
+          <PlayIcon
+            size={16}
+            className="swap-on fill-current text-black"
+          />
+        )}
+      </button>
+      <div
+        onClick={() => toggleLoop()}
+        className={cn('cursor-pointer', !looping && 'opacity-15')}
+      >
+        <ArrowReloadHorizontalIcon size={16} />
       </div>
     </div>
   );

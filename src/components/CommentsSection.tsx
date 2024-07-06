@@ -54,7 +54,7 @@ function CommentTile({
       style={style}
       className={cn(
         'absolute pointer-events-none flex flex-col',
-        hovered && 'z-20'
+        hovered && 'z-7'
       )}
     >
       <div className="flex">

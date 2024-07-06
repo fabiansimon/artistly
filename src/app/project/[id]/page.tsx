@@ -1,24 +1,31 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { fetchProject, joinCollabProject } from '@/lib/api';
-import { LocalStorage } from '@/lib/localStorage';
-import FeedbackContainer from '@/components/FeedbackContainer';
+import { fetchProject } from '@/lib/api';
 import { useAudioContext } from '@/providers/AudioProvider';
 import { useParams } from 'next/navigation';
-import AnimatedText from '@/components/AnimatedText';
 import VersionControl from '@/components/VersionControl';
-import AudioEditor from '@/components/AudioEditor';
 import AudioControls from '@/components/AudioControls';
-import { useRouter } from 'next/navigation';
-import DialogController from '@/controllers/DialogController';
-import ToastController from '@/controllers/ToastController';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
-import { Notebook01Icon, Notebook02Icon, Vynil01Icon } from 'hugeicons-react';
+import { Notebook02Icon } from 'hugeicons-react';
+import AudioWave from '@/components/AudioWave';
+import AudioInfo from '@/components/AudioInfo';
+import CommentsSection from '@/components/CommentsSection';
+import { calculateRange } from '@/lib/utils';
+import AudioEditor from '@/components/AudioEditor';
 
 function ProjectPage() {
-  const { version, file, project, setProject, setVersion } = useAudioContext();
+  const {
+    version,
+    file,
+    project,
+    jumpTo,
+    setSettings,
+    setRange,
+    setProject,
+    setVersion,
+  } = useAudioContext();
 
   const { id } = useParams();
 
@@ -46,7 +53,7 @@ function ProjectPage() {
     })();
   }, [id, setProject, setVersion]);
 
-  const empty = !project || !version;
+  const empty = !project || !version || !file;
 
   if (empty)
     return (
@@ -60,11 +67,11 @@ function ProjectPage() {
     );
 
   return (
-    <Container className="relative">
+    <Container className="relative w-full">
       <div className="flex w-full justify-between">
         <div className="grow">
           <h3 className="text-md text-white font-medium">{project.title}</h3>
-          <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2">
+          <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Notebook02Icon
@@ -82,7 +89,27 @@ function ProjectPage() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-10 justify-center flex left-0 right-0">
+      {/* <FeedbackContainer
+        generalComments={generalComments}
+        timestampComments={timestampComments}
+      /> */}
+      {/* <FeedbackContainer
+        generalComments={generalComments}
+        timestampComments={timestampComments}
+      /> */}
+      <div className="flex rounded-lg bg-black/10 flex-col items-center justify-center space-y-4 px-4 py-2">
+        {/* <AudioInfo />
+        <AudioWave
+          amplifyBy={200}
+          className="my-4"
+        /> */}
+        <AudioEditor
+          className="max-w-screen-md"
+          comments={timestampComments}
+        />
+        <AudioControls className="" />
+      </div>
+      <div className="absolute bottom-6 justify-center flex left-0 right-0">
         <VersionControl />
       </div>
       {/* <>
