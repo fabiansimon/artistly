@@ -14,8 +14,11 @@ export async function GET(request: NextRequest) {
     const authorProjects = await fetchAuthorProjects(userId, pagination);
 
     const data = {
-      authorProjects,
-      collabProjects,
+      content: {
+        collabs: collabProjects,
+        authored: authorProjects,
+      },
+      totalElements: authorProjects.length + collabProjects.length,
     };
 
     return NextResponse.json(data);

@@ -21,6 +21,9 @@ const config: Config = {
         900: '#121212',
         950: '#0d0d0d',
       },
+      fontSize: {
+        xs: '0.8rem',
+      },
       boxShadow: {
         simple: '-20px 22px 0px -15px rgba(0,0,0,1)',
       },

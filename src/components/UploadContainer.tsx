@@ -10,12 +10,12 @@ import {
   useEffect,
   ChangeEvent,
 } from 'react';
-import ShareContainer from '@/components/ShareContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import { analyzeAudio } from '@/lib/audioHelpers';
 import { cn } from '@/lib/utils';
 import { Project } from '@/types';
-import { stat } from 'fs';
+import ProjectInput from './ProjectInput';
+import VersionInput from './VersionInput';
 
 const transition = {
   duration: 500,
@@ -26,7 +26,8 @@ const transition = {
 enum INPUT_STATE {
   fileInput,
   projectSelection,
-  infoInput,
+  projectInput,
+  versionInput,
 }
 
 const DEBUG_PROJECTS: Project[] = [
@@ -55,16 +56,8 @@ export default function UploadContainer() {
   const { file, setFile } = useAudioContext();
   const [dragging, setDragging] = useState<boolean>(false);
   const [rawFile, setRawFile] = useState<File | undefined>();
-  const [state, setState] = useState<INPUT_STATE>(INPUT_STATE.fileInput);
-  const [project, setProject] = useState<string | 'new' | undefined>();
-
-  useEffect(() => {
-    setState(() => {
-      if (!rawFile || !file) return INPUT_STATE.fileInput;
-      if (!project) return INPUT_STATE.projectSelection;
-      return INPUT_STATE.infoInput;
-    });
-  }, [rawFile, file, project]);
+  const [state, setState] = useState<INPUT_STATE>(INPUT_STATE.versionInput);
+  const [project, setProject] = useState<string | 'new'>('new');
 
   useEffect(() => {
     if (!rawFile) return;
@@ -75,20 +68,27 @@ export default function UploadContainer() {
   }, [rawFile, setFile]);
 
   const getStateComponent = useCallback(() => {
-    if (state === INPUT_STATE.fileInput)
-      return <FileInputContainer onFile={handleFileChange} />;
+    switch (state) {
+      case INPUT_STATE.fileInput:
+        return <FileInputContainer onFile={handleFileChange} />;
+      case INPUT_STATE.projectSelection:
+        return (
+          <SelectContainer
+            onInput={(value) => setProject(value)}
+            projects={DEBUG_PROJECTS}
+          />
+        );
+      case INPUT_STATE.projectInput:
+        return (
+          <ProjectInput onClick={() => setState(INPUT_STATE.versionInput)} />
+        );
+      case INPUT_STATE.versionInput:
+        return <VersionInput audioFile={file!} />;
 
-    if (state === INPUT_STATE.projectSelection)
-      return (
-        <SelectContainer
-          onInput={(value) => setProject(value)}
-          projects={DEBUG_PROJECTS}
-        />
-      );
-
-    if (state === INPUT_STATE.infoInput)
-      return <ShareContainer audioFile={file!} />;
-  }, [state, file]);
+      default:
+        return null;
+    }
+  }, [state, file, project]);
 
   const handleDragging = useCallback(
     (e: DragEvent<HTMLDivElement>, status: boolean) => {
@@ -131,15 +131,7 @@ export default function UploadContainer() {
       onDrop={handleDrop}
       className="flex flex-grow items-center justify-center h-full w-full"
     >
-      <div className="flex">
-        {getStateComponent()}
-
-        {/* {!rawFile || !file ? (
-          <ShareContainer audioFile={file} />
-        ) : (
-          <FileInputContainer onFile={handlerawFileChange} />
-        )} */}
-      </div>
+      <div className="flex flex-grow w-full">{getStateComponent()}</div>
       <motion.div
         initial={'hidden'}
         transition={transition}
@@ -166,7 +158,7 @@ function FileInputContainer({
   onFile: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="flex items-center flex-col">
+    <div className="flex mx-auto items-center flex-col">
       <article className="prose text-center">
         <h3 className="text-white text-sm">{'Import your Masterpiece'}</h3>
         <p className="-mt-2 text-white/70 text-sm">

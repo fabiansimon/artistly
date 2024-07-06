@@ -13,8 +13,9 @@ import AudioControls from '@/components/AudioControls';
 import { useRouter } from 'next/navigation';
 import DialogController from '@/controllers/DialogController';
 import ToastController from '@/controllers/ToastController';
-import BackButton from '@/components/BackButton';
 import Container from '@/components/Container';
+import LoadingView from '@/components/LoadingView';
+import { Notebook01Icon, Notebook02Icon, Vynil01Icon } from 'hugeicons-react';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion } = useAudioContext();
@@ -38,7 +39,7 @@ function ProjectPage() {
       try {
         const res = await fetchProject(id as string);
         setProject(res);
-        setVersion({ ...res.versions[0], index: 1 });
+        setVersion({ ...res.versions[0], index: 0 });
       } catch (error) {
         console.error(error.message);
       }
@@ -47,39 +48,57 @@ function ProjectPage() {
 
   const empty = !project || !version;
 
+  if (empty)
+    return (
+      <LoadingView
+        strings={[
+          'Fetching Audio',
+          'Gathering Data',
+          'Searching for new Versions',
+        ]}
+      />
+    );
+
   return (
-    <Container>
-      {empty && (
-        <div className="flex w-full h-full items-center justify-center">
-          <div>
-            <span className="loading loading-ring loading-sm"></span>
-            <AnimatedText
-              className="mt-2"
-              strings={[
-                'Fetching Audio',
-                'Gathering Data',
-                'Searching for new Versions',
-              ]}
-            />
+    <Container className="relative">
+      <div className="flex w-full justify-between">
+        <div className="grow">
+          <h3 className="text-md text-white font-medium">{project.title}</h3>
+          <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Notebook02Icon
+                  size={13}
+                  className="text-white/60"
+                />
+                <p className="text-[11px] text-white/60 text-white">
+                  {'Version notes'}
+                </p>
+              </div>
+              <p className="text-xs text-white/50 text-white mr-10">
+                {version.notes}
+              </p>
+            </div>
           </div>
         </div>
-      )}
-      {!empty && (
-        <>
-          <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
-            <VersionControl />
-            <AudioEditor
-              className="max-w-screen-md"
-              comments={timestampComments}
-            />
-            <AudioControls />
-          </div>
-          <FeedbackContainer
-            generalComments={generalComments}
-            timestampComments={timestampComments}
+      </div>
+      <div className="absolute bottom-10 justify-center flex left-0 right-0">
+        <VersionControl />
+      </div>
+      {/* <>
+        <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
+          <VersionControl />
+          <AudioEditor
+            className="max-w-screen-md"
+            comments={timestampComments}
           />
-        </>
-      )}
+          <AudioControls />
+        </div>
+        <FeedbackContainer
+          generalComments={generalComments}
+          timestampComments={timestampComments}
+        />
+      </> */}
     </Container>
   );
 }
