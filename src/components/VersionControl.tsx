@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
 
-export default function VersionControl() {
+export default function VersionControl({ className }: { className?: string }) {
   const { project, version, handleVersionChange } = useAudioContext();
   if (!project || !version) return;
 
@@ -15,7 +15,7 @@ export default function VersionControl() {
   };
 
   return (
-    <div className="join">
+    <div className={cn('join', className)}>
       {version.index !== 0 && (
         <button
           onClick={() => handleClick(-1)}

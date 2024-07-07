@@ -1,6 +1,6 @@
 import { REGEX } from '@/constants/regex';
 import { SERVER_PARAMS } from '@/constants/serverParams';
-import { AudioFile, Pagination } from '@/types';
+import { Pagination } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 export function formatSeconds(seconds: number) {
-  if (!seconds) return 0;
+  if (!seconds) return '00:00';
   return new Date(seconds * 1000).toISOString().slice(14, 19);
 }
 
@@ -62,6 +62,16 @@ export function calculateRange(
     begin: Math.max(timestamp - buffer, 0),
     end: Math.min(timestamp + buffer, duration),
   };
+}
+
+export function withinRange(
+  duration: number,
+  timestamp: number,
+  buffer: number,
+  currTime: number
+) {
+  const { begin, end } = calculateRange(duration, timestamp, buffer);
+  return !(currTime < begin || currTime > end);
 }
 
 export function getReadableDate(date?: Date, short: boolean = false) {

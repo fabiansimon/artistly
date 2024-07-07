@@ -10,6 +10,7 @@ import {
 export default function AudioControls({ className }: { className?: string }) {
   const {
     settings: { looping, playing },
+    jumpTo,
     toggleLoop,
     togglePlaying,
   } = useAudioContext();
@@ -22,7 +23,7 @@ export default function AudioControls({ className }: { className?: string }) {
       )}
     >
       <div
-        onClick={() => console.log('first')}
+        onClick={() => jumpTo(0)}
         className="cursor-pointer"
       >
         <ArrowLeft03Icon size={16} />

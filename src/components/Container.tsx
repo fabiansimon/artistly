@@ -6,14 +6,20 @@ export default function Container({
   className,
   children,
   onRefresh,
+  omitPadding = false,
 }: {
   className?: string;
   children: React.ReactNode;
   onRefresh?: () => void;
+  omitPadding: boolean;
 }) {
   return (
-    <div className={cn('flex flex-col w-full px-4', className)}>
-      <div className="flex justify-between mb-2 mt-4">
+    <div
+      className={cn('flex flex-col w-full', !omitPadding && 'px-4', className)}
+    >
+      <div
+        className={cn('flex justify-between mb-2 mt-4', omitPadding && 'px-4')}
+      >
         <BackButton />
         {onRefresh && <RefreshButton onClick={onRefresh} />}
       </div>

@@ -14,6 +14,7 @@ import AudioInfo from '@/components/AudioInfo';
 import CommentsSection from '@/components/CommentsSection';
 import { calculateRange } from '@/lib/utils';
 import AudioEditor from '@/components/AudioEditor';
+import FeedbackContainer from '@/components/FeedbackContainer';
 
 function ProjectPage() {
   const {
@@ -67,65 +68,39 @@ function ProjectPage() {
     );
 
   return (
-    <Container className="relative w-full">
-      <div className="flex w-full justify-between">
-        <div className="grow">
-          <h3 className="text-md text-white font-medium">{project.title}</h3>
-          <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Notebook02Icon
-                  size={13}
-                  className="text-white/60"
-                />
-                <p className="text-[11px] text-white/60 text-white">
-                  {'Version notes'}
+    <Container omitPadding>
+      <div className="flex flex-col space-y-4 h-full">
+        <div className="flex w-full justify-between px-4">
+          <div className="grow">
+            <h3 className="text-md text-white font-medium">{project.title}</h3>
+            <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Notebook02Icon
+                    size={13}
+                    className="text-white/60"
+                  />
+                  <p className="text-[11px] text-white/60 text-white">
+                    {'Version notes'}
+                  </p>
+                </div>
+                <p className="text-xs text-white/50 text-white mr-10">
+                  {version.notes}
                 </p>
               </div>
-              <p className="text-xs text-white/50 text-white mr-10">
-                {version.notes}
-              </p>
             </div>
           </div>
         </div>
-      </div>
-      {/* <FeedbackContainer
-        generalComments={generalComments}
-        timestampComments={timestampComments}
-      /> */}
-      {/* <FeedbackContainer
-        generalComments={generalComments}
-        timestampComments={timestampComments}
-      /> */}
-      <div className="flex rounded-lg bg-black/10 flex-col items-center justify-center space-y-4 px-4 py-2">
-        {/* <AudioInfo />
-        <AudioWave
-          amplifyBy={200}
-          className="my-4"
-        /> */}
-        <AudioEditor
-          className="max-w-screen-md"
-          comments={timestampComments}
-        />
-        <AudioControls className="" />
-      </div>
-      <div className="absolute bottom-6 justify-center flex left-0 right-0">
-        <VersionControl />
-      </div>
-      {/* <>
-        <div className="flex items-center w-full space-x-6 px-10 mt-4 justify-center">
-          <VersionControl />
-          <AudioEditor
-            className="max-w-screen-md"
-            comments={timestampComments}
-          />
-          <AudioControls />
-        </div>
         <FeedbackContainer
+          className="mx-4 flex-grow h-full"
           generalComments={generalComments}
           timestampComments={timestampComments}
         />
-      </> */}
+        <div className="flex flex-col items-center w-full space-y-2">
+          <VersionControl />
+          <AudioEditor comments={timestampComments} />
+        </div>
+      </div>
     </Container>
   );
 }

@@ -2,7 +2,7 @@
 
 import { deleteFeedback, uploadFeeback } from '@/lib/api';
 import { fetchAudioFile, storeAudioFile } from '@/lib/audioHelpers';
-import { generateId } from '@/lib/utils';
+import { generateId, withinRange } from '@/lib/utils';
 import {
   AudioFile,
   AudioSettings,
@@ -19,6 +19,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -30,6 +31,7 @@ interface AudioContextType {
   project: Project | null;
   version: (Version & { index: number }) | null;
   file: AudioFile | null;
+  highlightedComment: string;
   audioRef: React.MutableRefObject<HTMLAudioElement | null>;
   setSettings: Dispatch<SetStateAction<AudioSettings>>;
   setRange: Dispatch<SetStateAction<Range>>;
@@ -210,6 +212,14 @@ export default function AudioProvider({
     [outOfBoundsCheck, setSettings]
   );
 
+  const highlightedComment = useMemo(() => {
+    if (!file || !version) return '';
+    const buffer = 4;
+    for (const { id, timestamp } of version.feedback)
+      if (timestamp && withinRange(file.duration, timestamp, buffer, time))
+        return id;
+  }, [time, version, file]);
+
   useEffect(() => {
     outOfBoundsCheck();
   }, [settings.playing, outOfBoundsCheck]);
@@ -222,6 +232,7 @@ export default function AudioProvider({
     version,
     file,
     audioRef,
+    highlightedComment,
     setSettings,
     setRange,
     setTime,
