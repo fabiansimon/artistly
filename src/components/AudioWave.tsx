@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import CursorLine from './CursorLine';
 import { useAudioContext } from '@/providers/AudioProvider';
 
-interface WaveContainerProps {
+interface AudioWaveProps {
   className?: string;
   amplifyBy?: number;
   duration?: number;
@@ -11,13 +11,21 @@ interface WaveContainerProps {
   onTap?: (time: number) => void;
 }
 
-export default function WaveContainer({
+export default function AudioWave({
   simple = false,
   className,
   amplifyBy,
-}: WaveContainerProps) {
-  const { time, settings, file, version, audioRef, setTime, setSettings } =
-    useAudioContext();
+}: AudioWaveProps) {
+  const {
+    time,
+    settings,
+    file,
+    project,
+    version,
+    audioRef,
+    setTime,
+    setSettings,
+  } = useAudioContext();
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
   const AMPLIFY_BY = amplifyBy || 100;
@@ -69,7 +77,9 @@ export default function WaveContainer({
     setTime(time);
   };
 
-  const waveClass = 'top-0 flex w-full left-0 items-end space-x-1';
+  const waveClass = 'top-0 flex w-full left-0 items-center space-x-1';
+
+  if (!project) return;
 
   return (
     <div className="flex flex-grow w-full">
@@ -105,14 +115,13 @@ export default function WaveContainer({
           </div>
           <div
             style={{ clipPath }}
-            // className="absolute top-0 flex w-full left-0 items-center space-x-1"
             className={cn('absolute', waveClass)}
           >
             {file?.intervalPeaks.map((peak, index) => (
               <div
                 key={index}
                 style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
-                className={cn('flex-grow bg-slate-50 rounded-full')}
+                className={cn('flex-grow bg-white rounded-full')}
               />
             ))}
           </div>

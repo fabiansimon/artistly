@@ -1,13 +1,18 @@
 import { REGEX } from '@/constants/regex';
-import { cn } from '@/lib/utils';
+import { cn, formatSeconds, withinRange } from '@/lib/utils';
 import { Comment, Input } from '@/types';
-import { Download04Icon, Navigation03Icon } from 'hugeicons-react';
+import {
+  Comment01Icon,
+  Download04Icon,
+  Navigation03Icon,
+} from 'hugeicons-react';
 import { useEffect, useMemo, useState } from 'react';
 import EmptyContainer from './EmptyContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import CommentTile from './CommentTile';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FeedbackSummaryPDF from './FeedbackSummaryPDF';
+import Avatar from './Avatar';
 
 enum FilterState {
   GENERAL,
@@ -25,14 +30,67 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
-  const { jumpTo, removeFeedback, project, version } = useAudioContext();
+  const { project, highlightedComment, jumpTo, removeFeedback, version } =
+    useAudioContext();
   const [filter, setFilter] = useState<FilterState>(FilterState.ALL);
 
   const feedback = useMemo(() => {
-    if (filter === FilterState.GENERAL) return generalComments;
-    if (filter === FilterState.TIMESTAMPS) return timestampComments;
-    return [...timestampComments, ...generalComments];
-  }, [filter, timestampComments, generalComments]);
+    // if (filter === FilterState.GENERAL) return generalComments;
+    // if (filter === FilterState.TIMESTAMPS) return timestampComments;
+    return [...timestampComments, ...generalComments].sort((a, b) => {
+      if (!a.timestamp && !b.timestamp) return 0;
+      if (!a.timestamp) return 1;
+      if (!b.timestamp) return -1;
+      return a.timestamp - b.timestamp;
+    });
+  }, [timestampComments, generalComments]);
+
+  return (
+    <div className={cn('grow', className)}>
+      <div className="flex justify-between items-end mb-2">
+        <div className="flex items-center ml-2 space-x-2">
+          <Comment01Icon size={14} />
+          <h3 className="text-md text-white font-medium">{'Feedback'}</h3>
+        </div>
+        <PDFDownloadLink
+          document={
+            <FeedbackSummaryPDF
+              title={project?.title!}
+              comments={[...timestampComments, ...generalComments]}
+            />
+          }
+          fileName={`Feedback ${project?.title}, version: ${version?.title}`}
+        >
+          <button className={cn('btn btn-xs btn-neutral min-h-8')}>
+            <Download04Icon size={16} />
+            Download Feedback
+          </button>
+        </PDFDownloadLink>
+      </div>
+      <div className="flex space-x-4 mt-4 mx-6">
+        <p className="text-xs font-medium w-10 text-neutral-400/80">User</p>
+        <p className="text-xs font-medium flex-grow text-neutral-400/80">
+          Comment
+        </p>
+        <p className="text-xs text-end font-medium text-neutral-400/80 pr-4">
+          Timestamp
+        </p>
+      </div>
+      <div className="divider my-0" />
+      <div className="max-h-96 pb-4 overflow-y-auto">
+        {feedback.map((comment, index) => {
+          return (
+            <div key={comment.id}>
+              <CommentTile comment={comment} />
+              {index !== feedback.length - 1 && (
+                <div className="divider my-0" />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <div

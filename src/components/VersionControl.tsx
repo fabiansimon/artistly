@@ -1,45 +1,43 @@
 import { cn } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
 
-export default function VersionControl() {
+export default function VersionControl({ className }: { className?: string }) {
   const { project, version, handleVersionChange } = useAudioContext();
   if (!project || !version) return;
 
   const { versions } = project;
 
-  return (
-    <div className="relative mt-4">
-      <article className="prose absolute -top-8">
-        <p className="font-medium text-sm text-white/70">{'Versions'}</p>
-      </article>
+  const handleClick = (step: number) => {
+    let index = version.index;
+    if (step < 0) index = Math.max(0, index + step);
+    else index = Math.min(versions.length - 1, index + step);
+    handleVersionChange(versions[index].id);
+  };
 
-      <div className="flex border rounded-md border-neutral-800 max-w-16 flex-col overflow-y-scroll scrollbar-hide max-h-20">
-        {versions.map((v, i) => {
-          const { title, id } = v;
-          const isLast = i === versions.length - 1;
-          const active = version.id === id;
-          return (
-            <div
-              key={id}
-              onClick={() => handleVersionChange(id)}
-              className={cn(
-                'bg-white/40 cursor-pointer min-h-8 flex items-center justify-center px-4',
-                active && 'bg-white',
-                !isLast && 'border-b border-neutral/40'
-              )}
-            >
-              <p
-                className={cn(
-                  'text-sm text-black/40 truncate font-medium',
-                  active && 'text-black'
-                )}
-              >
-                {title}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+  return (
+    <div className={cn('join', className)}>
+      {version.index !== 0 && (
+        <button
+          onClick={() => handleClick(-1)}
+          className="join-item btn bg-neutral-950"
+        >
+          «
+        </button>
+      )}
+      <button className="join-item text-xs btn bg-neutral-950">
+        <div className="flex flex-col space-y-1">
+          <p className="text-xs text-white/70 font-medium">{version.title}</p>
+          <p className="text-[10px] text-white/40 font">Version</p>
+        </div>
+      </button>
+      {version.index !== versions.length - 1 && (
+        <button
+          onClick={() => handleClick(1)}
+          className="join-item btn bg-neutral-950"
+        >
+          »
+        </button>
+      )}
     </div>
   );
 }

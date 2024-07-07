@@ -129,3 +129,13 @@ export interface Navigation {
   title: string;
   options: NavOption[];
 }
+
+export interface Projects {
+  collabs: Project[];
+  authored: Project[];
+}
+
+export interface Paginated<T> {
+  totalElements: number;
+  content: T;
+}

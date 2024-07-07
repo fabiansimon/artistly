@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const OFFSET = 50;
@@ -24,7 +24,7 @@ export default function AnimatedText({
   }, []);
 
   return (
-    <div className={cn('relative bg-green-500 flex justify-center', className)}>
+    <div className={cn('relative flex justify-center', className)}>
       {strings.map((string, i) => {
         let currAnimation: string;
         if (i === index) {
