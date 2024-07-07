@@ -1,22 +1,14 @@
-import {
-  formatSeconds,
-  formattedTimeToNumber,
-  timestampIndex,
-} from '@/lib/utils';
+import { cn, formatSeconds } from '@/lib/utils';
 import { Comment, MenuOption } from '@/types';
 import { Delete01Icon } from 'hugeicons-react';
 import DropDown from './Dropdown';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useAudioContext } from '@/providers/AudioProvider';
+import Avatar from './Avatar';
 
-export default function CommentTile({
-  comment,
-  onTimestamp,
-  onDelete,
-}: {
-  comment: Comment;
-  onTimestamp: (timestamp: number) => void;
-  onDelete: (id: string) => void;
-}) {
+export default function CommentTile({ comment }: { comment: Comment }) {
+  const { jumpTo, highlightedComment, removeFeedback } = useAudioContext();
+
   const { id, timestamp, text } = comment;
 
   const options: MenuOption[] = useMemo(
@@ -30,73 +22,64 @@ export default function CommentTile({
         ),
         text: 'Remove',
         confirm: true,
-        onClick: () => onDelete(id),
+        onClick: () => removeFeedback(id),
       },
     ],
-    [onDelete, id]
+    [removeFeedback, id]
   );
 
-  const timestampSpan = useCallback(
-    (timestamp: number) => {
-      return (
-        <p
-          onClick={() => onTimestamp(timestamp)}
-          className="text-sm cursor-pointer text-blue-400 font-normal -mt-3"
-        >
-          @{formatSeconds(timestamp)}
-        </p>
-      );
-    },
-    [onTimestamp]
-  );
+  // const timestampSpan = useCallback(
+  //   (timestamp: number) => {
+  //     return (
+  //       <p
+  //         onClick={() => onTimestamp(timestamp)}
+  //         className="text-sm cursor-pointer text-blue-400 font-normal -mt-3"
+  //       >
+  //         @{formatSeconds(timestamp)}
+  //       </p>
+  //     );
+  //   },
+  //   [onTimestamp]
+  // );
 
-  const textParts = useMemo(() => {
-    const output: { value: string | number; isTime: boolean }[] = [];
+  // const textParts = useMemo(() => {
+  //   const output: { value: string | number; isTime: boolean }[] = [];
 
-    const index = timestampIndex(text);
-    if (index === -1) {
-      timestamp != null && output.push({ value: timestamp, isTime: true });
-      output.push({ value: ` ${text}`, isTime: false });
-    } else {
-      output.push({ value: text.substring(0, index), isTime: false });
-      output.push({
-        value: formattedTimeToNumber(text.substring(index + 1, index + 6)),
-        isTime: true,
-      });
-      output.push({
-        value: text.substring(index + 6, text.length),
-        isTime: false,
-      });
-    }
+  //   const index = timestampIndex(text);
+  //   if (index === -1) {
+  //     timestamp != null && output.push({ value: timestamp, isTime: true });
+  //     output.push({ value: ` ${text}`, isTime: false });
+  //   } else {
+  //     output.push({ value: text.substring(0, index), isTime: false });
+  //     output.push({
+  //       value: formattedTimeToNumber(text.substring(index + 1, index + 6)),
+  //       isTime: true,
+  //     });
+  //     output.push({
+  //       value: text.substring(index + 6, text.length),
+  //       isTime: false,
+  //     });
+  //   }
 
-    return output;
-  }, [text, timestamp]);
+  //   return output;
+  // }, [text, timestamp]);
 
   return (
     <div
+      onClick={() => timestamp && jumpTo(timestamp)}
+      className={cn(
+        'hover:bg-neutral-950 rounded-md cursor-pointer flex min-h-11 space-x-4 items-center px-3',
+        highlightedComment === id && 'bg-neutral-950'
+      )}
       key={id}
-      className="bg-neutral rounded-xl p-2 shadow-xl shadow-black/5 flex justify-between relative"
     >
-      <article className="prose">
-        <p className="text-xs text-white/30">fabian.simon98@gmail.com</p>
-        <span
-          className="flex"
-          style={{ whiteSpace: 'pre' }}
-        >
-          {textParts.map(({ value, isTime }, index) => {
-            if (isTime)
-              return <div key={index}>{timestampSpan(value as number)}</div>;
-            return (
-              <h3
-                key={index}
-                className="text-sm text-white font-normal -mt-3"
-              >
-                {value}
-              </h3>
-            );
-          })}
-        </span>
-      </article>
+      <div className="flex min-w-14 justify-center">
+        <Avatar className="size-8" />
+      </div>
+      <div className="text-xs flex-grow">{text}</div>
+      <div className={cn('text-xs text-center', !timestamp && 'opacity-20')}>
+        {timestamp ? formatSeconds(timestamp) : 'n/A'}
+      </div>
       <DropDown options={options} />
     </div>
   );

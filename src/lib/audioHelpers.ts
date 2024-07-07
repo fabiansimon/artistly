@@ -85,18 +85,20 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
   const { duration, numberOfChannels, sampleRate } = audioBuffer;
   const channelData = audioBuffer.getChannelData(0);
 
-  const skipInterval = channelData.length / duration;
+  const interval = channelData.length / 100;
   const intervalPeaks: number[] = [];
-  let currTotal = 0;
+  let high = 0;
+  let count = 0;
 
   for (let i = 0; i < channelData.length; i++) {
-    if (i !== 0 && i % skipInterval == 0) {
-      intervalPeaks.push(currTotal / skipInterval);
-      currTotal = 0;
-      continue;
-    }
+    const curr = channelData[i];
+    high = Math.max(high, curr);
+    count += Math.abs(curr);
 
-    currTotal += Math.abs(channelData[i]);
+    if ((i + 1) % interval === 0 || i === channelData.length - 1) {
+      intervalPeaks.push(count / interval);
+      count = 0;
+    }
   }
 
   const audioData: AudioFile = {
