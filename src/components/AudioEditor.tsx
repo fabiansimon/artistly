@@ -16,7 +16,7 @@ export default function AudioEditor({
   return (
     <div
       className={cn(
-        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/30 border-t border-neutral-800/70',
+        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/20 border-t border-neutral-800/70',
         className
       )}
     >

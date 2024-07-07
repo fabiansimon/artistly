@@ -72,36 +72,16 @@ export default function FeedbackContainer({
         <p className="text-xs font-medium flex-grow text-neutral-400/80">
           Comment
         </p>
-        <p className="text-xs text-end font-medium text-neutral-400/80">
+        <p className="text-xs text-end font-medium text-neutral-400/80 pr-4">
           Timestamp
         </p>
       </div>
       <div className="divider my-0" />
-      <div className="max-h-96 overflow-y-auto">
-        {feedback.map(({ id, timestamp, text }, index) => {
+      <div className="max-h-96 pb-4 overflow-y-auto">
+        {feedback.map((comment, index) => {
           return (
-            <div key={id}>
-              <div
-                onClick={() => timestamp && jumpTo(timestamp)}
-                className={cn(
-                  'hover:bg-neutral-950 rounded-md cursor-pointer flex min-h-11 space-x-4 items-center px-3',
-                  highlightedComment === id && 'bg-neutral-950'
-                )}
-                key={id}
-              >
-                <div className="flex min-w-14 justify-center">
-                  <Avatar className="size-8" />
-                </div>
-                <div className="text-xs flex-grow">{text}</div>
-                <div
-                  className={cn(
-                    'text-xs text-center',
-                    !timestamp && 'opacity-20'
-                  )}
-                >
-                  {timestamp ? formatSeconds(timestamp) : 'n/A'}
-                </div>
-              </div>
+            <div key={comment.id}>
+              <CommentTile comment={comment} />
               {index !== feedback.length - 1 && (
                 <div className="divider my-0" />
               )}

@@ -7,6 +7,7 @@ export default function DropDown({ options }: { options: MenuOption[] }) {
   return (
     <div className="dropdown dropdown-left">
       <div
+        onClick={(e) => e.stopPropagation()}
         tabIndex={0}
         role="button"
       >
@@ -18,11 +19,12 @@ export default function DropDown({ options }: { options: MenuOption[] }) {
       >
         {options.map(({ icon, onClick, text, confirm }, i) => (
           <li
-            className="rounded-lg"
-            onClick={() =>
-              confirm ? DialogController.showDialog(_, _, onClick) : onClick()
-            }
             key={i}
+            className="rounded-lg"
+            onClick={(e) => {
+              e.stopPropagation();
+              confirm ? DialogController.showDialog(_, _, onClick) : onClick();
+            }}
           >
             <div>
               {icon}
