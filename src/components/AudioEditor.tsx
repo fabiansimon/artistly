@@ -1,17 +1,10 @@
-import { calculateRange, cn, formatSeconds, ordinalString } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Comment } from '@/types';
-import { useMemo, useState } from 'react';
 import WaveContainer from './WaveContainer';
-import {
-  ArrowReloadHorizontalIcon,
-  Comment01Icon,
-  Layers01Icon,
-  Time04Icon,
-} from 'hugeicons-react';
-import { useAudioContext } from '@/providers/AudioProvider';
 import CommentsSection from './CommentsSection';
 import RangeIndicator from './RangeIndicator';
 import AudioInfo from './AudioInfo';
+import AudioControls from './AudioControls';
 
 export default function AudioEditor({
   className,
@@ -20,36 +13,18 @@ export default function AudioEditor({
   className?: string;
   comments: Comment[];
 }) {
-  const {
-    file,
-    audioRef,
-    project,
-    version,
-    settings: { looping },
-    jumpTo,
-    setRange,
-    setSettings,
-  } = useAudioContext();
-
   return (
     <div
       className={cn(
-        'flex flex-col space-y-2 flex-grow w-full space-x-3 items-center',
+        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/30 border-t border-neutral-800/70',
         className
       )}
     >
       <AudioInfo />
-      <RangeIndicator className="w-full" />
       <WaveContainer amplifyBy={200} />
-      <CommentsSection
-        onClick={jumpTo}
-        onLoop={(timestamp) => {
-          setSettings({ playing: true, looping: true });
-          setRange(calculateRange(file?.duration!, timestamp, 4));
-        }}
-        comments={comments}
-        duration={audioRef.current?.duration || 10}
-      />
+      <RangeIndicator className="w-full" />
+      <CommentsSection comments={comments} />
+      <AudioControls className="mx-auto border-t border-neutral-800/70 w-full py-2 pt-4 justify-center" />
     </div>
   );
 }

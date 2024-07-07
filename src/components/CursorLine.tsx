@@ -18,7 +18,7 @@ export default function CursorLine({
   return (
     <>
       <div
-        className={'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-8'}
+        className={'bg-white flex h-full w-[1px] absolute top-4 -mt-4 z-10'}
         style={style}
       >
         <motion.div

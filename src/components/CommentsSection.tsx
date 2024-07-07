@@ -1,32 +1,38 @@
-import { cn, formatSeconds } from '@/lib/utils';
+import { calculateRange, cn, formatSeconds } from '@/lib/utils';
+import { useAudioContext } from '@/providers/AudioProvider';
 import { Comment } from '@/types';
 import { motion } from 'framer-motion';
 import { ArrowReloadHorizontalIcon } from 'hugeicons-react';
 import { useState } from 'react';
 
-export default function CommentsSection({
-  comments,
-  duration,
-  onClick,
-  onLoop,
-}: {
-  comments: Comment[];
-  duration: number;
-  onClick: (timestamp: number) => void;
-  onLoop: (timestamp: number) => void;
-}) {
+export default function CommentsSection({ comments }: { comments: Comment[] }) {
+  const { file, highlightedComment, jumpTo, setRange, setSettings } =
+    useAudioContext();
+
+  const duration = file?.duration || 0;
+
+  const handleLoop = (timestamp: number) => {
+    setSettings({ playing: true, looping: true });
+    setRange(calculateRange(file?.duration!, timestamp, 4));
+  };
+
+  if (!comments.length) return;
+
   return (
-    <div className="flex w-full mt-3 relative">
+    <div className="flex w-full relative h-8">
       {comments.map((comment) => {
         const { timestamp } = comment;
         const offset = (timestamp! / duration) * 100;
 
         return (
           <CommentTile
-            onClick={() => onClick(timestamp!)}
-            style={{ left: `${offset}%` }}
+            onClick={() => jumpTo(timestamp!)}
+            style={{
+              left: `${offset}%`,
+              zIndex: highlightedComment === comment.id ? 20 : undefined,
+            }}
             key={comment.id}
-            onLoop={onLoop}
+            onLoop={() => handleLoop(timestamp!)}
             comment={comment}
           />
         );
@@ -58,17 +64,17 @@ function CommentTile({
       )}
     >
       <div className="flex">
-        <div className="w-[2px] bg-primary h-6 absolute" />
         <div
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral flex pointer-events-auto rounded-tr-md rounded-br-md overflow-hidden cursor-pointer mr-auto"
+          className="bg-neutral flex pointer-events-auto rounded-md overflow-hidden cursor-pointer mr-auto shadow-xl shadow-black border border-neutral-900/80"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}
           </p>
           <motion.div
+            initial="hidden"
             animate={hovered ? 'expanded' : 'hidden'}
             variants={{
               expanded: { width: 'auto', marginRight: 6 },

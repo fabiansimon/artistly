@@ -72,7 +72,7 @@ export default function RangeIndicator({ className }: { className?: string }) {
       onClick={handleBarTap}
       className={cn(
         'relative cursor-pointer',
-        !looping && 'opacity-10 ',
+        !looping && 'opacity-20 ',
         className
       )}
     >
@@ -86,7 +86,7 @@ export default function RangeIndicator({ className }: { className?: string }) {
           onChange={(e) =>
             setRange((prev) => ({ ...prev, begin: Number(e.target.value) }))
           }
-          className="absolute pointer-events-none appearance-none z-20 h-2 w-full opacity-0"
+          className="absolute pointer-events-none appearance-none h-2 w-full opacity-0"
         />
         <input
           type="range"
@@ -97,21 +97,21 @@ export default function RangeIndicator({ className }: { className?: string }) {
           onChange={(e) =>
             setRange((prev) => ({ ...prev, end: Number(e.target.value) }))
           }
-          className="absolute pointer-events-none appearance-none z-20 h-2 w-full opacity-0"
+          className="absolute pointer-events-none appearance-none  h-2 w-full opacity-0"
         />
-        <div className="relative z-10 h-1">
-          <div className="absolute z-10 begin-0 right-0 bottom-0 top-0 h-full w-full bg-yellow-500/30 rounded-md"></div>
+        <div className="relative h-1">
+          <div className="absolute begin-0 right-0 bottom-0 top-0 h-full w-full bg-yellow-500/30 rounded-md"></div>
           <div
             onDoubleClick={() => setRange({ begin: min, end: max })}
-            className="absolute z-20 cursor-pointer top-0 bottom-0 bg-yellow-500"
+            className="absolute  cursor-pointer top-0 bottom-0 bg-yellow-500"
             style={{ right: `${thumbRight}%`, left: `${thumbLeft}%` }}
           />
           <div
-            className="absolute z-30 w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px] -ml-[1px]"
+            className="absolute w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px] -ml-[1px]"
             style={{ left: `${thumbLeft}%` }}
           />
           <div
-            className="absolute z-30 w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px]"
+            className="absolute w-[1px] h-4 top-0 bg-yellow-500 rounded-xs -mt-[5px]"
             style={{ right: `${thumbRight}%` }}
           />
         </div>
