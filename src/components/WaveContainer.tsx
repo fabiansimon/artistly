@@ -95,7 +95,7 @@ export default function WaveContainer({
             {file?.intervalPeaks.map((peak, index) => (
               <div
                 key={index}
-                style={{ height: Math.max(peak * AMPLIFY_BY, 3) }}
+                style={{ height: peak * AMPLIFY_BY }}
                 className={cn(
                   'flex-grow bg-slate-50 rounded-full',
                   'opacity-30'
@@ -111,7 +111,7 @@ export default function WaveContainer({
             {file?.intervalPeaks.map((peak, index) => (
               <div
                 key={index}
-                style={{ height: Math.max(peak * AMPLIFY_BY, 1) }}
+                style={{ height: peak * AMPLIFY_BY }}
                 className={cn('flex-grow bg-slate-50 rounded-full')}
               />
             ))}

@@ -28,42 +28,6 @@ export default function CommentTile({ comment }: { comment: Comment }) {
     [removeFeedback, id]
   );
 
-  // const timestampSpan = useCallback(
-  //   (timestamp: number) => {
-  //     return (
-  //       <p
-  //         onClick={() => onTimestamp(timestamp)}
-  //         className="text-sm cursor-pointer text-blue-400 font-normal -mt-3"
-  //       >
-  //         @{formatSeconds(timestamp)}
-  //       </p>
-  //     );
-  //   },
-  //   [onTimestamp]
-  // );
-
-  // const textParts = useMemo(() => {
-  //   const output: { value: string | number; isTime: boolean }[] = [];
-
-  //   const index = timestampIndex(text);
-  //   if (index === -1) {
-  //     timestamp != null && output.push({ value: timestamp, isTime: true });
-  //     output.push({ value: ` ${text}`, isTime: false });
-  //   } else {
-  //     output.push({ value: text.substring(0, index), isTime: false });
-  //     output.push({
-  //       value: formattedTimeToNumber(text.substring(index + 1, index + 6)),
-  //       isTime: true,
-  //     });
-  //     output.push({
-  //       value: text.substring(index + 6, text.length),
-  //       isTime: false,
-  //     });
-  //   }
-
-  //   return output;
-  // }, [text, timestamp]);
-
   return (
     <div
       onClick={() => timestamp && jumpTo(timestamp)}

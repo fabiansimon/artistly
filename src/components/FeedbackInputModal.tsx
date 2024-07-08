@@ -88,6 +88,9 @@ export default function FeedbackInputModal({
       <div className="space-y-4">
         <article className="prose">
           <h3 className="font-medium text-white text-sm">{'Add comment'}</h3>
+          <p className="text-white/70 -mt-2 text-xs">
+            {'Inlcuding a timestamp is optional'}
+          </p>
         </article>
         <div className="flex w-full space-x-2">
           <input

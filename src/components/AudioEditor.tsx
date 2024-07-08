@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils';
-import { Comment } from '@/types';
-import WaveContainer from './WaveContainer';
 import CommentsSection from './CommentsSection';
 import RangeIndicator from './RangeIndicator';
 import AudioInfo from './AudioInfo';
 import AudioControls from './AudioControls';
+import VersionControl from './VersionControl';
+import WaveContainer from './WaveContainer';
+import { Comment } from '@/types';
 
 export default function AudioEditor({
   className,
@@ -16,10 +17,11 @@ export default function AudioEditor({
   return (
     <div
       className={cn(
-        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/20 border-t border-neutral-800/70',
+        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/20 border-t border-neutral-800/70 relative',
         className
       )}
     >
+      <VersionControl className="absolute left-2 -top-14" />
       <AudioInfo />
       <WaveContainer amplifyBy={200} />
       <RangeIndicator className="w-full" />

@@ -12,6 +12,7 @@ export async function storeAudioFile(url: string, id: string) {
     const file = await downloadAudio(url, name);
     if (!file) return;
     const audioData = await analyzeAudio(file);
+    console.log(audioData);
 
     const db = await openDatabase({
       dbName: DB_NAME,
@@ -52,7 +53,6 @@ export async function fetchAudioFile(id: string) {
 
 export async function downloadAudio(url: string, name: string) {
   try {
-    console.log(url);
     const response = await axios.get(url, { responseType: 'blob' });
     const blob = response.data;
     return new File([blob], name, { type: 'audio/mpeg' });
@@ -85,21 +85,23 @@ export async function analyzeAudio(file: File): Promise<AudioFile> {
   const { duration, numberOfChannels, sampleRate } = audioBuffer;
   const channelData = audioBuffer.getChannelData(0);
 
-  const interval = channelData.length / 100;
-  const intervalPeaks: number[] = [];
+  const interval = Math.ceil(channelData.length / 100);
+  let intervalPeaks: number[] = [];
   let high = 0;
   let count = 0;
 
   for (let i = 0; i < channelData.length; i++) {
-    const curr = channelData[i];
-    high = Math.max(high, curr);
-    count += Math.abs(curr);
+    count += Math.abs(channelData[i]);
 
     if ((i + 1) % interval === 0 || i === channelData.length - 1) {
-      intervalPeaks.push(count / interval);
+      const peak = count / interval;
+      intervalPeaks.push(peak);
+      high = Math.max(high, peak);
       count = 0;
     }
   }
+
+  intervalPeaks.map((peak) => peak / high);
 
   const audioData: AudioFile = {
     channels: numberOfChannels,

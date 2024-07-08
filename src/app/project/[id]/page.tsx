@@ -8,13 +8,21 @@ import VersionControl from '@/components/VersionControl';
 import AudioControls from '@/components/AudioControls';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
-import { Notebook02Icon } from 'hugeicons-react';
+import {
+  AddTeamIcon,
+  Download01Icon,
+  Download04Icon,
+  Notebook02Icon,
+  Share01Icon,
+} from 'hugeicons-react';
 import AudioWave from '@/components/AudioWave';
 import AudioInfo from '@/components/AudioInfo';
 import CommentsSection from '@/components/CommentsSection';
-import { calculateRange } from '@/lib/utils';
+import { calculateRange, cn } from '@/lib/utils';
 import AudioEditor from '@/components/AudioEditor';
-import FeedbackContainer from '@/components/FeedbackContainer';
+import FeedbackContainer, { InputField } from '@/components/FeedbackContainer';
+import { MenuOption } from '@/types';
+import SimpleButton from '@/components/SimpleButton';
 
 function ProjectPage() {
   const {
@@ -69,10 +77,11 @@ function ProjectPage() {
 
   return (
     <Container omitPadding>
-      <div className="flex flex-col space-y-4 h-full">
+      <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
             <h3 className="text-md text-white font-medium">{project.title}</h3>
+            <ProjectOptions className="mt-2" />
             <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -91,17 +100,55 @@ function ProjectPage() {
             </div>
           </div>
         </div>
+        <div className="divider my-0" />
         <FeedbackContainer
-          className="mx-4 flex-grow h-full"
+          className="mx-4"
           generalComments={generalComments}
           timestampComments={timestampComments}
         />
+
         <div className="flex flex-col items-center w-full space-y-2">
-          <VersionControl />
           <AudioEditor comments={timestampComments} />
         </div>
       </div>
     </Container>
+  );
+}
+
+function ProjectOptions({ className }: { className?: string }) {
+  const options: MenuOption[] = useMemo(
+    () => [
+      {
+        text: 'Share',
+        icon: <Share01Icon size={16} />,
+        onClick: () => console.log('hello'),
+      },
+      {
+        text: 'Invite',
+        icon: <AddTeamIcon size={16} />,
+        onClick: () => console.log('hello'),
+      },
+      {
+        text: 'Download',
+        icon: <Download04Icon size={16} />,
+        onClick: () => console.log('hello'),
+      },
+    ],
+    []
+  );
+  return (
+    <div className={cn('flex space-x-2', className)}>
+      {options.map(({ text, icon, onClick }, index) => (
+        <SimpleButton
+          iconPosition="left"
+          condensed
+          key={index}
+          icon={icon}
+          text={text}
+          onClick={onClick}
+        />
+      ))}
+    </div>
   );
 }
 
