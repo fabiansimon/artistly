@@ -4,37 +4,23 @@ import { useEffect, useMemo } from 'react';
 import { fetchProject } from '@/lib/api';
 import { useAudioContext } from '@/providers/AudioProvider';
 import { useParams } from 'next/navigation';
-import VersionControl from '@/components/VersionControl';
-import AudioControls from '@/components/AudioControls';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
 import {
   AddTeamIcon,
-  Download01Icon,
   Download04Icon,
+  InformationCircleIcon,
   Notebook02Icon,
   Share01Icon,
 } from 'hugeicons-react';
-import AudioWave from '@/components/AudioWave';
-import AudioInfo from '@/components/AudioInfo';
-import CommentsSection from '@/components/CommentsSection';
-import { calculateRange, cn } from '@/lib/utils';
 import AudioEditor from '@/components/AudioEditor';
-import FeedbackContainer, { InputField } from '@/components/FeedbackContainer';
+import FeedbackContainer from '@/components/FeedbackContainer';
 import { MenuOption } from '@/types';
 import SimpleButton from '@/components/SimpleButton';
+import { cn } from '@/lib/utils';
 
 function ProjectPage() {
-  const {
-    version,
-    file,
-    project,
-    jumpTo,
-    setSettings,
-    setRange,
-    setProject,
-    setVersion,
-  } = useAudioContext();
+  const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
 
@@ -81,7 +67,24 @@ function ProjectPage() {
         <div className="flex w-full justify-between px-4">
           <div className="grow">
             <h3 className="text-md text-white font-medium">{project.title}</h3>
+
             <ProjectOptions className="mt-2" />
+            {/* <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <InformationCircleIcon
+                    size={13}
+                    className="text-white/60"
+                  />
+                  <p className="text-[11px] text-white/60 text-white">
+                    {'Project Information'}
+                  </p>
+                </div>
+                <p className="text-xs text-white/50 text-white mr-10">
+                  {project.description || 'Nothing added'}
+                </p>
+              </div>
+            </div> */}
             <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -94,7 +97,7 @@ function ProjectPage() {
                   </p>
                 </div>
                 <p className="text-xs text-white/50 text-white mr-10">
-                  {version.notes}
+                  {version.notes || 'Nothing added'}
                 </p>
               </div>
             </div>

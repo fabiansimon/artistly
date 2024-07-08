@@ -1,5 +1,5 @@
 import ToastController from '@/controllers/ToastController';
-import { Pagination, Project } from '@/types';
+import { Pagination } from '@/types';
 import axios from 'axios';
 
 const _axios = axios.create({
@@ -57,16 +57,30 @@ export async function fetchInvitation(projectId: string) {
   }
 }
 
-export async function uploadTrack(data: FormData) {
+export async function createProject(data: FormData) {
   try {
-    const res = await _axios.post('/api/uploadTrack', data, {
+    const res = await _axios.post('/api/create-project', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'uploadTrack' });
+    handleError({ error, callName: 'createProject' });
+    throw error;
+  }
+}
+
+export async function uploadVersion(data: FormData) {
+  try {
+    const res = await _axios.post('/api/upload-version', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'uploadVersion' });
     throw error;
   }
 }

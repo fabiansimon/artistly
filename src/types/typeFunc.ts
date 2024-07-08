@@ -1,10 +1,9 @@
-import { InputData } from '.';
+import { ProjectInputData } from '.';
 
-export function inputDataEmpty(inputData: InputData): boolean {
+export function inputDataEmpty(inputData: ProjectInputData): boolean {
   return (
-    inputData.file === undefined ||
-    (inputData.description.trim() === '' &&
-      inputData.email.trim() === '' &&
-      inputData.emailList.size === 0)
+    inputData.description.trim() === '' &&
+    inputData.email.trim() === '' &&
+    inputData.emailList.size === 0
   );
 }

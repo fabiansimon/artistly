@@ -6,12 +6,18 @@ import { v4 as uuidv4 } from 'uuid';
 const PROJECT_TABLE = 'projects';
 const COLLAB_TABLE = 'collaborators';
 
-export async function createProject({ title }: { title: string }) {
+export async function createProject({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   const creatorId = uuidv4(); // for now
 
   const { data, error } = await supabase
     .from(PROJECT_TABLE)
-    .insert([{ title, creator_id: creatorId }])
+    .insert([{ title, description, creator_id: creatorId }])
     .select()
     .single();
 
@@ -83,7 +89,6 @@ export async function fetchCollabProjects(
 }
 
 export async function projectIncludesUser(projectId: string, userId: string) {
-  console.log(projectId, userId);
   const { data, error } = await supabase
     .from('collaborators')
     .select('*')

@@ -38,8 +38,10 @@ function Dialog(): JSX.Element {
 
   const closeDialog = useCallback(() => {
     setIsVisible(false);
-    setContent(null);
-    setInfo(null);
+    setTimeout(() => {
+      setContent(null);
+      setInfo(null);
+    }, 300);
   }, []);
 
   useLayoutEffect(() => {

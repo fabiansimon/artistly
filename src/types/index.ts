@@ -37,18 +37,23 @@ export enum InputType {
   ADD_EMAIL,
 }
 
-export interface InputData {
-  file: File | undefined;
+export interface ProjectInputData {
   title: string;
   description: string;
   email: string;
   emailList: Set<string>;
 }
 
+export interface VersionInputData {
+  title: string;
+  notes: string;
+  file: AudioFile;
+}
+
 export interface VersionUpload {
   title: string;
   fileUrl: string;
-  feedbackNotes: string;
+  notes: string;
   projectId: string;
 }
 
@@ -80,9 +85,15 @@ export interface Project {
   created_at: Date;
   creator_id: string;
   title: string;
+  description: string;
   versions: Version[];
   collaborators: User[];
 }
+
+export type LeanProject = Omit<
+  Project,
+  'created_at' | 'creator_id' | 'collaborators' | 'description'
+>;
 
 export interface FeedbackUpload {
   text: string;

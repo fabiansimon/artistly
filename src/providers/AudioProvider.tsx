@@ -231,6 +231,7 @@ export default function AudioProvider({
     for (const { id, timestamp } of version.feedback)
       if (timestamp && withinRange(file.duration, timestamp, buffer, time))
         return id;
+    return '';
   }, [time, version, file]);
 
   useEffect(() => {

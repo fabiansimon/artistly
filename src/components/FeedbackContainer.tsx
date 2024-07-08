@@ -1,26 +1,12 @@
-import { REGEX } from '@/constants/regex';
-import { cn, formatSeconds, withinRange } from '@/lib/utils';
-import { Comment, Input } from '@/types';
-import {
-  Add01Icon,
-  Comment01Icon,
-  Download04Icon,
-  Navigation03Icon,
-} from 'hugeicons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Comment } from '@/types';
+import { Add01Icon, Comment01Icon } from 'hugeicons-react';
+import { useMemo } from 'react';
 import EmptyContainer from './EmptyContainer';
 import { useAudioContext } from '@/providers/AudioProvider';
 import CommentTile from './CommentTile';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FeedbackSummaryPDF from './FeedbackSummaryPDF';
-import Avatar from './Avatar';
-import SimpleButton from './SimpleButton';
-
-enum FilterState {
-  GENERAL,
-  TIMESTAMPS,
-  ALL,
-}
 
 interface FeedbackContainerProps {
   timestampComments: Comment[];
@@ -35,8 +21,6 @@ export default function FeedbackContainer({
   const { project, toggleCommentInput, version } = useAudioContext();
 
   const feedback = useMemo(() => {
-    // if (filter === FilterState.GENERAL) return generalComments;
-    // if (filter === FilterState.TIMESTAMPS) return timestampComments;
     return [...timestampComments, ...generalComments].sort((a, b) => {
       if (!a.timestamp && !b.timestamp) return 0;
       if (!a.timestamp) return 1;
@@ -45,7 +29,7 @@ export default function FeedbackContainer({
     });
   }, [timestampComments, generalComments]);
 
-  const empty = feedback.length < 0;
+  const empty = !(feedback.length > 0);
 
   return (
     <div className={cn('flex flex-col grow h-full justify-between', className)}>
@@ -59,7 +43,7 @@ export default function FeedbackContainer({
             document={
               <FeedbackSummaryPDF
                 title={project?.title!}
-                comments={[...timestampComments, ...generalComments]}
+                comments={feedback}
               />
             }
             fileName={`Feedback ${project?.title}, version: ${version?.title}`}
@@ -100,27 +84,6 @@ export default function FeedbackContainer({
               );
             })}
         </div>
-
-        {/* <div className="bg-red-500 flex-grow pb-4 overflow-y-auto">
-          {empty && (
-            <EmptyContainer
-              title="No comments yet"
-              description="Be the first one to add one"
-              className="mt-4 "
-            />
-          )}
-          {!empty &&
-            [...feedback, ...feedback, ...feedback].map((comment, index) => {
-              return (
-                <div key={comment.id}>
-                  <CommentTile comment={comment} />
-                  {index !== feedback.length - 1 && (
-                    <div className="divider my-0" />
-                  )}
-                </div>
-              );
-            })}
-        </div> */}
       </div>
       <button
         onClick={() => toggleCommentInput()}

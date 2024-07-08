@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
+    const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';
 
     const { id } = params;
     if (!userId || !id) {
@@ -21,15 +21,19 @@ export async function GET(
       );
     }
 
-    const exists = await projectIncludesUser(id, userId);
-    if (!exists)
+    const projectId = Array.isArray(id) ? id[0] : id;
+    const project = await fetchProjectById(projectId);
+
+    if (
+      project.creator_id !== userId &&
+      (await projectIncludesUser(id, userId))
+    ) {
       return NextResponse.json(
         { error: 'User is not a member of this project.' },
         { status: 400 }
       );
+    }
 
-    const projectId = Array.isArray(id) ? id[0] : id;
-    const project = await fetchProjectById(projectId);
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
 
     const data: Project = {

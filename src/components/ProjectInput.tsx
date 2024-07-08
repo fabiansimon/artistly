@@ -1,4 +1,4 @@
-import { AudioFile, InputData, InputType } from '@/types';
+import { InputType, LeanProject, ProjectInputData } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Cancel01Icon,
@@ -9,36 +9,32 @@ import {
 import { LocalStorage } from '@/lib/localStorage';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
-import { uploadTrack } from '@/lib/api';
 import { inputDataEmpty } from '@/types/typeFunc';
-import { useRouter } from 'next/navigation';
 import AudioPlayer from './AudioPlayer';
+import DialogController from '@/controllers/DialogController';
+import { createProject } from '@/lib/api';
 
-export default function ProjectInput({ onClick }: { onClick: () => void }) {
+export default function ProjectInput({
+  onSuccess,
+}: {
+  onSuccess: (data: LeanProject) => void;
+}) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [inputData, setInputData] = useState<InputData>({
-    file: undefined,
+  const [inputData, setInputData] = useState<ProjectInputData>({
     title: '',
     description: '',
     emailList: new Set<string>(),
     email: '',
   });
 
-  const router = useRouter();
-
   const inputValid = useMemo(() => {
     const { title, emailList } = inputData;
-    return !(
-      !inputData?.file ||
-      title.trim().length === 0 ||
-      emailList.size === 0
-    );
+    return !(title.trim().length === 0 || emailList.size === 0);
   }, [inputData]);
 
   useEffect(() => {
     const cachedInput = LocalStorage.fetchInputData();
-    if (cachedInput)
-      setInputData((prev) => ({ ...cachedInput, file: prev.file }));
+    if (cachedInput) setInputData(cachedInput);
   }, []);
 
   useEffect(() => {
@@ -50,21 +46,28 @@ export default function ProjectInput({ onClick }: { onClick: () => void }) {
     if (!inputValid) return;
     setLoading(true);
 
-    const { title, description, emailList, file } = inputData;
+    const { title, description, emailList } = inputData;
+
+    // const form = await req.formData();
+    // const title = form.get('title') as string;
+    // const description = form.get('description') as string;
+    // const invitees = form.get('invitees') as string;
 
     const form = new FormData();
     form.append('title', title);
-    form.append('feedbackNotes', description);
-    form.append('emailList', JSON.stringify(Array.from(emailList)));
-    form.append('tracks', file!);
+    form.append('description', description);
+    form.append('invitees', JSON.stringify(Array.from(emailList)));
 
     /*
     DEBUG PURPOSES
     */
 
     try {
-      const res = await uploadTrack(form);
-      router.push(`/project/${res.project.id}`);
+      const res = await createProject(form);
+      onSuccess({ id: res.project.id, title, versions: [] });
+    } catch (error) {
+      console.log(error);
+      DialogController.closeDialog();
     } finally {
       setLoading(false);
     }
@@ -143,8 +146,6 @@ export default function ProjectInput({ onClick }: { onClick: () => void }) {
           className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
           placeholder="Add some project notes (optional)"
         ></textarea>
-
-        <AudioPlayer className="py-4" />
 
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
