@@ -1,8 +1,7 @@
 import { formatSeconds } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { PlusSignIcon } from 'hugeicons-react';
-import { useState } from 'react';
-import FeedbackInputModal from './FeedbackInputModal';
+import { useAudioContext } from '@/providers/AudioProvider';
 
 export default function CursorLine({
   time,
@@ -13,8 +12,7 @@ export default function CursorLine({
   cursorVisible: boolean;
   style: React.CSSProperties;
 }) {
-  const [timestamp, setTimestamp] = useState<number | undefined>();
-
+  const { toggleCommentInput } = useAudioContext();
   return (
     <>
       <div
@@ -39,7 +37,7 @@ export default function CursorLine({
             className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              setTimestamp(Math.round(time));
+              toggleCommentInput(Math.round(time));
             }}
           >
             <PlusSignIcon
@@ -49,11 +47,6 @@ export default function CursorLine({
           </div>
         </motion.div>
       </div>
-      <FeedbackInputModal
-        onRequestClose={() => setTimestamp(undefined)}
-        isVisible={timestamp !== undefined}
-        timestamp={timestamp}
-      />
     </>
   );
 }

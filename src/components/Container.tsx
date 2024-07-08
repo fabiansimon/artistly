@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { ArrowLeft02Icon, ReloadIcon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
+import SimpleButton from './SimpleButton';
 
 export default function Container({
   className,
@@ -11,7 +12,7 @@ export default function Container({
   className?: string;
   children: React.ReactNode;
   onRefresh?: () => void;
-  omitPadding: boolean;
+  omitPadding?: boolean;
 }) {
   return (
     <div
@@ -53,18 +54,16 @@ function RefreshButton({
   onClick: () => void;
 }) {
   return (
-    <div
-      className={cn(
-        'cursor-pointer hover:bg-neutral-800 py-2 px-3 rounded-full space-x-2 flex items-center',
-        className
-      )}
+    <SimpleButton
+      text="Refetch"
       onClick={onClick}
-    >
-      <p className="prose text-white/80 text-xs">Refetch</p>
-      <ReloadIcon
-        className="text-white/80"
-        size={16}
-      />
-    </div>
+      className={className}
+      icon={
+        <ReloadIcon
+          className="text-white/80"
+          size={16}
+        />
+      }
+    />
   );
 }

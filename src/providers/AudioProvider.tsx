@@ -1,5 +1,6 @@
 'use client';
 
+import FeedbackInputModal from '@/components/FeedbackInputModal';
 import { deleteFeedback, uploadFeeback } from '@/lib/api';
 import { fetchAudioFile, storeAudioFile } from '@/lib/audioHelpers';
 import { generateId, withinRange } from '@/lib/utils';
@@ -44,6 +45,7 @@ interface AudioContextType {
   jumpTo: (timestamp: number) => void;
   toggleLoop: (status?: boolean) => void;
   togglePlaying: (status?: boolean) => void;
+  toggleCommentInput: (timestamp?: number) => void;
   removeFeedback: (id: string) => void;
 }
 
@@ -59,6 +61,10 @@ export default function AudioProvider({
     playing: false,
   });
   const [time, setTime] = useState<number>(0);
+  const [commentInput, setCommentInput] = useState<{
+    isVisible: boolean;
+    timestamp?: number;
+  }>({ isVisible: false });
   const [project, setProject] = useState<Project | null>(null);
   const [file, setFile] = useState<AudioFile | null>(null);
   const [range, setRange] = useState<Range>({ begin: 0, end: 0 });
@@ -212,6 +218,13 @@ export default function AudioProvider({
     [outOfBoundsCheck, setSettings]
   );
 
+  const toggleCommentInput = useCallback((timestamp?: number) => {
+    setCommentInput((prev) => ({
+      isVisible: !prev.isVisible,
+      timestamp: timestamp || prev.timestamp,
+    }));
+  }, []);
+
   const highlightedComment = useMemo(() => {
     if (!file || !version) return '';
     const buffer = 4;
@@ -244,12 +257,24 @@ export default function AudioProvider({
     jumpTo,
     togglePlaying,
     toggleLoop,
+    toggleCommentInput,
     removeFeedback,
   };
 
   return (
     <>
-      <AudioContext.Provider value={value}>{children}</AudioContext.Provider>
+      <AudioContext.Provider value={value}>
+        {
+          <>
+            {children}
+            <FeedbackInputModal
+              onRequestClose={() => setCommentInput({ isVisible: false })}
+              isVisible={commentInput.isVisible}
+              timestamp={commentInput.timestamp}
+            />
+          </>
+        }
+      </AudioContext.Provider>
     </>
   );
 }
