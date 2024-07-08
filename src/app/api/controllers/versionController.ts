@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { VersionUpload } from '@/types';
 
 export async function createVersion(version: VersionUpload) {
-  const { title, fileUrl, feedbackNotes, projectId } = version;
+  const { title, fileUrl, notes, projectId } = version;
 
   const { data, error } = await supabase
     .from('versions')
@@ -10,7 +10,7 @@ export async function createVersion(version: VersionUpload) {
       {
         title,
         file_url: fileUrl,
-        notes: feedbackNotes,
+        notes,
         project_id: projectId,
       },
     ])
@@ -27,8 +27,8 @@ export async function fetchVersionsByProjectId(projectId: string) {
   const { data, error } = await supabase
     .from('versions')
     .select('id, created_at, title, file_url, notes')
-    .eq('project_id', projectId);
-
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: true });
   if (error) {
     throw new Error(`Error fetching versions: ${error.message}`);
   }

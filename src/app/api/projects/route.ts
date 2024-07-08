@@ -6,7 +6,7 @@ import {
 import { convertPaginationParam } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
-  const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
+  const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';
   const pagination = convertPaginationParam(request.nextUrl.searchParams);
 
   try {

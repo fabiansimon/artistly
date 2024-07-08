@@ -1,31 +1,27 @@
 import { storeFile } from '../controllers/fileController';
-import { createProject } from '../controllers/projectController';
-import { createVersion } from '../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
+import { createVersion } from '../controllers/versionController';
 
 export async function POST(req: NextRequest) {
   try {
     const form = await req.formData();
-    const file = form.get('tracks') as File;
+    const file = form.get('track') as File;
     const title = form.get('title') as string;
-    const feedbackNotes = form.get('feedbackNotes') as string;
-    const emailList = form.get('emailList') as string;
+    const projectId = form.get('projectId') as string;
+    const notes = form.get('notes') as string;
 
     if (!file)
       return NextResponse.json({ error: 'No file received.' }, { status: 400 });
 
     const { fileUrl } = await storeFile({ file });
-    const project = await createProject({ title });
     const version = await createVersion({
       title,
       fileUrl,
-      feedbackNotes,
-      projectId: project.id,
+      notes,
+      projectId,
     });
 
     return NextResponse.json({
-      message: 'File uploaded and version created successfully',
-      project,
       version,
     });
   } catch (error) {

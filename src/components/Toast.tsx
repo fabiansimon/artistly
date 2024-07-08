@@ -102,7 +102,7 @@ function Toast(): JSX.Element {
         mass: 1,
       }}
       className={cn(
-        'fixed p-4 right-10 rounded-md flex items-center space-x-3 z-10',
+        'fixed p-4 right-10 rounded-md flex items-center space-x-3 z-30',
         'bottom-10',
         // !isSmall ? 'bottom-10' : 'top-10 left-10',
         backgroundColor
