@@ -12,6 +12,7 @@ import {
   Download04Icon,
   InformationCircleIcon,
   Notebook02Icon,
+  PencilEdit02Icon,
   Share01Icon,
 } from 'hugeicons-react';
 import AudioEditor from '@/components/AudioEditor';
@@ -21,6 +22,7 @@ import SimpleButton from '@/components/SimpleButton';
 import { cn } from '@/lib/utils';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
+import DownloadDialog from '@/components/DownloadDialog';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion } = useAudioContext();
@@ -64,6 +66,7 @@ function ProjectPage() {
       />
     );
 
+  const author = project.creator_id === '4f0f6512-2b24-4d15-a058-8af776af0409';
   return (
     <Container
       omitPadding
@@ -72,9 +75,20 @@ function ProjectPage() {
       <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
-            <h3 className="text-md text-white font-medium">{project.title}</h3>
+            <div
+              className={cn(
+                'flex items-center space-x-2',
+                author && 'cursor-pointer'
+              )}
+            >
+              <h3 className="text-md text-white font-medium">
+                {project.title}
+              </h3>
+              {author && <PencilEdit02Icon size={14} />}
+            </div>
 
             <ProjectOptions
+              author={author}
               projectId={project.id}
               className="mt-2"
             />
@@ -132,8 +146,10 @@ function ProjectPage() {
 
 function ProjectOptions({
   projectId,
+  author,
   className,
 }: {
+  author: boolean;
   projectId: string;
   className?: string;
 }) {
@@ -158,7 +174,7 @@ function ProjectOptions({
       {
         text: 'Download',
         icon: <Download04Icon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
       },
     ],
     []
@@ -177,20 +193,22 @@ function ProjectOptions({
           />
         ))}
       </div>
-      <SimpleButton
-        icon={
-          <Add01Icon
-            size={16}
-            className="text-white"
-          />
-        }
-        onClick={handleAddVersion}
-        className="bg-primary hover:bg-primary-400"
-        textClassName="text-white font-medium"
-        iconPosition="left"
-        condensed
-        text={'new version'}
-      />
+      {author && (
+        <SimpleButton
+          icon={
+            <Add01Icon
+              size={16}
+              className="text-white"
+            />
+          }
+          onClick={handleAddVersion}
+          className="bg-primary hover:bg-primary-400"
+          textClassName="text-white font-medium"
+          iconPosition="left"
+          condensed
+          text={'new version'}
+        />
+      )}
     </div>
   );
 }

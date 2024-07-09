@@ -12,7 +12,6 @@ export async function storeAudioFile(url: string, id: string) {
     const file = await downloadAudio(url, name);
     if (!file) return;
     const audioData = await analyzeAudio(file);
-    console.log(audioData);
 
     const db = await openDatabase({
       dbName: DB_NAME,
@@ -133,4 +132,41 @@ export function dataURLToBlob(dataURL: string): Blob {
   for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
 
   return new Blob([ab], { type: mimeString });
+}
+
+export async function clientDownload(
+  name: string,
+  id: string,
+  fileUrl: string
+) {
+  try {
+    const file = await fetchFile(id, fileUrl);
+
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.setAttribute('download', name);
+
+    document.body.appendChild(a);
+    a.click();
+
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error('Error downloading the file');
+    ToastController.showErrorToast();
+  }
+}
+
+async function fetchFile(id: string, url: string) {
+  let res = await fetchAudioFile(id);
+  if (res) {
+    return res.file;
+  }
+  const newFile = await storeAudioFile(url, id);
+  if (!newFile) {
+    throw new Error('Something went wrong while fetching the audio.');
+  }
+  return newFile.file;
 }

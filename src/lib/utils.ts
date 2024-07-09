@@ -90,7 +90,6 @@ export function getReadableDate(date?: Date, short: boolean = false) {
     day: 'numeric' as 'numeric',
     hour: '2-digit' as '2-digit',
     minute: '2-digit' as '2-digit',
-    second: '2-digit' as '2-digit',
     hour12: true,
   };
   return now.toLocaleDateString('en-US', short ? shortOptions : options);
