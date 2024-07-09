@@ -1,4 +1,4 @@
-import { AudioFile, InputData } from '@/types';
+import { AudioFile, ProjectInputData } from '@/types';
 import { dataURLToBlob, fileToBase64 } from './audioHelpers';
 
 const KEYS = {
@@ -32,7 +32,7 @@ export class LocalStorage {
     };
   }
 
-  static saveInputData(input: InputData) {
+  static saveInputData(input: ProjectInputData) {
     const serialized = {
       ...input,
       emailList: Array.from(input.emailList),
@@ -40,7 +40,7 @@ export class LocalStorage {
     localStorage.setItem(KEYS.inputData, JSON.stringify(serialized));
   }
 
-  static fetchInputData(): InputData | undefined {
+  static fetchInputData(): ProjectInputData | undefined {
     const res = localStorage.getItem(KEYS.inputData);
     if (!res) return;
 
@@ -49,5 +49,9 @@ export class LocalStorage {
       ...parsed,
       emailList: new Set(parsed.emailList),
     };
+  }
+
+  static clearInputData() {
+    localStorage.removeItem(KEYS.inputData);
   }
 }

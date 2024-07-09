@@ -1,3 +1,4 @@
+import { createInvites } from '../controllers/inviteController';
 import { createProject } from '../controllers/projectController';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -8,7 +9,10 @@ export async function POST(req: NextRequest) {
     const description = form.get('description') as string;
     const invitees = form.get('invitees') as string;
 
+    const emails = await JSON.parse(invitees);
     const project = await createProject({ title, description });
+
+    await createInvites(project.id, emails);
 
     return NextResponse.json({
       project,

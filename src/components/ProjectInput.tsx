@@ -48,22 +48,14 @@ export default function ProjectInput({
 
     const { title, description, emailList } = inputData;
 
-    // const form = await req.formData();
-    // const title = form.get('title') as string;
-    // const description = form.get('description') as string;
-    // const invitees = form.get('invitees') as string;
-
     const form = new FormData();
     form.append('title', title);
     form.append('description', description);
     form.append('invitees', JSON.stringify(Array.from(emailList)));
 
-    /*
-    DEBUG PURPOSES
-    */
-
     try {
       const res = await createProject(form);
+      LocalStorage.clearInputData();
       onSuccess({ id: res.project.id, title, versions: [] });
     } catch (error) {
       console.log(error);
