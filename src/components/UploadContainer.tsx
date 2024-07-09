@@ -26,7 +26,7 @@ enum INPUT_STATE {
   versionInput,
 }
 
-export default function UploadContainer() {
+export default function UploadContainer({ projectId }: { projectId?: string }) {
   const { file, setFile } = useAudioContext();
   const {
     projects: {
@@ -55,7 +55,6 @@ export default function UploadContainer() {
         return (
           <ProjectInput
             onSuccess={(data: LeanProject) => {
-              console.log(file);
               setProject(data);
               setState(INPUT_STATE.versionInput);
             }}
@@ -74,15 +73,20 @@ export default function UploadContainer() {
     }
   }, [state, file, project, authored]);
 
+  const updateProject = (id) => {
+    const _project = authored.find((p) => p.id === id);
+    if (!_project) return;
+    setProject({ id, title: _project.title, versions: _project.versions });
+    setState(INPUT_STATE.versionInput);
+  };
+
   const handleSelection = (id?: string) => {
     if (!id) {
       setState(INPUT_STATE.projectInput);
       return;
     }
-    const _project = authored.find((p) => p.id === id);
-    if (!_project) return;
-    setProject({ id, title: _project.title, versions: _project.versions });
-    setState(INPUT_STATE.versionInput);
+
+    updateProject(id);
   };
 
   const handleDragging = useCallback(
@@ -105,6 +109,13 @@ export default function UploadContainer() {
 
     const file = await analyzeAudio(rawFile);
     setFile(file);
+
+    // If dialog is called from project page with default projectId
+    if (projectId) {
+      updateProject(projectId);
+      return;
+    }
+
     setState(INPUT_STATE.projectSelection);
   };
 

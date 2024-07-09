@@ -1,6 +1,5 @@
 'use client';
 
-import AnimatedText from '@/components/AnimatedText';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
 import { route, ROUTES } from '@/constants/routes';
@@ -37,6 +36,9 @@ export default function ProjectsListPage() {
         </article>
       </div>
       <div className="">
+        {collabs.length == 0 && (
+          <p className="text-sm text-white/50">No projects found.</p>
+        )}
         {collabs.map((collab) => (
           <ProjectTile
             onClick={() => router.push(route(ROUTES.project, collab.id))}
@@ -52,6 +54,9 @@ export default function ProjectsListPage() {
         </article>
       </div>
       <div className="">
+        {authored.length == 0 && (
+          <p className="text-sm text-white/50">No projects found.</p>
+        )}
         {authored.map((collab) => (
           <ProjectTile
             onClick={() => router.push(route(ROUTES.project, collab.id))}

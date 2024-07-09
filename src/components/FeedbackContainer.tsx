@@ -68,7 +68,7 @@ export default function FeedbackContainer({
             <EmptyContainer
               title="No comments yet"
               description="Be the first one to add one"
-              className="mt-[30%] "
+              className="mt-[10%] "
             />
           )}
 

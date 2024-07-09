@@ -105,7 +105,6 @@ export default function WaveContainer({
           </div>
           <div
             style={{ clipPath }}
-            // className="absolute top-0 flex w-full left-0 items-center space-x-1"
             className={cn('absolute', waveClass)}
           >
             {file?.intervalPeaks.map((peak, index) => (
