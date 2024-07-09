@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  fetchAuthorProjects,
-  fetchCollabProjects,
-} from '../controllers/projectController';
+import { fetchAuthorProjects } from '../controllers/projectController';
 import { convertPaginationParam } from '@/lib/utils';
+import { fetchCollabProjects } from '../controllers/collabController';
 
 export async function GET(request: NextRequest) {
-  const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
+  const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';
   const pagination = convertPaginationParam(request.nextUrl.searchParams);
 
   try {

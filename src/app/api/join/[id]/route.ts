@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   joinCollabProject,
   projectIncludesUser,
-} from '../../controllers/projectController';
+} from '../../controllers/collabController';
 
 export async function POST(
   _: NextRequest,

@@ -4,29 +4,28 @@ import { useEffect, useMemo } from 'react';
 import { fetchProject } from '@/lib/api';
 import { useAudioContext } from '@/providers/AudioProvider';
 import { useParams } from 'next/navigation';
-import VersionControl from '@/components/VersionControl';
-import AudioControls from '@/components/AudioControls';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
-import { Notebook02Icon } from 'hugeicons-react';
-import AudioWave from '@/components/AudioWave';
-import AudioInfo from '@/components/AudioInfo';
-import CommentsSection from '@/components/CommentsSection';
-import { calculateRange } from '@/lib/utils';
+import {
+  Add01Icon,
+  AddTeamIcon,
+  Download04Icon,
+  InformationCircleIcon,
+  Notebook02Icon,
+  PencilEdit02Icon,
+  Share01Icon,
+} from 'hugeicons-react';
 import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
+import { MenuOption } from '@/types';
+import SimpleButton from '@/components/SimpleButton';
+import { cn } from '@/lib/utils';
+import DialogController from '@/controllers/DialogController';
+import UploadContainer from '@/components/UploadContainer';
+import DownloadDialog from '@/components/DownloadDialog';
 
 function ProjectPage() {
-  const {
-    version,
-    file,
-    project,
-    jumpTo,
-    setSettings,
-    setRange,
-    setProject,
-    setVersion,
-  } = useAudioContext();
+  const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
 
@@ -67,41 +66,159 @@ function ProjectPage() {
       />
     );
 
+  const author = project.creator_id === '4f0f6512-2b24-4d15-a058-8af776af0409';
   return (
-    <Container omitPadding>
-      <div className="flex flex-col space-y-4 h-full">
+    <Container
+      omitPadding
+      className="max-w-screen-lg mx-auto"
+    >
+      <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
-            <h3 className="text-md text-white font-medium">{project.title}</h3>
-            <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Notebook02Icon
-                    size={13}
-                    className="text-white/60"
-                  />
-                  <p className="text-[11px] text-white/60 text-white">
-                    {'Version notes'}
+            <div
+              className={cn(
+                'flex items-center space-x-2',
+                author && 'cursor-pointer'
+              )}
+            >
+              <h3 className="text-md text-white font-medium">
+                {project.title}
+              </h3>
+              {author && <PencilEdit02Icon size={14} />}
+            </div>
+
+            <ProjectOptions
+              author={author}
+              projectId={project.id}
+              className="mt-2"
+            />
+
+            <div className="flex w-full mt-2 space-x-2">
+              <div className="border border-white/10 rounded-md p-2 space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Notebook02Icon
+                      size={13}
+                      className="text-white/60"
+                    />
+                    <p className="text-[11px] text-white/60 text-white">
+                      {'Version notes'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-white/50 text-white mr-10">
+                    {version.notes || 'Nothing added'}
                   </p>
                 </div>
-                <p className="text-xs text-white/50 text-white mr-10">
-                  {version.notes}
-                </p>
+              </div>
+              <div className="border border-white/10 rounded-md p-2 space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <InformationCircleIcon
+                      size={13}
+                      className="text-white/60"
+                    />
+                    <p className="text-[11px] text-white/60 text-white">
+                      {'Project Information'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-white/50 text-white mr-10">
+                    {project.description || 'Nothing added'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="divider my-0" />
         <FeedbackContainer
-          className="mx-4 flex-grow h-full"
+          className="mx-4"
           generalComments={generalComments}
           timestampComments={timestampComments}
         />
+
         <div className="flex flex-col items-center w-full space-y-2">
-          <VersionControl />
           <AudioEditor comments={timestampComments} />
         </div>
       </div>
     </Container>
+  );
+}
+
+function ProjectOptions({
+  projectId,
+  author,
+  className,
+}: {
+  author: boolean;
+  projectId: string;
+  className?: string;
+}) {
+  const handleAddVersion = () => {
+    DialogController.showCustomDialog(
+      <UploadContainer projectId={projectId} />
+    );
+  };
+
+  const options: MenuOption[] = useMemo(
+    () => [
+      {
+        text: 'Edit',
+        icon: <PencilEdit02Icon size={16} />,
+        onClick: () => console.log('hello'),
+        ignore: !author,
+      },
+      {
+        text: 'Share',
+        icon: <Share01Icon size={16} />,
+        onClick: () => console.log('hello'),
+      },
+      {
+        text: 'Invite',
+        icon: <AddTeamIcon size={16} />,
+        onClick: () => console.log('hello'),
+      },
+      {
+        text: 'Download',
+        icon: <Download04Icon size={16} />,
+        onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
+      },
+    ],
+    []
+  );
+  return (
+    <div className={cn('flex justify-between', className)}>
+      <div className="flex space-x-2">
+        {options.map(({ text, icon, onClick, ignore }, index) => {
+          if (ignore) return;
+          return (
+            <SimpleButton
+              iconPosition="left"
+              condensed
+              key={index}
+              icon={icon}
+              text={text}
+              onClick={onClick}
+            />
+          );
+        })}
+      </div>
+      {author && (
+        <SimpleButton
+          icon={
+            <Add01Icon
+              size={16}
+              className="text-white"
+            />
+          }
+          onClick={handleAddVersion}
+          className="bg-primary hover:bg-primary-400"
+          textClassName="text-white font-medium"
+          iconPosition="left"
+          condensed
+          text={'new version'}
+        />
+      )}
+    </div>
   );
 }
 

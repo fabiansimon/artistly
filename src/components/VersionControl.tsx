@@ -15,16 +15,16 @@ export default function VersionControl({ className }: { className?: string }) {
   };
 
   return (
-    <div className={cn('join', className)}>
+    <div className={cn('join bg-transparent', className)}>
       {version.index !== 0 && (
         <button
           onClick={() => handleClick(-1)}
-          className="join-item btn bg-neutral-950"
+          className="join-item btn bg-black/20"
         >
           «
         </button>
       )}
-      <button className="join-item text-xs btn bg-neutral-950">
+      <button className="join-item text-xs btn bg-black/20">
         <div className="flex flex-col space-y-1">
           <p className="text-xs text-white/70 font-medium">{version.title}</p>
           <p className="text-[10px] text-white/40 font">Version</p>
@@ -33,7 +33,7 @@ export default function VersionControl({ className }: { className?: string }) {
       {version.index !== versions.length - 1 && (
         <button
           onClick={() => handleClick(1)}
-          className="join-item btn bg-neutral-950"
+          className="join-item btn bg-black/20"
         >
           »
         </button>

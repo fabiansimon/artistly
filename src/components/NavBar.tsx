@@ -12,7 +12,7 @@ import {
   UserIcon,
 } from 'hugeicons-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from './UploadContainer';
 
@@ -20,9 +20,6 @@ function NavBar({ className }: { className?: string }): JSX.Element {
   const { isSmall } = useWindowSize();
   const path = usePathname();
 
-  useEffect(() => {
-    // DialogController.showCustomDialog(<UploadContainer />);
-  }, []);
   const options: Navigation[] = useMemo(
     () => [
       {
@@ -129,7 +126,7 @@ function MenuItem({
           : 'opacity-25 hover:opacity-100 transition-opacity duration-100'
       )}
     >
-      {icon}
+      <div className="md:min-w-6">{icon}</div>
       {!isSmall && (
         <article className="prose">
           <p className="text text-white text-sm">{title}</p>

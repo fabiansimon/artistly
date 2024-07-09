@@ -68,7 +68,7 @@ function CommentTile({
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral flex pointer-events-auto rounded-md overflow-hidden cursor-pointer mr-auto shadow-xl shadow-black border border-neutral-900/80"
+          className="bg-neutral flex pointer-events-auto rounded-md overflow-hidden cursor-pointer mr-auto shadow-md shadow-black/50 border border-neutral-900/80"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}

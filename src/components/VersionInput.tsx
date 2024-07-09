@@ -1,113 +1,60 @@
-import { AudioFile, InputData, InputType } from '@/types';
-import { useEffect, useMemo, useState } from 'react';
+import { AudioFile, InputType, LeanProject, VersionInputData } from '@/types';
+import { useMemo, useState } from 'react';
 import { PencilEdit02Icon } from 'hugeicons-react';
-import { LocalStorage } from '@/lib/localStorage';
-import { REGEX } from '@/constants/regex';
-import ToastController from '@/controllers/ToastController';
-import { uploadTrack } from '@/lib/api';
-import { inputDataEmpty } from '@/types/typeFunc';
 import { useRouter } from 'next/navigation';
 import { PlayButton } from './PlayButton';
+import { uploadVersion } from '@/lib/api';
+import DialogController from '@/controllers/DialogController';
+import { route, ROUTES } from '@/constants/routes';
 
-export default function VersionInput() {
+export default function VersionInput({
+  project,
+  audioFile,
+}: {
+  project: LeanProject;
+  audioFile: AudioFile;
+}) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [inputData, setInputData] = useState<InputData>({
-    file: undefined,
-    title: '',
-    description: '',
-    emailList: new Set<string>(),
-    email: '',
+  const [inputData, setInputData] = useState<VersionInputData>({
+    title: `v${project.versions.length + 1}`,
+    notes: '',
+    file: audioFile,
   });
 
   const router = useRouter();
 
   const inputValid = useMemo(() => {
-    const { title, emailList } = inputData;
-    return !(
-      !inputData?.file ||
-      title.trim().length === 0 ||
-      emailList.size === 0
-    );
-  }, [inputData]);
-
-  // useEffect(() => {
-  //   if (!audioFile) return;
-  //   const { name: title, file } = audioFile;
-  //   setInputData((prev) => ({ ...prev, file, title }));
-  // }, [audioFile]);
-
-  useEffect(() => {
-    const cachedInput = LocalStorage.fetchInputData();
-    if (cachedInput)
-      setInputData((prev) => ({ ...cachedInput, file: prev.file }));
-  }, []);
-
-  useEffect(() => {
-    if (inputDataEmpty(inputData)) return;
-    LocalStorage.saveInputData(inputData);
+    const { title } = inputData;
+    return !(title.trim().length === 0);
   }, [inputData]);
 
   const handleSubmit = async () => {
     if (!inputValid) return;
     setLoading(true);
 
-    const { title, description, emailList, file } = inputData;
-
+    const { title, notes, file } = inputData;
     const form = new FormData();
     form.append('title', title);
-    form.append('feedbackNotes', description);
-    form.append('emailList', JSON.stringify(Array.from(emailList)));
-    form.append('tracks', file!);
-
-    /*
-      DEBUG PURPOSES
-      */
+    form.append('notes', notes);
+    form.append('track', file.file);
+    form.append('projectId', project.id);
 
     try {
-      const res = await uploadTrack(form);
-      router.push(`/project/${res.project.id}`);
+      await uploadVersion(form);
+      router.push(route(ROUTES.project, project.id));
     } finally {
+      DialogController.closeDialog();
       setLoading(false);
     }
-  };
-
-  const handleError = (title: string, description?: string) => {
-    ToastController.showErrorToast(title, description);
-  };
-
-  const removeEmail = (email: string) => {
-    setInputData((prev) => {
-      const list = prev.emailList;
-      list.delete(email);
-      const newInput = {
-        ...prev,
-        emailList: list,
-      };
-
-      LocalStorage.saveInputData(newInput);
-      return newInput;
-    });
   };
 
   const handleInput = (type: InputType, value?: string) => {
     setInputData((prev) => {
       switch (type) {
-        case InputType.ADD_EMAIL:
-          const input = prev.email.trim();
-          if (!REGEX.email.test(input)) {
-            handleError('Not a valid email', 'Try again with a valid email.');
-            return prev;
-          }
-
-          const newEmailList = new Set(prev.emailList);
-          newEmailList.add(input);
-          return { ...prev, email: '', emailList: newEmailList };
         case InputType.TITLE:
           return { ...prev, title: value ?? '' };
         case InputType.DESCRIPTION:
-          return { ...prev, description: value ?? '' };
-        case InputType.EMAIL:
-          return { ...prev, email: value ?? '' };
+          return { ...prev, notes: value ?? '' };
         default:
           return prev;
       }
@@ -118,6 +65,7 @@ export default function VersionInput() {
     <div className="flex flex-col w-full items-center">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Upload Version</h3>
+        <p className="text-white/70 text-sm text-center -mt-2">{`to project "${project.title}"`}</p>
       </article>
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full mb-4">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
@@ -137,7 +85,7 @@ export default function VersionInput() {
         </label>
 
         <textarea
-          value={inputData.description}
+          value={inputData.notes}
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
@@ -150,11 +98,16 @@ export default function VersionInput() {
 
       <button
         disabled={!inputValid}
+        onClick={handleSubmit}
         className="btn btn-active btn-primary text-white mt-4 w-full"
       >
-        <article className="prose text-white">
-          <p>{'Create'}</p>
-        </article>
+        {loading ? (
+          <span className="loading loading-spinner"></span>
+        ) : (
+          <article className="prose text-white">
+            <p>{'Upload'}</p>
+          </article>
+        )}
       </button>
     </div>
   );

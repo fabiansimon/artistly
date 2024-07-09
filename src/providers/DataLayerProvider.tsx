@@ -16,7 +16,7 @@ enum MODE {
 }
 
 interface ContextData<T> {
-  data: T | null;
+  data: T;
   refetch: (args?: any) => Promise<void>;
   isLoading: boolean;
 }
