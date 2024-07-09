@@ -4,6 +4,7 @@ export default function SimpleButton({
   icon,
   text,
   className,
+  textClassName,
   condensed,
   iconPosition = 'right',
   onClick,
@@ -13,6 +14,7 @@ export default function SimpleButton({
   iconPosition?: 'left' | 'right';
   condensed?: boolean;
   className?: string;
+  textClassName?: string;
   onClick?: () => void;
 }) {
   return (
@@ -25,7 +27,7 @@ export default function SimpleButton({
       onClick={onClick}
     >
       {iconPosition === 'left' && icon}
-      <p className="prose text-white/60 text-xs">{text}</p>
+      <p className={cn('prose text-white/60 text-xs', textClassName)}>{text}</p>
       {iconPosition === 'right' && icon}
     </button>
   );

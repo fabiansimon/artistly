@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
 import {
+  Add01Icon,
   AddTeamIcon,
   Download04Icon,
   InformationCircleIcon,
@@ -18,6 +19,8 @@ import FeedbackContainer from '@/components/FeedbackContainer';
 import { MenuOption } from '@/types';
 import SimpleButton from '@/components/SimpleButton';
 import { cn } from '@/lib/utils';
+import DialogController from '@/controllers/DialogController';
+import UploadContainer from '@/components/UploadContainer';
 
 function ProjectPage() {
   const { version, file, project, setProject, setVersion } = useAudioContext();
@@ -62,43 +65,52 @@ function ProjectPage() {
     );
 
   return (
-    <Container omitPadding>
+    <Container
+      omitPadding
+      className="max-w-screen-lg mx-auto"
+    >
       <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
             <h3 className="text-md text-white font-medium">{project.title}</h3>
 
-            <ProjectOptions className="mt-2" />
-            {/* <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <InformationCircleIcon
-                    size={13}
-                    className="text-white/60"
-                  />
-                  <p className="text-[11px] text-white/60 text-white">
-                    {'Project Information'}
+            <ProjectOptions
+              projectId={project.id}
+              className="mt-2"
+            />
+
+            <div className="flex w-full mt-2 space-x-2">
+              <div className="border border-white/10 rounded-md p-2 space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Notebook02Icon
+                      size={13}
+                      className="text-white/60"
+                    />
+                    <p className="text-[11px] text-white/60 text-white">
+                      {'Version notes'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-white/50 text-white mr-10">
+                    {version.notes || 'Nothing added'}
                   </p>
                 </div>
-                <p className="text-xs text-white/50 text-white mr-10">
-                  {project.description || 'Nothing added'}
-                </p>
               </div>
-            </div> */}
-            <div className="border border-white/10 rounded-md p-2 space-y-2 mt-2 max-w-[70%]">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Notebook02Icon
-                    size={13}
-                    className="text-white/60"
-                  />
-                  <p className="text-[11px] text-white/60 text-white">
-                    {'Version notes'}
+              <div className="border border-white/10 rounded-md p-2 space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <InformationCircleIcon
+                      size={13}
+                      className="text-white/60"
+                    />
+                    <p className="text-[11px] text-white/60 text-white">
+                      {'Project Information'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-white/50 text-white mr-10">
+                    {project.description || 'Nothing added'}
                   </p>
                 </div>
-                <p className="text-xs text-white/50 text-white mr-10">
-                  {version.notes || 'Nothing added'}
-                </p>
               </div>
             </div>
           </div>
@@ -118,7 +130,19 @@ function ProjectPage() {
   );
 }
 
-function ProjectOptions({ className }: { className?: string }) {
+function ProjectOptions({
+  projectId,
+  className,
+}: {
+  projectId: string;
+  className?: string;
+}) {
+  const handleAddVersion = () => {
+    DialogController.showCustomDialog(
+      <UploadContainer projectId={projectId} />
+    );
+  };
+
   const options: MenuOption[] = useMemo(
     () => [
       {
@@ -140,17 +164,33 @@ function ProjectOptions({ className }: { className?: string }) {
     []
   );
   return (
-    <div className={cn('flex space-x-2', className)}>
-      {options.map(({ text, icon, onClick }, index) => (
-        <SimpleButton
-          iconPosition="left"
-          condensed
-          key={index}
-          icon={icon}
-          text={text}
-          onClick={onClick}
-        />
-      ))}
+    <div className={cn('flex justify-between', className)}>
+      <div className="flex space-x-2">
+        {options.map(({ text, icon, onClick }, index) => (
+          <SimpleButton
+            iconPosition="left"
+            condensed
+            key={index}
+            icon={icon}
+            text={text}
+            onClick={onClick}
+          />
+        ))}
+      </div>
+      <SimpleButton
+        icon={
+          <Add01Icon
+            size={16}
+            className="text-white"
+          />
+        }
+        onClick={handleAddVersion}
+        className="bg-primary hover:bg-primary-400"
+        textClassName="text-white font-medium"
+        iconPosition="left"
+        condensed
+        text={'new version'}
+      />
     </div>
   );
 }
