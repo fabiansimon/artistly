@@ -1,10 +1,8 @@
 import { Project } from '@/types';
-import {
-  fetchProjectById,
-  projectIncludesUser,
-} from '../../controllers/projectController';
+import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
+import { projectIncludesUser } from '../../controllers/collabController';
 
 export async function GET(
   _: NextRequest,

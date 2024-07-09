@@ -162,6 +162,12 @@ function ProjectOptions({
   const options: MenuOption[] = useMemo(
     () => [
       {
+        text: 'Edit',
+        icon: <PencilEdit02Icon size={16} />,
+        onClick: () => console.log('hello'),
+        ignore: !author,
+      },
+      {
         text: 'Share',
         icon: <Share01Icon size={16} />,
         onClick: () => console.log('hello'),
@@ -182,16 +188,19 @@ function ProjectOptions({
   return (
     <div className={cn('flex justify-between', className)}>
       <div className="flex space-x-2">
-        {options.map(({ text, icon, onClick }, index) => (
-          <SimpleButton
-            iconPosition="left"
-            condensed
-            key={index}
-            icon={icon}
-            text={text}
-            onClick={onClick}
-          />
-        ))}
+        {options.map(({ text, icon, onClick, ignore }, index) => {
+          if (ignore) return;
+          return (
+            <SimpleButton
+              iconPosition="left"
+              condensed
+              key={index}
+              icon={icon}
+              text={text}
+              onClick={onClick}
+            />
+          );
+        })}
       </div>
       {author && (
         <SimpleButton

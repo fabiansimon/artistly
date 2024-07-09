@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  fetchAuthorProjects,
-  fetchCollabProjects,
-} from '../controllers/projectController';
+import { fetchAuthorProjects } from '../controllers/projectController';
 import { convertPaginationParam } from '@/lib/utils';
+import { fetchCollabProjects } from '../controllers/collabController';
 
 export async function GET(request: NextRequest) {
   const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';

@@ -39,7 +39,7 @@ export default function DownloadDialog() {
         <h3 className="text-white text-sm text-center">Download Audio</h3>
         <p className="text-white/70 text-sm text-center -mt-2">{`From project "${title}"`}</p>
       </article>
-      <div className="space-y-2 w-full">
+      <div className="space-y-2 w-full max-h-64 overflow-y-auto">
         {versions.map((version) => {
           const { id, title, created_at } = version;
           return (

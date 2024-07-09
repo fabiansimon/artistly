@@ -121,6 +121,7 @@ export interface MenuOption {
   text: string;
   icon: React.ReactNode;
   confirm?: boolean;
+  ignore?: boolean;
   onClick: (args?: any) => any | void;
 }
 

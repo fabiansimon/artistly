@@ -134,10 +134,8 @@ export async function getUserProjects({
 }
 
 export async function joinCollabProject({ id }: { id: string }) {
-  console.log(`/api/join/${id}`);
   try {
     const res = await _axios.post(`/api/join/${id}`);
-    console.log(res);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'getUserProjects' });
