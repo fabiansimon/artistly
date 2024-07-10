@@ -3,17 +3,22 @@ import {
   joinCollabProject,
   projectIncludesUser,
 } from '../../controllers/collabController';
+import { getUserId } from '../../controllers/authController';
 
 export async function POST(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id: projectId } = params;
-    const userId = 'd52d5b96-142c-4837-a462-1f8b9e2e9d55';
-    if (!projectId || !userId)
+    if (!projectId)
       return NextResponse.json(
-        { error: 'Project ID and User ID are required.' },
+        { error: 'Project ID is required.' },
         { status: 400 }
       );
 

@@ -263,20 +263,16 @@ export default function AudioProvider({
   };
 
   return (
-    <>
-      <AudioContext.Provider value={value}>
-        {
-          <>
-            {children}
-            <FeedbackInputModal
-              onRequestClose={() => setCommentInput({ isVisible: false })}
-              isVisible={commentInput.isVisible}
-              timestamp={commentInput.timestamp}
-            />
-          </>
-        }
-      </AudioContext.Provider>
-    </>
+    <AudioContext.Provider value={value}>
+      <>
+        {children}
+        <FeedbackInputModal
+          onRequestClose={() => setCommentInput({ isVisible: false })}
+          isVisible={commentInput.isVisible}
+          timestamp={commentInput.timestamp}
+        />
+      </>
+    </AudioContext.Provider>
   );
 }
 

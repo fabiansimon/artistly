@@ -55,6 +55,7 @@ export interface VersionUpload {
   fileUrl: string;
   notes: string;
   projectId: string;
+  creatorId: string;
 }
 
 export interface Version {
@@ -67,12 +68,15 @@ export interface Version {
 }
 
 export interface User {
-  id: string;
+  id?: string;
   email: string;
   created_at: Date;
   first_name?: string;
   last_name?: string;
+  image_url?: string;
 }
+
+export type SignUpUser = Omit<User, 'created_at' | 'id'>;
 
 export interface Comment {
   id: string;

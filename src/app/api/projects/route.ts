@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchAuthorProjects } from '../controllers/projectController';
 import { convertPaginationParam } from '@/lib/utils';
 import { fetchCollabProjects } from '../controllers/collabController';
+import { getUserId } from '../controllers/authController';
 
-export async function GET(request: NextRequest) {
-  const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';
-  const pagination = convertPaginationParam(request.nextUrl.searchParams);
-
+export async function GET(req: NextRequest) {
   try {
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const pagination = convertPaginationParam(req.nextUrl.searchParams);
     const collabProjects = await fetchCollabProjects(userId, pagination);
     const authorProjects = await fetchAuthorProjects(userId, pagination);
 

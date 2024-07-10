@@ -3,16 +3,20 @@ import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
 import { projectIncludesUser } from '../../controllers/collabController';
+import { getUserId } from '../../controllers/authController';
 
 export async function GET(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = '4f0f6512-2b24-4d15-a058-8af776af0409';
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { id } = params;
-    if (!userId || !id) {
+    if (!id) {
       return NextResponse.json(
         { error: 'Bad Request: Missing project ID' },
         { status: 400 }
