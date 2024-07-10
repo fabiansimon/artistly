@@ -23,8 +23,11 @@ import { cn } from '@/lib/utils';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
+import { useSession } from 'next-auth/react';
+import { useUserContext } from '@/providers/UserProvider';
 
 function ProjectPage() {
+  const { userId } = useUserContext();
   const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
@@ -66,7 +69,7 @@ function ProjectPage() {
       />
     );
 
-  const author = project.creator_id === '4f0f6512-2b24-4d15-a058-8af776af0409';
+  const author = project.creator_id === userId;
   return (
     <Container
       omitPadding

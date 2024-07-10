@@ -1,16 +1,22 @@
+import { getUserId } from '../controllers/authController';
 import { createInvites } from '../controllers/inviteController';
 import { createProject } from '../controllers/projectController';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const form = await req.formData();
     const title = form.get('title') as string;
     const description = form.get('description') as string;
     const invitees = form.get('invitees') as string;
 
     const emails = await JSON.parse(invitees);
-    const project = await createProject({ title, description });
+    const project = await createProject({ title, description, userId });
 
     await createInvites(project.id, emails);
 
