@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { VersionUpload } from '@/types';
 
 export async function createVersion(version: VersionUpload) {
-  const { title, fileUrl, notes, projectId } = version;
+  const { title, fileUrl, notes, projectId, creatorId } = version;
 
   const { data, error } = await supabase
     .from('versions')
@@ -12,6 +12,7 @@ export async function createVersion(version: VersionUpload) {
         file_url: fileUrl,
         notes,
         project_id: projectId,
+        creator_id: creatorId,
       },
     ])
     .single();

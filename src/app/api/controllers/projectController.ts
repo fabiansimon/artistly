@@ -8,15 +8,15 @@ const TABLE = 'projects';
 export async function createProject({
   title,
   description,
+  userId,
 }: {
   title: string;
   description: string;
+  userId: string;
 }) {
-  const creatorId = uuidv4(); // for now
-
   const { data, error } = await supabase
     .from(TABLE)
-    .insert([{ title, description, creator_id: creatorId }])
+    .insert([{ title, description, creator_id: userId }])
     .select()
     .single();
 

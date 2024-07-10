@@ -4,6 +4,7 @@ export const ROUTES = {
   home: '',
   join: 'join',
   share: 'share',
+  auth: 'auth',
 };
 
 export function route(name: string, ...params: string[]) {

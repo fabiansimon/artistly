@@ -1,9 +1,15 @@
 import { storeFile } from '../controllers/fileController';
 import { NextRequest, NextResponse } from 'next/server';
 import { createVersion } from '../controllers/versionController';
+import { getUserId } from '../controllers/authController';
 
 export async function POST(req: NextRequest) {
   try {
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const form = await req.formData();
     const file = form.get('track') as File;
     const title = form.get('title') as string;
@@ -19,6 +25,7 @@ export async function POST(req: NextRequest) {
       fileUrl,
       notes,
       projectId,
+      creatorId: userId,
     });
 
     return NextResponse.json({
