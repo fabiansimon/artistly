@@ -25,9 +25,12 @@ import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
 import { useSession } from 'next-auth/react';
 import { useUserContext } from '@/providers/UserProvider';
+import InviteDialog from '@/components/InviteDialog';
 
 function ProjectPage() {
-  const { userId } = useUserContext();
+  const {
+    user: { id: userId },
+  } = useUserContext();
   const { version, file, project, setProject, setVersion } = useAudioContext();
 
   const { id } = useParams();
@@ -178,7 +181,7 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => DialogController.showCustomDialog(<InviteDialog />),
       },
       {
         text: 'Download',
@@ -186,8 +189,9 @@ function ProjectOptions({
         onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
       },
     ],
-    []
+    [author]
   );
+
   return (
     <div className={cn('flex justify-between', className)}>
       <div className="flex space-x-2">
