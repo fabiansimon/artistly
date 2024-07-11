@@ -2,7 +2,7 @@
 
 import { route, ROUTES } from '@/constants/routes';
 import useWindowSize from '@/hooks/useWindowSize';
-import { cn } from '@/lib/utils';
+import { cn, concatName } from '@/lib/utils';
 import { Navigation, NavOption } from '@/types';
 import {
   AddCircleIcon,
@@ -15,10 +15,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from './UploadContainer';
+import Avatar from './Avatar';
+import { useUserContext } from '@/providers/UserProvider';
 
 function NavBar({ className }: { className?: string }): JSX.Element {
+  const { user } = useUserContext();
   const { isSmall } = useWindowSize();
   const path = usePathname();
+  const router = useRouter();
 
   const options: Navigation[] = useMemo(
     () => [
@@ -57,16 +61,16 @@ function NavBar({ className }: { className?: string }): JSX.Element {
             onClick: () => console.log('hello'),
           },
           {
-            title: 'Projects',
+            title: 'Profile',
             icon: <UserIcon size={16} />,
-            onClick: () => console.log('hello'),
+            route: route(ROUTES.profile),
           },
         ],
       },
     ],
     []
   );
-
+  const { first_name, last_name, image_url, email } = user;
   return (
     <nav
       className={cn(
@@ -74,6 +78,23 @@ function NavBar({ className }: { className?: string }): JSX.Element {
         className
       )}
     >
+      <div
+        onClick={() => router.push(ROUTES.profile)}
+        className="border rounded-2xl border-white/10 cursor-pointer flex space-x-2 p-2 items-center mt-4 hover:bg-neutral-950 mx-2"
+      >
+        <Avatar
+          size={32}
+          src={image_url}
+        />
+        {!isSmall && (
+          <article className="prose">
+            <p className="text-sm font-medium text-white">
+              {concatName(first_name, last_name)}
+            </p>
+            <p className="text-xs -mt-4 text-white/50">{email}</p>
+          </article>
+        )}
+      </div>
       {options.map((option, index) => {
         const { options, title } = option;
         return (

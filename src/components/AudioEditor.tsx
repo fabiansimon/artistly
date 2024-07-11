@@ -17,12 +17,12 @@ export default function AudioEditor({
   return (
     <div
       className={cn(
-        'flex flex-col w-full items-center justify-center space-y-3 px-4 py-2 bg-black/20 border-t border-neutral-800/70 relative',
+        'flex flex-col w-full items-center justify-center space-y-3 px-4 pb-2 bg-black/20 border-t border-neutral-800/70 relative',
         className
       )}
     >
       <VersionControl className="absolute left-2 -top-14" />
-      <AudioInfo />
+      <AudioInfo className="-pt-2" />
       <WaveContainer amplifyBy={200} />
       <RangeIndicator className="w-full" />
       <CommentsSection comments={comments} />

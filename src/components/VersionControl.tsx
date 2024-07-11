@@ -30,7 +30,7 @@ export default function VersionControl({ className }: { className?: string }) {
           <p className="text-[10px] text-white/40 font">Version</p>
         </div>
       </button>
-      {version.index !== versions.length - 1 && (
+      {version.index !== versions?.length - 1 && (
         <button
           onClick={() => handleClick(1)}
           className="join-item btn bg-black/20"

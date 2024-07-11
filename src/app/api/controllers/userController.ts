@@ -6,8 +6,7 @@ import { authOptions } from '../auth/[...nextauth]/route';
 
 const TABLE = 'users';
 
-export async function fetchUser(email: string) {
-  console.log('fetching user...', email);
+export async function fetchUserByEmail(email: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('*')
@@ -15,7 +14,21 @@ export async function fetchUser(email: string) {
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    throw new Error(`Error fetching user: ${error.message}`);
+    throw new Error(`Error fetching user by email: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function fetchUserById(id: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Error finding user by id: ${error.message}`);
   }
 
   return data;
@@ -41,12 +54,14 @@ export async function createUser({
   return data;
 }
 
-export async function getUserId(request: NextRequest) {
+export async function getUserData(request: NextRequest) {
   const session = await getServerSession({ req: request, ...authOptions });
-
-  if (!session || !session.user?.id) {
-    return false;
+  if (!session || !session.user) {
+    return;
   }
 
-  return session.user.id;
+  return {
+    userId: session.user.id,
+    email: session.user.email,
+  };
 }

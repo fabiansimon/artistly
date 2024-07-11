@@ -1,21 +1,15 @@
 'use client';
 
-import AuthContainer from '@/components/AuthContainer';
 import Container from '@/components/Container';
 import LoadingView from '@/components/LoadingView';
 import { route, ROUTES } from '@/constants/routes';
-import DialogController from '@/controllers/DialogController';
 import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Project } from '@/types';
 import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function ProjectsListPage() {
-  const { data: session } = useSession();
-  console.log(session);
   const {
     projects: { data, refetch, isLoading },
   } = useDataLayerContext();
