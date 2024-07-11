@@ -125,4 +125,7 @@ export function pluralize(amount: number, post: string) {
   return `${amount || 'no'} ${post}${amount > 1 || amount === 0 ? 's' : ''}`;
 }
 
+export function concatName(firstName: string, lastName?: string) {
+  return `${firstName} ${lastName || ''}`;
+}
 export const _ = undefined;
