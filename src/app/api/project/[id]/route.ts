@@ -2,15 +2,18 @@ import { Project } from '@/types';
 import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
-import { projectIncludesUser } from '../../controllers/collabController';
-import { getUserId } from '../../controllers/authController';
+import {
+  fetchCollaboratorsByProject,
+  projectIncludesUser,
+} from '../../controllers/collabController';
+import { fetchUsersByIds, getUserData } from '../../controllers/userController';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = await getUserId(req);
+    const { userId } = await getUserData(req);
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,7 +31,7 @@ export async function GET(
 
     if (
       project.creator_id !== userId &&
-      (await projectIncludesUser(id, userId))
+      !(await projectIncludesUser(id, userId))
     ) {
       return NextResponse.json(
         { error: 'User is not a member of this project.' },
@@ -37,11 +40,20 @@ export async function GET(
     }
 
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
+    const collaboratorsIds = await fetchCollaboratorsByProject(project.id);
+    const users = await fetchUsersByIds([
+      project.creator_id,
+      ...collaboratorsIds,
+    ]);
+
+    const authors = users.slice(0, 1);
+    const collaborators = users.slice(1);
 
     const data: Project = {
       ...project,
+      authors,
       versions,
-      collaborators: [],
+      collaborators,
     };
 
     return NextResponse.json(data);

@@ -1,18 +1,13 @@
 import { InputType, LeanProject, ProjectInputData } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Cancel01Icon,
-  Mail01Icon,
-  MehIcon,
-  PencilEdit02Icon,
-} from 'hugeicons-react';
+import { Mail01Icon, MehIcon, PencilEdit02Icon } from 'hugeicons-react';
 import { LocalStorage } from '@/lib/localStorage';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import { inputDataEmpty } from '@/types/typeFunc';
-import AudioPlayer from './AudioPlayer';
 import DialogController from '@/controllers/DialogController';
 import { createProject } from '@/lib/api';
+import CollaboratorChip from './CollaboratorChip';
 
 export default function ProjectInput({
   onSuccess,
@@ -146,7 +141,7 @@ export default function ProjectInput({
           {inputData.emailList.size > 0 ? (
             <div className="flex flex-wrap gap-2">
               {Array.from(inputData.emailList).map((email, index) => (
-                <CollaboratorContainer
+                <CollaboratorChip
                   key={index}
                   email={email}
                   onDelete={() => removeEmail(email)}
@@ -202,26 +197,6 @@ export default function ProjectInput({
           </article>
         )}
       </button>
-    </div>
-  );
-}
-
-function CollaboratorContainer({
-  email,
-  onDelete,
-}: {
-  email: string;
-  onDelete: () => void;
-}) {
-  return (
-    <div
-      onClick={onDelete}
-      className="flex cursor-pointer bg-primary/10 rounded-md px-2 py-1 items-center space-x-2"
-    >
-      <article className="prose">
-        <p className="prose-sm text-white/70">{email}</p>
-      </article>
-      <Cancel01Icon size={16} />
     </div>
   );
 }

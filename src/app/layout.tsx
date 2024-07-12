@@ -7,6 +7,7 @@ import AudioProvider from '@/providers/AudioProvider';
 import DataLayerProvider from '@/providers/DataLayerProvider';
 import InitRoot from '@/components/InitRoot';
 import UserProvider from '@/providers/UserProvider';
+import ProjectProvider from '@/providers/ProjectProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,13 +26,15 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextAuthProvider session={session}>
-          <AudioProvider>
-            <DataLayerProvider>
-              <UserProvider>
-                <InitRoot>{children}</InitRoot>
-              </UserProvider>
-            </DataLayerProvider>
-          </AudioProvider>
+          <DataLayerProvider>
+            <UserProvider>
+              <AudioProvider>
+                <ProjectProvider>
+                  <InitRoot>{children}</InitRoot>
+                </ProjectProvider>
+              </AudioProvider>
+            </UserProvider>
+          </DataLayerProvider>
         </NextAuthProvider>
       </body>
     </html>

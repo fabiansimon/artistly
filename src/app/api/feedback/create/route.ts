@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createFeedback } from '../../controllers/feedbackController';
-import { getUserId } from '../../controllers/authController';
+import { getUserData } from '../../controllers/userController';
 
 export async function POST(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const { userId } = await getUserData(req);
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

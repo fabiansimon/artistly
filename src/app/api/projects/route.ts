@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchAuthorProjects } from '../controllers/projectController';
 import { convertPaginationParam } from '@/lib/utils';
 import { fetchCollabProjects } from '../controllers/collabController';
-import { getUserId } from '../controllers/authController';
+import { getUserData } from '../controllers/userController';
 
 export async function GET(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const { userId } = await getUserData(req);
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -3,10 +3,10 @@ import { Comment } from '@/types';
 import { Add01Icon, Comment01Icon } from 'hugeicons-react';
 import { useMemo } from 'react';
 import EmptyContainer from './EmptyContainer';
-import { useAudioContext } from '@/providers/AudioProvider';
 import CommentTile from './CommentTile';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FeedbackSummaryPDF from './FeedbackSummaryPDF';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 interface FeedbackContainerProps {
   timestampComments: Comment[];
@@ -18,7 +18,8 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
-  const { project, toggleCommentInput, version } = useAudioContext();
+  const { project } = useProjectContext();
+  const { toggleCommentInput, version } = useProjectContext();
 
   const feedback = useMemo(() => {
     return [...timestampComments, ...generalComments].sort((a, b) => {

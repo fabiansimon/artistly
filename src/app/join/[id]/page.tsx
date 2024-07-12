@@ -1,38 +1,46 @@
 'use client';
 
 import { PlayButton } from '@/components/PlayButton';
+import { route, ROUTES } from '@/constants/routes';
 import DialogController from '@/controllers/DialogController';
 import ToastController from '@/controllers/ToastController';
 import { fetchInvitation, joinCollabProject } from '@/lib/api';
 import { getReadableDate } from '@/lib/utils';
 import { Project } from '@/types';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function JoinPage() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { id } = useParams();
   const router = useRouter();
 
   const handleChoice = (decision: boolean) => {
-    DialogController.closeDialog();
     if (decision) return handleJoin();
-    router.push('/');
+    DialogController.closeDialog();
+    router.back();
   };
 
   const handleJoin = async () => {
+    setIsLoading(true);
     try {
-      await joinCollabProject({ id: id as string });
-      router.push(`/project/${id}`);
+      const _id = id as string;
+      await joinCollabProject({ id: _id });
+      router.push(route(ROUTES.project, _id));
     } catch (error) {
       ToastController.showErrorToast();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     (async () => {
       const project = await fetchInvitation(id as string);
+      console.log(project);
       DialogController.showCustomDialog(
         <InvitationCard
+          isLoading={isLoading}
           project={project}
           onInput={handleChoice}
         />
@@ -48,9 +56,11 @@ export default function JoinPage() {
 function InvitationCard({
   project,
   onInput,
+  isLoading,
 }: {
   project: Project;
   onInput: (decision: boolean) => void;
+  isLoading: boolean;
 }) {
   const { title, created_at } = project;
   return (
@@ -63,7 +73,7 @@ function InvitationCard({
           <span className="flex space-x-1">
             <p className="text-white text-sm">{title}</p>
             <p className="text-white/60 text-sm">{'by'}</p>
-            <p className="text-white text-sm">{'Osive'}</p>
+            <p className="text-white text-sm">{project.author.first_name}</p>
           </span>
           <p className="text-white/80 text-sm">
             {getReadableDate(created_at, true)}
@@ -84,7 +94,11 @@ function InvitationCard({
             onClick={() => onInput(true)}
             className="btn btn-primary ml-2"
           >
-            {'Accept'}
+            {isLoading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              'Accept'
+            )}
           </button>
         </form>
       </div>

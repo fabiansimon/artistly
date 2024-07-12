@@ -4,17 +4,11 @@ import { useSession } from 'next-auth/react';
 import Dialog from './Dialog';
 import NavBar from './NavBar';
 import Toast from './Toast';
-import { useEffect } from 'react';
-import { route, ROUTES } from '@/constants/routes';
-import { useRouter } from 'next/navigation';
+import AuthPage from '@/app/auth/page';
 
 export default function InitRoot({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'unauthenticated') router.push(route(ROUTES.auth));
-  }, [status, router]);
+  if (status === 'unauthenticated') return <AuthPage />;
 
   return (
     <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">

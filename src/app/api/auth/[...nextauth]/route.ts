@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { createUser, fetchUser } from '../../controllers/authController';
+import { createUser, fetchUserByEmail } from '../../controllers/userController';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!email) return false;
 
-        let existingUser = await fetchUser(email);
+        let existingUser = await fetchUserByEmail(email);
 
         if (!existingUser) {
           existingUser = await createUser({
@@ -38,9 +38,13 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       try {
         if (!session.user?.email) return false;
-        const user = await fetchUser(session.user.email);
+        const user = await fetchUserByEmail(session.user.email);
+
         if (user) {
           session.user.id = user.id;
+          session.user.created_at = user.created_at;
+          session.user.first_name = user.first_name;
+          session.user.last_name = user.last_name;
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

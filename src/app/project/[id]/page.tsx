@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { fetchProject } from '@/lib/api';
 import { useAudioContext } from '@/providers/AudioProvider';
 import { useParams } from 'next/navigation';
 import Container from '@/components/Container';
@@ -13,6 +12,7 @@ import {
   InformationCircleIcon,
   Notebook02Icon,
   PencilEdit02Icon,
+  Rocket01Icon,
   Share01Icon,
 } from 'hugeicons-react';
 import AudioEditor from '@/components/AudioEditor';
@@ -23,12 +23,21 @@ import { cn } from '@/lib/utils';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
-import { useSession } from 'next-auth/react';
 import { useUserContext } from '@/providers/UserProvider';
+import InviteDialog from '@/components/InviteDialog';
+import CollaboratorContainer from '@/components/CollaboratorContainer';
+import { useDataLayerContext } from '@/providers/DataLayerProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 function ProjectPage() {
-  const { userId } = useUserContext();
-  const { version, file, project, setProject, setVersion } = useAudioContext();
+  const {
+    user: { id: userId },
+  } = useUserContext();
+  const {
+    project: { fetch, data: project, isLoading },
+  } = useDataLayerContext();
+  const { file } = useAudioContext();
+  const { version, handleVersionChange } = useProjectContext();
 
   const { id } = useParams();
 
@@ -44,21 +53,15 @@ function ProjectPage() {
 
   useEffect(() => {
     if (!id) return;
+    fetch({ id });
+  }, [id, fetch]);
 
-    (async () => {
-      try {
-        const res = await fetchProject(id as string);
-        setProject(res);
-        setVersion({ ...res.versions[0], index: 0 });
-      } catch (error) {
-        console.error(error.message);
-      }
-    })();
-  }, [id, setProject, setVersion]);
+  useEffect(() => {
+    if (!project?.versions?.length) return;
+    handleVersionChange(project.versions[0].id);
+  }, [project]);
 
-  const empty = !project || !version || !file;
-
-  if (empty)
+  if (isLoading || !project)
     return (
       <LoadingView
         strings={[
@@ -68,6 +71,8 @@ function ProjectPage() {
         ]}
       />
     );
+
+  const empty = !file || !version;
 
   const author = project.creator_id === userId;
   return (
@@ -96,52 +101,83 @@ function ProjectPage() {
               className="mt-2"
             />
 
-            <div className="flex w-full mt-2 space-x-2">
-              <div className="border border-white/10 rounded-md p-2 space-y-2">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Notebook02Icon
-                      size={13}
-                      className="text-white/60"
-                    />
-                    <p className="text-[11px] text-white/60 text-white">
-                      {'Version notes'}
+            <div className="flex mt-2 space-x-2">
+              <div className="flex w-full space-x-2">
+                <div className="border border-white/10 rounded-md p-2 space-y-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Notebook02Icon
+                        size={13}
+                        className="text-white/60"
+                      />
+                      <p className="text-[11px] text-white/60 text-white">
+                        {'Version notes'}
+                      </p>
+                    </div>
+                    <p className="text-xs text-white/50 text-white mr-10">
+                      {version?.notes || 'Nothing added'}
                     </p>
                   </div>
-                  <p className="text-xs text-white/50 text-white mr-10">
-                    {version.notes || 'Nothing added'}
-                  </p>
                 </div>
-              </div>
-              <div className="border border-white/10 rounded-md p-2 space-y-2">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <InformationCircleIcon
-                      size={13}
-                      className="text-white/60"
-                    />
-                    <p className="text-[11px] text-white/60 text-white">
-                      {'Project Information'}
+                <div className="border border-white/10 rounded-md p-2 space-y-2 w-full">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <InformationCircleIcon
+                        size={13}
+                        className="text-white/60"
+                      />
+                      <p className="text-[11px] text-white/60 text-white">
+                        {'Project Information'}
+                      </p>
+                    </div>
+                    <p className="text-xs text-white/50 text-white mr-10">
+                      {project.description || 'Nothing added'}
                     </p>
                   </div>
-                  <p className="text-xs text-white/50 text-white mr-10">
-                    {project.description || 'Nothing added'}
-                  </p>
                 </div>
               </div>
+              <CollaboratorContainer className="border border-white/10 rounded-md p-2" />
             </div>
           </div>
         </div>
         <div className="divider my-0" />
-        <FeedbackContainer
-          className="mx-4"
-          generalComments={generalComments}
-          timestampComments={timestampComments}
-        />
+        {empty && (
+          <div className="flex flex-col items-center h-full justify-center -translate-y-12">
+            <article className="prose text-center">
+              <h3 className="text-white text-[16px]">
+                No version updated yet.
+              </h3>
+              <p className="text-white/70 -mt-2 text-xs">
+                Make sure to upload your first version before inviting
+                collaborators.
+              </p>
+            </article>
+            <button
+              onClick={() =>
+                DialogController.showCustomDialog(
+                  <UploadContainer projectId={id as string} />
+                )
+              }
+              className="btn btn-primary text-white mx-auto mt-4"
+            >
+              <Rocket01Icon size={18} />
+              Upload First Draft
+            </button>
+          </div>
+        )}
+        {!empty && (
+          <FeedbackContainer
+            className="mx-4"
+            generalComments={generalComments}
+            timestampComments={timestampComments}
+          />
+        )}
 
-        <div className="flex flex-col items-center w-full space-y-2">
-          <AudioEditor comments={timestampComments} />
-        </div>
+        {!empty && (
+          <div className="flex flex-col items-center w-full space-y-2">
+            <AudioEditor comments={timestampComments} />
+          </div>
+        )}
       </div>
     </Container>
   );
@@ -178,7 +214,7 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => DialogController.showCustomDialog(<InviteDialog />),
       },
       {
         text: 'Download',
@@ -186,8 +222,9 @@ function ProjectOptions({
         onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
       },
     ],
-    []
+    [author]
   );
+
   return (
     <div className={cn('flex justify-between', className)}>
       <div className="flex space-x-2">

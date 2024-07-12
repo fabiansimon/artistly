@@ -1,7 +1,7 @@
 import { formatSeconds } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { PlusSignIcon } from 'hugeicons-react';
-import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 export default function CursorLine({
   time,
@@ -12,7 +12,7 @@ export default function CursorLine({
   cursorVisible: boolean;
   style: React.CSSProperties;
 }) {
-  const { toggleCommentInput } = useAudioContext();
+  const { toggleCommentInput } = useProjectContext();
   return (
     <>
       <div

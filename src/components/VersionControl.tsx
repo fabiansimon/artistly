@@ -1,8 +1,12 @@
 import { cn } from '@/lib/utils';
-import { useAudioContext } from '@/providers/AudioProvider';
+import { useDataLayerContext } from '@/providers/DataLayerProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 export default function VersionControl({ className }: { className?: string }) {
-  const { project, version, handleVersionChange } = useAudioContext();
+  const {
+    project: { data: project },
+  } = useDataLayerContext();
+  const { version, handleVersionChange } = useProjectContext();
   if (!project || !version) return;
 
   const { versions } = project;
@@ -30,7 +34,7 @@ export default function VersionControl({ className }: { className?: string }) {
           <p className="text-[10px] text-white/40 font">Version</p>
         </div>
       </button>
-      {version.index !== versions.length - 1 && (
+      {version.index !== versions?.length - 1 && (
         <button
           onClick={() => handleClick(1)}
           className="join-item btn bg-black/20"

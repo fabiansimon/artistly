@@ -68,11 +68,11 @@ export interface Version {
 }
 
 export interface User {
-  id?: string;
+  id: string;
   email: string;
   created_at: Date;
-  first_name?: string;
-  last_name?: string;
+  first_name: string;
+  last_name: string;
   image_url?: string;
 }
 
@@ -88,6 +88,7 @@ export interface Project {
   id: string;
   created_at: Date;
   creator_id: string;
+  authors: User[];
   title: string;
   description: string;
   versions: Version[];
@@ -96,7 +97,7 @@ export interface Project {
 
 export type LeanProject = Omit<
   Project,
-  'created_at' | 'creator_id' | 'collaborators' | 'description'
+  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'author'
 >;
 
 export interface FeedbackUpload {

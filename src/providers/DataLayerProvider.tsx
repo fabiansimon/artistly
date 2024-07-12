@@ -1,8 +1,8 @@
 'use client';
 
 import ToastController from '@/controllers/ToastController';
-import { getUserProjects } from '@/lib/api';
-import { Paginated, Projects } from '@/types';
+import { fetchProject, getUserProjects } from '@/lib/api';
+import { Paginated, Project, Projects, Version } from '@/types';
 import {
   createContext,
   useCallback,
@@ -13,16 +13,20 @@ import {
 
 enum MODE {
   projects,
+  project,
 }
 
 interface ContextData<T> {
   data: T;
-  refetch: (args?: any) => Promise<void>;
+  fetch: (args?: any) => Promise<void>;
   isLoading: boolean;
 }
 
+type NullableContextData<T> = Omit<ContextData<T>, 'data'> & { data: T | null };
+
 interface DataLayerContextType {
   projects: ContextData<Paginated<Projects>>;
+  project: NullableContextData<Project>;
 }
 
 const DataLayerContext = createContext<DataLayerContextType | undefined>(
@@ -35,6 +39,7 @@ export default function DataLayerProvider({
   children: React.ReactNode;
 }) {
   const [isLoading, setIsLoading] = useState<MODE | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Paginated<Projects>>({
     content: {
       collabs: [],
@@ -76,6 +81,16 @@ export default function DataLayerProvider({
     [load]
   );
 
+  const loadProject = useCallback(
+    ({ id }: { id: string }) =>
+      load(
+        MODE.project,
+        () => fetchProject(id),
+        (res) => setProject(res)
+      ),
+    [load]
+  );
+
   useEffect(() => {
     loadProjects();
   }, [loadProjects]);
@@ -83,8 +98,13 @@ export default function DataLayerProvider({
   const value = {
     projects: {
       data: projects,
-      refetch: loadProjects,
+      fetch: loadProjects,
       isLoading: isLoading === MODE.projects,
+    },
+    project: {
+      data: project,
+      fetch: loadProject,
+      isLoading: isLoading === MODE.project,
     },
   };
   return (
