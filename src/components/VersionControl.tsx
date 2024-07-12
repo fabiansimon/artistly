@@ -1,8 +1,12 @@
 import { cn } from '@/lib/utils';
-import { useAudioContext } from '@/providers/AudioProvider';
+import { useDataLayerContext } from '@/providers/DataLayerProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 export default function VersionControl({ className }: { className?: string }) {
-  const { project, version, handleVersionChange } = useAudioContext();
+  const {
+    project: { data: project },
+  } = useDataLayerContext();
+  const { version, handleVersionChange } = useProjectContext();
   if (!project || !version) return;
 
   const { versions } = project;

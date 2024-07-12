@@ -8,6 +8,7 @@ import {
 } from '@/lib/utils';
 import { REGEX } from '@/constants/regex';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 interface FeedbackInputModalProps {
   isVisible: boolean;
@@ -22,7 +23,8 @@ export default function FeedbackInputModal({
   timestamp,
   className,
 }: FeedbackInputModalProps) {
-  const { file, addFeedback } = useAudioContext();
+  const { file } = useAudioContext();
+  const { addFeedback } = useProjectContext();
 
   const [error, setError] = useState<string>('');
   const [input, setInput] = useState<{ text: string; timestamp?: string }>({

@@ -5,9 +5,11 @@ import DropDown from './Dropdown';
 import { useMemo } from 'react';
 import { useAudioContext } from '@/providers/AudioProvider';
 import Avatar from './Avatar';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 export default function CommentTile({ comment }: { comment: Comment }) {
-  const { jumpTo, highlightedComment, removeFeedback } = useAudioContext();
+  const { jumpTo } = useAudioContext();
+  const { highlightedComment, removeFeedback } = useProjectContext();
 
   const { id, timestamp, text } = comment;
 

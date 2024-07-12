@@ -22,7 +22,7 @@ export default function AudioEditor({
       )}
     >
       <VersionControl className="absolute left-2 -top-14" />
-      <AudioInfo className="-pt-2" />
+      <AudioInfo />
       <WaveContainer amplifyBy={200} />
       <RangeIndicator className="w-full" />
       <CommentsSection comments={comments} />

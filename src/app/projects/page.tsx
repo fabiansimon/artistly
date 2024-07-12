@@ -11,12 +11,12 @@ import { useRouter } from 'next/navigation';
 
 export default function ProjectsListPage() {
   const {
-    projects: { data, refetch, isLoading },
+    projects: { data, fetch, isLoading },
   } = useDataLayerContext();
 
   const router = useRouter();
 
-  if (isLoading || !data)
+  if (isLoading)
     return (
       <LoadingView
         strings={[
@@ -28,7 +28,7 @@ export default function ProjectsListPage() {
 
   const { collabs, authored } = data.content;
   return (
-    <Container onRefresh={refetch}>
+    <Container onRefresh={fetch}>
       <div className="flex space-x-2 items-center mb-2">
         <Rocket01Icon size={18} />
         <article className="prose">

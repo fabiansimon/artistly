@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 import CursorLine from './CursorLine';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 interface WaveContainerProps {
   className?: string;
@@ -16,8 +17,10 @@ export default function WaveContainer({
   className,
   amplifyBy,
 }: WaveContainerProps) {
-  const { time, settings, file, version, audioRef, setTime, setSettings } =
+  const { time, settings, file, audioRef, setTime, setSettings } =
     useAudioContext();
+  const { version } = useProjectContext();
+
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
   const AMPLIFY_BY = amplifyBy || 100;

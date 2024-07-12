@@ -2,7 +2,10 @@ import { Project } from '@/types';
 import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
-import { projectIncludesUser } from '../../controllers/collabController';
+import {
+  fetchCollaboratorsByProject,
+  projectIncludesUser,
+} from '../../controllers/collabController';
 import { getUserData } from '../../controllers/userController';
 
 export async function GET(
@@ -37,6 +40,7 @@ export async function GET(
     }
 
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
+    const collaboratorsId = await fetchCollaboratorsByProject(project.id);
 
     const data: Project = {
       ...project,

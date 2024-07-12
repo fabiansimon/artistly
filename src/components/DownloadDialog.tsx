@@ -1,12 +1,12 @@
 import { clientDownload } from '@/lib/audioHelpers';
 import { getReadableDate } from '@/lib/utils';
-import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 import { Version } from '@/types';
 import { useState } from 'react';
 
 export default function DownloadDialog() {
   const [isLoading, setIsLoading] = useState<Set<string>>(new Set<string>());
-  const { project } = useAudioContext();
+  const { project } = useProjectContext();
 
   if (!project) return;
   const { versions, title } = project;
@@ -39,6 +39,13 @@ export default function DownloadDialog() {
         <h3 className="text-white text-sm text-center">Download Audio</h3>
         <p className="text-white/70 text-sm text-center -mt-2">{`From project "${title}"`}</p>
       </article>
+      {!versions.length && (
+        <div className="border rounded-lg p-2 border-white/10">
+          <p className="prose text-sm text-white/60">
+            No versions updated yet.
+          </p>
+        </div>
+      )}
       <div className="space-y-2 w-full max-h-64 overflow-y-auto">
         {versions.map((version) => {
           const { id, title, created_at } = version;

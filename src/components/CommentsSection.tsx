@@ -1,13 +1,14 @@
 import { calculateRange, cn, formatSeconds } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 import { Comment } from '@/types';
 import { motion } from 'framer-motion';
 import { ArrowReloadHorizontalIcon } from 'hugeicons-react';
 import { useState } from 'react';
 
 export default function CommentsSection({ comments }: { comments: Comment[] }) {
-  const { file, highlightedComment, jumpTo, setRange, setSettings } =
-    useAudioContext();
+  const { file, jumpTo, setRange, setSettings } = useAudioContext();
+  const { highlightedComment } = useProjectContext();
 
   const duration = file?.duration || 0;
 
