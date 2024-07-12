@@ -88,7 +88,7 @@ export interface Project {
   id: string;
   created_at: Date;
   creator_id: string;
-  author: User;
+  authors: User[];
   title: string;
   description: string;
   versions: Version[];
