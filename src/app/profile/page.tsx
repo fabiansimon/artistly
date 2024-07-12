@@ -12,7 +12,7 @@ import { ArrowLeft02Icon, UserAccountIcon } from 'hugeicons-react';
 export default function ProfilePage() {
   const { user } = useUserContext();
   const {
-    projects: { data, refetch, isLoading },
+    projects: { data, fetch, isLoading },
   } = useDataLayerContext();
 
   if (isLoading || !data)
@@ -24,7 +24,7 @@ export default function ProfilePage() {
 
   const { first_name, last_name, email, image_url } = user;
   return (
-    <Container onRefresh={refetch}>
+    <Container onRefresh={fetch}>
       <div className="flex space-x-2 items-center mb-2">
         <UserAccountIcon size={18} />
         <article className="prose">

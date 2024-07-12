@@ -1,5 +1,6 @@
 import { cn, formatSeconds, ordinalString } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 import {
   ArrowReloadHorizontalIcon,
   Comment01Icon,
@@ -12,9 +13,9 @@ export default function AudioInfo({ className }: { className?: string }) {
   const {
     file,
     audioRef,
-    version,
     settings: { looping },
   } = useAudioContext();
+  const { version } = useProjectContext();
 
   const info = useMemo(() => {
     if (!version || !file) return;

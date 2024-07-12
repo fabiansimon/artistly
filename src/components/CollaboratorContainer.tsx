@@ -1,21 +1,11 @@
-import { Cancel01Icon } from 'hugeicons-react';
+import { cn } from '@/lib/utils';
 
 export default function CollaboratorContainer({
-  email,
-  onDelete,
+  className,
 }: {
-  email: string;
-  onDelete: () => void;
+  className?: string;
 }) {
   return (
-    <div
-      onClick={onDelete}
-      className="flex cursor-pointer bg-primary/10 rounded-md px-2 py-1 items-center space-x-2"
-    >
-      <article className="prose">
-        <p className="prose-sm text-white/70">{email}</p>
-      </article>
-      <Cancel01Icon size={16} />
-    </div>
+    <div className={cn('flex bg-neutral-950 rounded-xl p-3', className)}></div>
   );
 }

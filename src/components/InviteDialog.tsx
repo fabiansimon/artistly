@@ -3,7 +3,7 @@ import { Mail01Icon, MehIcon } from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import DialogController from '@/controllers/DialogController';
-import CollaboratorContainer from './CollaboratorContainer';
+import CollaboratorChip from './CollaboratorChip';
 
 export default function InviteDialog() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -71,7 +71,7 @@ export default function InviteDialog() {
           {emails.size > 0 ? (
             <div className="flex flex-wrap gap-2">
               {Array.from(emails).map((email, index) => (
-                <CollaboratorContainer
+                <CollaboratorChip
                   key={index}
                   email={email}
                   onDelete={() => removeEmail(email)}

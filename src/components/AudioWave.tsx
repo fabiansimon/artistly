@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 import CursorLine from './CursorLine';
 import { useAudioContext } from '@/providers/AudioProvider';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
 interface AudioWaveProps {
   className?: string;
@@ -16,16 +17,10 @@ export default function AudioWave({
   className,
   amplifyBy,
 }: AudioWaveProps) {
-  const {
-    time,
-    settings,
-    file,
-    project,
-    version,
-    audioRef,
-    setTime,
-    setSettings,
-  } = useAudioContext();
+  const { time, settings, file, audioRef, setTime, setSettings } =
+    useAudioContext();
+  const { project, version } = useProjectContext();
+
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 
   const AMPLIFY_BY = amplifyBy || 100;

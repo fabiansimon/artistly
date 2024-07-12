@@ -7,7 +7,7 @@ import ToastController from '@/controllers/ToastController';
 import { inputDataEmpty } from '@/types/typeFunc';
 import DialogController from '@/controllers/DialogController';
 import { createProject } from '@/lib/api';
-import CollaboratorContainer from './CollaboratorContainer';
+import CollaboratorChip from './CollaboratorChip';
 
 export default function ProjectInput({
   onSuccess,
@@ -141,7 +141,7 @@ export default function ProjectInput({
           {inputData.emailList.size > 0 ? (
             <div className="flex flex-wrap gap-2">
               {Array.from(inputData.emailList).map((email, index) => (
-                <CollaboratorContainer
+                <CollaboratorChip
                   key={index}
                   email={email}
                   onDelete={() => removeEmail(email)}
