@@ -57,7 +57,7 @@ function ProjectPage() {
   }, [id, fetch]);
 
   useEffect(() => {
-    if (!project?.versions.length) return;
+    if (!project?.versions?.length) return;
     handleVersionChange(project.versions[0].id);
   }, [project]);
 
@@ -95,47 +95,48 @@ function ProjectPage() {
               {author && <PencilEdit02Icon size={14} />}
             </div>
 
-            <CollaboratorContainer />
-
             <ProjectOptions
               author={author}
               projectId={project.id}
               className="mt-2"
             />
 
-            <div className="flex w-full mt-2 space-x-2">
-              <div className="border border-white/10 rounded-md p-2 space-y-2">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Notebook02Icon
-                      size={13}
-                      className="text-white/60"
-                    />
-                    <p className="text-[11px] text-white/60 text-white">
-                      {'Version notes'}
+            <div className="flex mt-2 space-x-2">
+              <div className="flex w-full space-x-2">
+                <div className="border border-white/10 rounded-md p-2 space-y-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Notebook02Icon
+                        size={13}
+                        className="text-white/60"
+                      />
+                      <p className="text-[11px] text-white/60 text-white">
+                        {'Version notes'}
+                      </p>
+                    </div>
+                    <p className="text-xs text-white/50 text-white mr-10">
+                      {version?.notes || 'Nothing added'}
                     </p>
                   </div>
-                  <p className="text-xs text-white/50 text-white mr-10">
-                    {version?.notes || 'Nothing added'}
-                  </p>
                 </div>
-              </div>
-              <div className="border border-white/10 rounded-md p-2 space-y-2">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <InformationCircleIcon
-                      size={13}
-                      className="text-white/60"
-                    />
-                    <p className="text-[11px] text-white/60 text-white">
-                      {'Project Information'}
+                <div className="border border-white/10 rounded-md p-2 space-y-2 w-full">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <InformationCircleIcon
+                        size={13}
+                        className="text-white/60"
+                      />
+                      <p className="text-[11px] text-white/60 text-white">
+                        {'Project Information'}
+                      </p>
+                    </div>
+                    <p className="text-xs text-white/50 text-white mr-10">
+                      {project.description || 'Nothing added'}
                     </p>
                   </div>
-                  <p className="text-xs text-white/50 text-white mr-10">
-                    {project.description || 'Nothing added'}
-                  </p>
                 </div>
               </div>
+              <CollaboratorContainer className="border border-white/10 rounded-md p-2" />
             </div>
           </div>
         </div>

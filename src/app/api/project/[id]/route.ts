@@ -6,7 +6,7 @@ import {
   fetchCollaboratorsByProject,
   projectIncludesUser,
 } from '../../controllers/collabController';
-import { getUserData } from '../../controllers/userController';
+import { fetchUsersByIds, getUserData } from '../../controllers/userController';
 
 export async function GET(
   req: NextRequest,
@@ -40,12 +40,20 @@ export async function GET(
     }
 
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
-    const collaboratorsId = await fetchCollaboratorsByProject(project.id);
+    const collaboratorsIds = await fetchCollaboratorsByProject(project.id);
+    const users = await fetchUsersByIds([
+      project.creator_id,
+      ...collaboratorsIds,
+    ]);
+
+    const authors = users.slice(0, 1);
+    const collaborators = users.slice(1);
 
     const data: Project = {
       ...project,
+      authors,
       versions,
-      collaborators: [],
+      collaborators,
     };
 
     return NextResponse.json(data);
