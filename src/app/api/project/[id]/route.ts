@@ -45,7 +45,6 @@ export async function GET(
       project.creator_id,
       ...collaboratorsIds,
     ]);
-
     const authors = users.slice(0, 1);
     const collaborators = users.slice(1);
 

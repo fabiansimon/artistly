@@ -83,16 +83,19 @@ function ProjectPage() {
       <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
-            <div
-              className={cn(
-                'flex items-center space-x-2',
-                author && 'cursor-pointer'
-              )}
-            >
-              <h3 className="text-md text-white font-medium">
-                {project.title}
-              </h3>
-              {author && <PencilEdit02Icon size={14} />}
+            <div className="grow flex justify-between w-full relative">
+              <div
+                className={cn(
+                  'flex items-center space-x-2',
+                  author && 'cursor-pointer'
+                )}
+              >
+                <h3 className="text-md text-white font-medium">
+                  {project.title}
+                </h3>
+                {author && <PencilEdit02Icon size={14} />}
+              </div>
+              <CollaboratorContainer className="absolute right-0 bottom-2" />
             </div>
 
             <ProjectOptions
@@ -136,7 +139,6 @@ function ProjectPage() {
                   </div>
                 </div>
               </div>
-              <CollaboratorContainer className="border border-white/10 rounded-md p-2" />
             </div>
           </div>
         </div>

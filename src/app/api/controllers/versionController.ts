@@ -40,7 +40,7 @@ export async function fetchVersionsByProjectId(projectId: string) {
 export async function fetchVersionWithFeedbackByProjectId(projectId: string) {
   const versions = await fetchVersionsByProjectId(projectId);
 
-  return await Promise.all(
+  const res = await Promise.all(
     versions.map(async (version) => {
       const { data, error } = await supabase
         .from('comments')
@@ -59,4 +59,6 @@ export async function fetchVersionWithFeedbackByProjectId(projectId: string) {
       };
     })
   );
+
+  return res;
 }
