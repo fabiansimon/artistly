@@ -68,5 +68,5 @@ export async function fetchCollaboratorsByProject(projectId: string) {
     throw new Error(`Error fetching collaborators: ${error.message}`);
   }
 
-  return data;
+  return data.map((u) => u.user_id);
 }

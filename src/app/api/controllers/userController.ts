@@ -35,7 +35,7 @@ export async function fetchUserById(id: string) {
 }
 
 export async function fetchUsersByIds(ids: string[]) {
-  const { data, error } = await supabase.from(TABLE).select('*').eq('id', ids);
+  const { data, error } = await supabase.from(TABLE).select('*').in('id', ids);
 
   if (error) {
     throw new Error(`Error finding users by ids: ${error.message}`);

@@ -37,7 +37,6 @@ export default function JoinPage() {
   useEffect(() => {
     (async () => {
       const project = await fetchInvitation(id as string);
-      console.log(project);
       DialogController.showCustomDialog(
         <InvitationCard
           isLoading={isLoading}
