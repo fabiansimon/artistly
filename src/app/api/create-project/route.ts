@@ -2,6 +2,7 @@ import { getUserData } from '../controllers/userController';
 import { createInvites } from '../controllers/inviteController';
 import { createProject } from '../controllers/projectController';
 import { NextRequest, NextResponse } from 'next/server';
+import { sendInvitations } from '../controllers/emailController';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     const project = await createProject({ title, description, userId });
 
     await createInvites(project.id, emails);
-
+    await sendInvitations({ emails, projectId: project.id });
     return NextResponse.json({
       project,
     });
