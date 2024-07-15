@@ -104,7 +104,7 @@ function UserTile({ user, isAuthor }: { user: User; isAuthor?: boolean }) {
         )}
       />
       <div className="flex flex-col">
-        <p className="prose text-xs text-white/70">
+        <p className="prose text-xs text-white">
           {concatName(first_name, last_name)}
         </p>
         <p className="prose text-xs -mt-1 text-white/50">{email}</p>
