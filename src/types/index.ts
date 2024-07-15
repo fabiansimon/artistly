@@ -97,7 +97,7 @@ export interface Project {
 
 export type LeanProject = Omit<
   Project,
-  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'author'
+  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'authors'
 >;
 
 export interface FeedbackUpload {
@@ -155,4 +155,11 @@ export interface Projects {
 export interface Paginated<T> {
   totalElements: number;
   content: T;
+}
+
+export enum UsageLimit {
+  versions = 0,
+  projects = 1,
+  collaborators = 2,
+  authors = 3,
 }

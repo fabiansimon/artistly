@@ -121,7 +121,7 @@ function CommentTile({
         }}
         className="bg-primary rounded-bl-md px-2 py-1 rounded-tr-md rounded-br-md"
       >
-        <p className="prose text-black/80 text-[13px]">{text}</p>
+        <p className="prose text-white text-[13px] font-medium">{text}</p>
       </motion.div>
     </div>
   );
