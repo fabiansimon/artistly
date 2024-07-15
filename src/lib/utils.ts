@@ -1,6 +1,6 @@
 import { REGEX } from '@/constants/regex';
 import { SERVER_PARAMS } from '@/constants/serverParams';
-import { Pagination } from '@/types';
+import { Pagination, Project, UsageLimit, User } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
@@ -127,5 +127,68 @@ export function pluralize(amount: number, post: string) {
 
 export function concatName(firstName: string, lastName?: string) {
   return `${firstName} ${lastName || ''}`;
+}
+
+export function getUsageLimit({
+  premiumTier,
+  premiumKey,
+  freeKey,
+}: {
+  premiumTier: boolean;
+  premiumKey: string;
+  freeKey: string;
+}) {
+  return parseInt(
+    premiumTier ? process.env[premiumKey]! : process.env[freeKey]!
+  );
+}
+
+export function getUsage(key: string) {
+  return process.env[key]!;
+}
+
+export function checkUserCapacity({
+  user,
+  check,
+  project,
+  projects,
+}: {
+  user: User;
+  check: UsageLimit;
+  project?: Project;
+  projects?: Project[];
+}) {
+  const premiumTier = true;
+
+  const checkLimit = (current: number, premiumKey: string, freeKey: string) => {
+    const max = getUsageLimit({ premiumTier, premiumKey, freeKey });
+    return current < max;
+  };
+
+  switch (check) {
+    case UsageLimit.versions:
+      return checkLimit(
+        project!.versions.length,
+        'MAX_PAID_VERSIONS_AMOUNT',
+        'MAX_FREE_VERSIONS_AMOUNT'
+      );
+
+    case UsageLimit.collaborators:
+      return checkLimit(
+        project!.collaborators.length,
+        'MAX_PAID_COLLABORATORS_AMOUNT',
+        'MAX_FREE_COLLABORATORS_AMOUNT'
+      );
+
+    case UsageLimit.projects:
+      return checkLimit(
+        projects!.length,
+        'MAX_PAID_PROJECTS_AMOUNT',
+        'MAX_FREE_PROJECTS_AMOUNT'
+      );
+
+    default:
+      return false;
+  }
 }
 export const _ = undefined;

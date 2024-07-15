@@ -73,7 +73,7 @@ export default function UploadContainer({ projectId }: { projectId?: string }) {
     }
   }, [state, file, project, authored]);
 
-  const updateProject = (id) => {
+  const updateProject = (id: string) => {
     const _project = authored.find((p) => p.id === id);
     if (!_project) return;
     setProject({ id, title: _project.title, versions: _project.versions });

@@ -1,25 +1,33 @@
-import { cn } from '@/lib/utils';
+import { cn, concatName } from '@/lib/utils';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import Avatar from './Avatar';
 import { PaintBrush01Icon, UserGroupIcon } from 'hugeicons-react';
+import { useState } from 'react';
+import { User } from '@/types';
+import { motion } from 'framer-motion';
 
 export default function CollaboratorContainer({
   className,
 }: {
   className?: string;
 }) {
+  const [hovered, setHovered] = useState<boolean>(false);
+
   const { project } = useProjectContext();
   if (!project || !project.authors || !project.collaborators) return;
   const { authors, collaborators } = project;
 
   return (
     <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => setHovered(true)}
       className={cn(
         'flex cursor-pointer bg-neutral-950 border-white/10 border rounded-full items-start justify-between p-2 -space-x-2',
         className
       )}
     >
-      {authors.map(({ image_url, first_name, last_name, email, id }) => (
+      {authors.map(({ image_url, id }) => (
         <Avatar
           key={id}
           size={18}
@@ -27,7 +35,7 @@ export default function CollaboratorContainer({
           className="border-2 border-primary rounded-full"
         />
       ))}
-      {collaborators.map(({ image_url, first_name, last_name, email, id }) => (
+      {collaborators.map(({ image_url, id }) => (
         <Avatar
           key={id}
           size={18}
@@ -35,51 +43,71 @@ export default function CollaboratorContainer({
           className="border-2 border-transparent rounded-full"
         />
       ))}
+      {hovered && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="absolute z-20 bg-neutral-950 p-3 rounded-lg shadow shadow-black right-0 top-10 overflow-hidden"
+        >
+          <div className="flex items-center mb-2 space-x-1">
+            <PaintBrush01Icon
+              size={15}
+              className="text-white/70"
+            />
+            <p className="prose text-xs text-white/70 font-medium">Authors</p>
+          </div>
+          <div className="space-y-2">
+            {authors.map((user) => (
+              <UserTile
+                isAuthor
+                user={user}
+                key={user.id}
+              />
+            ))}
+          </div>
+          <div className="divider my-2"></div>
+          <div className="flex items-center mb-2 space-x-1">
+            <UserGroupIcon
+              size={15}
+              className="text-white/70"
+            />
+            <p className="prose text-xs text-white/70 font-medium">
+              Collaborators
+            </p>
+          </div>
+          <div className="space-y-2">
+            {collaborators.map((user) => (
+              <UserTile
+                user={user}
+                key={user.id}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
+}
+
+function UserTile({ user, isAuthor }: { user: User; isAuthor?: boolean }) {
+  const { image_url, first_name, last_name, email } = user;
   return (
-    <div
-      className={cn('flex space-x-4 items-start justify-between', className)}
-    >
-      <div className="flex flex-col justify-center">
-        <div className="flex items-center space-x-1">
-          <PaintBrush01Icon
-            size={12}
-            className="text-white/70"
-          />
-          <p className="text-xs text-white/70">Authors</p>
-        </div>
-        <div className="flex -space-x-1">
-          {authors.map(({ image_url, first_name, last_name, email, id }) => (
-            <Avatar
-              key={id}
-              size={18}
-              src={image_url}
-              className="border border-primary rounded-full"
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-col justify-center space-y-1">
-        <div className="flex items-center space-x-1">
-          <UserGroupIcon
-            size={12}
-            className="text-white/70"
-          />
-          <p className="text-xs text-white/70">Collaborators</p>
-        </div>
-        <div className="flex -space-x-1">
-          {collaborators.map(
-            ({ image_url, first_name, last_name, email, id }) => (
-              <Avatar
-                key={id}
-                size={18}
-                src={image_url}
-                className="rounded-full"
-              />
-            )
-          )}
-        </div>
+    <div className="flex items-center space-x-2">
+      <Avatar
+        size={18}
+        src={image_url}
+        className={cn(
+          'border-2 size-7 rounded-full',
+          isAuthor ? 'border-primary' : 'border-transparent'
+        )}
+      />
+      <div className="flex flex-col">
+        <p className="prose text-xs text-white/70">
+          {concatName(first_name, last_name)}
+        </p>
+        <p className="prose text-xs -mt-1 text-white/50">{email}</p>
       </div>
     </div>
   );
