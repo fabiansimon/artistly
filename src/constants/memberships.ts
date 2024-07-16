@@ -9,3 +9,10 @@ export const MEMBERSHIP_PRICE_ID = {
   [MEMBERSHIP.tier1]: 'price_1PcmlXEsfTIBY629yUymjtA8',
   [MEMBERSHIP.tier2]: '',
 };
+
+export function getMembershipById(priceId: string) {
+  const entry = Object.entries(MEMBERSHIP_PRICE_ID).find(
+    ([_, id]) => id === priceId
+  );
+  return entry?.[0];
+}

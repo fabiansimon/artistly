@@ -5,7 +5,6 @@ import { MembershipType, User } from '../types/index';
 import { useSession } from 'next-auth/react';
 import { createContext, useCallback, useContext, useMemo } from 'react';
 import { openStripSession } from '@/lib/api';
-import { permanentRedirect } from 'next/navigation';
 
 interface UserContextType {
   user: User;

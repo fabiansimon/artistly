@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { updateUserMembership } from '../controllers/userController';
+import { MembershipType } from '@/types';
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -20,25 +21,21 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    console.log('body', body);
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    console.log(event, event.type);
 
-    if (event.type === 'customer.subscription.created') {
-      const subscription = event.data.object as Stripe.Subscription;
-      const userId = subscription.metadata?.userId;
-
-      console.log(event);
-      console.log('111', subscription.metadata);
-      console.log('222', userId);
-      if (!userId) {
-        console.log('NOOOOOOO USEIRD');
+    if (event.type === 'checkout.session.completed') {
+      const { metadata } = event.data.object;
+      if (!metadata || !metadata['user_id'] || !metadata['membership_tier']) {
         return new NextResponse('User ID is missing in the session metadata.', {
           status: 400,
         });
       }
 
-      await updateUserMembership({ id: userId, membership: 'tier_1' });
+      const { user_id: userId, membership_tier: membership } = metadata;
+      await updateUserMembership({
+        id: userId,
+        membership: membership as MembershipType,
+      });
     }
 
     return new NextResponse(null, { status: 200 });
