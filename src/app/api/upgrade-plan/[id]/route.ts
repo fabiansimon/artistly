@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserData } from '../../controllers/userController';
 import { stripe } from '@/lib/stripeClient';
+import { getMembershipById } from '@/constants/memberships';
 
 export async function POST(
   req: NextRequest,
@@ -34,8 +35,8 @@ export async function POST(
         },
       ],
       metadata: {
-        userId: 23123,
-        test: '22',
+        ['user_id']: userId,
+        ['membership_tier']: getMembershipById(priceId) || '',
       },
       subscription_data: {
         trial_settings: {
@@ -46,6 +47,8 @@ export async function POST(
         trial_period_days: 7,
       },
     });
+
+    console.log(stripeSession);
 
     return NextResponse.json({ url: stripeSession.url }, { status: 200 });
   } catch (error) {
