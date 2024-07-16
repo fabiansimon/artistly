@@ -8,7 +8,7 @@ import AuthPage from '@/app/auth/page';
 
 export default function InitRoot({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
-  // if (status === 'unauthenticated') return <AuthPage />;
+  if (status === 'unauthenticated') return <AuthPage />;
 
   return (
     <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
