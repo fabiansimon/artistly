@@ -20,10 +20,8 @@ export async function POST(
       );
     }
 
-    console.log(userId, email);
-
     const stripeSession = await stripe.checkout.sessions.create({
-      success_url: 'http://localhost:3000/checkout-success',
+      success_url: 'http://localhost:3000/profile',
       cancel_url: 'http://localhost:3000',
       payment_method_types: ['card'],
       mode: 'subscription',
@@ -36,7 +34,8 @@ export async function POST(
         },
       ],
       metadata: {
-        userId,
+        userId: 23123,
+        test: '22',
       },
       subscription_data: {
         trial_settings: {
@@ -48,15 +47,11 @@ export async function POST(
       },
     });
 
-    console.log('stripeSession', stripeSession);
-    return NextResponse.json({ stripeSession }, { status: 200 });
+    return NextResponse.json({ url: stripeSession.url }, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : 'An unknown error occurred',
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      error,
+      status: 500,
+    });
   }
 }

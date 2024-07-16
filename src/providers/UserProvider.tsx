@@ -4,7 +4,8 @@ import { MEMBERSHIP, MEMBERSHIP_PRICE_ID } from '@/constants/memberships';
 import { MembershipType, User } from '../types/index';
 import { useSession } from 'next-auth/react';
 import { createContext, useCallback, useContext, useMemo } from 'react';
-import { upgradeMembership } from '@/lib/api';
+import { openStripSession } from '@/lib/api';
+import { permanentRedirect } from 'next/navigation';
 
 interface UserContextType {
   user: User;
@@ -56,8 +57,12 @@ export default function UserProvider({
 
   const updateMembership = useCallback(async (membership: MembershipType) => {
     try {
-      await upgradeMembership({ priceId: MEMBERSHIP_PRICE_ID[membership] });
+      const { url } = await openStripSession({
+        priceId: MEMBERSHIP_PRICE_ID[membership],
+      });
+      window.location.replace(url);
     } catch (error) {
+      console.log(error);
       throw new Error(error.message);
     }
   }, []);

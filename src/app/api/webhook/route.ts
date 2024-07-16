@@ -20,7 +20,9 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
+    console.log('body', body);
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    console.log(event, event.type);
 
     if (event.type === 'customer.subscription.created') {
       const subscription = event.data.object as Stripe.Subscription;
