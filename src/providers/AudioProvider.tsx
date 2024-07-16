@@ -10,12 +10,14 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
 interface AudioContextType {
   settings: AudioSettings;
+  duration: number;
   range: Range;
   time: number;
   file: AudioFile | null;
@@ -46,6 +48,8 @@ export default function AudioProvider({
   const [range, setRange] = useState<Range>({ begin: 0, end: 0 });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const duration = useMemo(() => Math.round(file?.duration!), [file?.duration]);
 
   const onVersionChange = async (version: Version) => {
     togglePlaying();
@@ -112,6 +116,7 @@ export default function AudioProvider({
     time,
     file,
     audioRef,
+    duration,
     setSettings,
     setRange,
     setTime,

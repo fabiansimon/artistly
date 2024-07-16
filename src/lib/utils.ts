@@ -191,4 +191,9 @@ export function checkUserCapacity({
       return false;
   }
 }
+
+export default function convertPrice(price: number) {
+  return `€ ${price}`;
+}
+
 export const _ = undefined;

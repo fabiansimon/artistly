@@ -1,21 +1,22 @@
 import { cn } from '@/lib/utils';
 import { useAudioContext } from '@/providers/AudioProvider';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export default function RangeIndicator({ className }: { className?: string }) {
   const {
     file,
+    duration,
     settings: { looping },
     range: { begin, end },
     setRange,
   } = useAudioContext();
 
   const min = 0;
-  const max = Math.round(file?.duration!);
+  const max = duration;
 
   useEffect(() => {
     setRange({ begin: min, end: max });
-  }, []);
+  }, [max]);
 
   useEffect(() => {
     maxTrigger();

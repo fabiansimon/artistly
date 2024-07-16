@@ -40,6 +40,12 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
+  // useEffect(() => {
+  //   DialogController.showCustomDialog(
+  //     <PremiumDialog usageLimit={UsageLimit.versions} />
+  //   );
+  // }, []);
+
   const { id } = useParams();
 
   const { timestampComments, generalComments } = useMemo(() => {
@@ -61,7 +67,6 @@ function ProjectPage() {
     if (!project?.versions?.length) return;
     handleVersionChange(project.versions[0].id);
   }, [project]);
-
   if (isLoading || !project)
     return (
       <LoadingView
