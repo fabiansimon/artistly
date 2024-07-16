@@ -1,3 +1,5 @@
+import { MEMBERSHIP } from '@/constants/memberships';
+
 export enum ToastType {
   ERROR,
   WARNING,
@@ -73,7 +75,16 @@ export interface User {
   created_at: Date;
   first_name: string;
   last_name: string;
+  image_url: string;
+  membership: MembershipType;
+}
+
+export interface UpdateUser {
+  email?: string;
+  first_name?: string;
+  last_name?: string;
   image_url?: string;
+  membership?: MembershipType;
 }
 
 export type SignUpUser = Omit<User, 'created_at' | 'id'>;
@@ -163,3 +174,5 @@ export enum UsageLimit {
   collaborators = 2,
   authors = 3,
 }
+
+export type MembershipType = (typeof MEMBERSHIP)[keyof typeof MEMBERSHIP];

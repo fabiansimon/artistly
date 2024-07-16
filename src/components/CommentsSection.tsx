@@ -7,14 +7,17 @@ import { ArrowReloadHorizontalIcon } from 'hugeicons-react';
 import { useState } from 'react';
 
 export default function CommentsSection({ comments }: { comments: Comment[] }) {
-  const { file, jumpTo, setRange, setSettings } = useAudioContext();
+  const { file, range, duration, jumpTo, setRange, setSettings } =
+    useAudioContext();
   const { highlightedComment } = useProjectContext();
-
-  const duration = file?.duration || 0;
 
   const handleLoop = (timestamp: number) => {
     setSettings({ playing: true, looping: true });
-    setRange(calculateRange(file?.duration!, timestamp, 4));
+    let newRange = calculateRange(file?.duration!, timestamp, 4);
+    if (newRange.begin === range.begin && newRange.end === range.end) {
+      newRange = { begin: 0, end: duration };
+    }
+    setRange(newRange);
   };
 
   if (!comments.length) return;
@@ -100,7 +103,6 @@ function CommentTile({
         variants={{
           expanded: {
             opacity: 1,
-            maxHeight: 'none',
             scale: 1,
             transition: {
               type: 'spring',
@@ -111,7 +113,6 @@ function CommentTile({
           },
           hidden: {
             opacity: 0,
-            maxHeight: 0,
             scale: 0.8,
             transition: {
               duration: 0.1,

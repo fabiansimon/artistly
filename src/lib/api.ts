@@ -142,3 +142,15 @@ export async function joinCollabProject({ id }: { id: string }) {
     throw error;
   }
 }
+
+export async function upgradeMembership({ priceId }: { priceId: string }) {
+  try {
+    console.log('called');
+    const res = await _axios.post(`/api/upgrade-plan/${priceId}`);
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'getUserProjects' });
+    throw error;
+  }
+}

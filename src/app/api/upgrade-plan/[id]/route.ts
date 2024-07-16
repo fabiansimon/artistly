@@ -12,13 +12,15 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: priceId } = params;
+    const priceId = params.id;
     if (!priceId) {
       return NextResponse.json(
         { error: 'Bad Request: Missing Price ID' },
         { status: 400 }
       );
     }
+
+    console.log(userId, email);
 
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: 'http://localhost:3000/checkout-success',
@@ -45,10 +47,16 @@ export async function POST(
         trial_period_days: 7,
       },
     });
+
+    console.log('stripeSession', stripeSession);
+    return NextResponse.json({ stripeSession }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({
-      error,
-      status: 500,
-    });
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      },
+      { status: 500 }
+    );
   }
 }

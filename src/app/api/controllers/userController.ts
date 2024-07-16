@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
-import { SignUpUser } from '@/types';
+import { MembershipType, SignUpUser, UpdateUser } from '@/types';
 import { getServerSession } from 'next-auth';
 import { NextRequest } from 'next/server';
 import { authOptions } from '../auth/[...nextauth]/route';
@@ -62,6 +62,43 @@ export async function createUser({
   }
 
   return data;
+}
+
+export async function updateUser({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: UpdateUser;
+}) {
+  const { data, error } = await supabase
+    .from('users')
+    .update(updates)
+    .eq('id', id);
+
+  if (error) {
+    console.log('error', error);
+    throw new Error(`Error updating user: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function updateUserMembership({
+  id,
+  membership,
+}: {
+  id: string;
+  membership: MembershipType;
+}) {
+  try {
+    const data = await updateUser({ id, updates: { membership } });
+
+    return data;
+  } catch (error) {
+    console.log('error', error);
+    throw new Error(`Error upgrading user membership: ${error.message}`);
+  }
 }
 
 export async function getUserData(request: NextRequest) {
