@@ -8,9 +8,6 @@ interface WindowSize {
 }
 
 function getWindowSize(): WindowSize {
-  if (typeof window !== 'undefined')
-    return { width: 0, height: 0, isSmall: false };
-
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,

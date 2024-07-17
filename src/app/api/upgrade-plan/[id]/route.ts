@@ -38,17 +38,7 @@ export async function POST(
         ['user_id']: userId,
         ['membership_tier']: getMembershipById(priceId) || '',
       },
-      subscription_data: {
-        trial_settings: {
-          end_behavior: {
-            missing_payment_method: 'cancel',
-          },
-        },
-        trial_period_days: 7,
-      },
     });
-
-    console.log(stripeSession);
 
     return NextResponse.json({ url: stripeSession.url }, { status: 200 });
   } catch (error) {
