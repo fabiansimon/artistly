@@ -87,12 +87,14 @@ export interface UpdateUser {
   membership?: MembershipType;
 }
 
-export type SignUpUser = Omit<User, 'created_at' | 'id'>;
+export type SignUpUser = Omit<User, 'created_at' | 'id' | 'membership'>;
 
 export interface Comment {
   id: string;
   timestamp?: number;
   text: string;
+  creator_id: string;
+  creator: User;
 }
 
 export interface Project {

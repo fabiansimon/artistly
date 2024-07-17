@@ -17,6 +17,7 @@ import DialogController from '@/controllers/DialogController';
 import UploadContainer from './UploadContainer';
 import Avatar from './Avatar';
 import { useUserContext } from '@/providers/UserProvider';
+import MembershipBadge from './MembershipBadge';
 
 function NavBar({ className }: { className?: string }): JSX.Element {
   const { user } = useUserContext();
@@ -82,10 +83,15 @@ function NavBar({ className }: { className?: string }): JSX.Element {
         onClick={() => router.push(ROUTES.profile)}
         className="border rounded-2xl border-white/10 cursor-pointer flex space-x-2 p-2 items-center mt-4 hover:bg-neutral-950 mx-2"
       >
-        <Avatar
-          size={32}
-          src={image_url}
-        />
+        <div className="relative flex flex-col-reverse">
+          <Avatar
+            size={32}
+            src={image_url}
+          />
+          <MembershipBadge
+            className={!isSmall ? 'absolute -top-[6px] -right-[6px]' : 'mb-1'}
+          />
+        </div>
         {!isSmall && (
           <article className="prose">
             <p className="text-sm font-medium text-white">

@@ -32,7 +32,7 @@ export default function CollaboratorContainer({
           key={id}
           size={18}
           src={image_url}
-          className="border-2 border-primary rounded-full"
+          className="rounded-full"
         />
       ))}
       {collaborators.map(({ image_url, id }) => (
@@ -40,7 +40,7 @@ export default function CollaboratorContainer({
           key={id}
           size={18}
           src={image_url}
-          className="border-2 border-transparent rounded-full"
+          className="rounded-full"
         />
       ))}
       {hovered && (
@@ -100,7 +100,7 @@ function UserTile({ user, isAuthor }: { user: User; isAuthor?: boolean }) {
         src={image_url}
         className={cn(
           'border-2 size-7 rounded-full',
-          isAuthor ? 'border-primary' : 'border-transparent'
+          false ? 'border-primary' : 'border-transparent'
         )}
       />
       <div className="flex flex-col">
