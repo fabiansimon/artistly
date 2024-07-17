@@ -29,6 +29,7 @@ import CollaboratorContainer from '@/components/CollaboratorContainer';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import PremiumDialog from '@/components/PremiumDialog';
+import EditProjectDialog from '@/components/EditProjectDialog';
 
 function ProjectPage() {
   const {
@@ -216,7 +217,7 @@ function ProjectOptions({
       {
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => DialogController.showCustomDialog(<EditProjectDialog />),
         ignore: !author,
       },
       {
@@ -228,6 +229,7 @@ function ProjectOptions({
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
         onClick: () => DialogController.showCustomDialog(<InviteDialog />),
+        ignore: !author,
       },
       {
         text: 'Download',

@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { useAudioContext } from './AudioProvider';
 import { useDataLayerContext } from './DataLayerProvider';
+import { useUserContext } from './UserProvider';
 
 interface ProjectContextType {
   project: Project | null;
@@ -34,6 +35,7 @@ export default function ProjectProvider({
   children: React.ReactNode;
 }) {
   const { file, time, onVersionChange } = useAudioContext();
+  const { user } = useUserContext();
   const {
     project: { data: project },
   } = useDataLayerContext();
@@ -98,6 +100,8 @@ export default function ProjectProvider({
         id: tempId,
         text,
         timestamp,
+        creator: user,
+        creator_id: user.id,
       };
 
       try {
