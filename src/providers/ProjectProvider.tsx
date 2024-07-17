@@ -3,7 +3,7 @@
 import FeedbackInputModal from '@/components/FeedbackInputModal';
 import { deleteFeedback, uploadFeeback } from '@/lib/api';
 import { generateId, withinRange } from '@/lib/utils';
-import { Comment, Input, Project, Version } from '@/types';
+import { Comment, Input, Project, User, Version } from '@/types';
 import {
   createContext,
   useCallback,
@@ -16,6 +16,7 @@ import { useDataLayerContext } from './DataLayerProvider';
 
 interface ProjectContextType {
   project: Project | null;
+  users: { [id: string]: User };
   version: (Version & { index: number }) | null;
   highlightedComment: string;
   setVersion: (version: (Version & { index: number }) | null) => void;
@@ -149,8 +150,18 @@ export default function ProjectProvider({
     return '';
   }, [time, version, file]);
 
+  const users = useMemo(() => {
+    if (!project) return {};
+    const map: { [id: string]: User } = {};
+
+    project.authors.forEach((u) => (map[u.id] = u));
+    project.collaborators.forEach((u) => (map[u.id] = u));
+    return map;
+  }, [project]);
+
   const value = {
     project,
+    users,
     version,
     highlightedComment,
     setVersion,

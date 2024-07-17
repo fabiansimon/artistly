@@ -1,3 +1,5 @@
+import { MEMBERSHIP } from '@/constants/memberships';
+
 export enum ToastType {
   ERROR,
   WARNING,
@@ -73,15 +75,26 @@ export interface User {
   created_at: Date;
   first_name: string;
   last_name: string;
-  image_url?: string;
+  image_url: string;
+  membership: MembershipType;
 }
 
-export type SignUpUser = Omit<User, 'created_at' | 'id'>;
+export interface UpdateUser {
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  image_url?: string;
+  membership?: MembershipType;
+}
+
+export type SignUpUser = Omit<User, 'created_at' | 'id' | 'membership'>;
 
 export interface Comment {
   id: string;
   timestamp?: number;
   text: string;
+  creator_id: string;
+  creator: User;
 }
 
 export interface Project {
@@ -97,7 +110,7 @@ export interface Project {
 
 export type LeanProject = Omit<
   Project,
-  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'author'
+  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'authors'
 >;
 
 export interface FeedbackUpload {
@@ -156,3 +169,12 @@ export interface Paginated<T> {
   totalElements: number;
   content: T;
 }
+
+export enum UsageLimit {
+  versions = 0,
+  projects = 1,
+  collaborators = 2,
+  authors = 3,
+}
+
+export type MembershipType = (typeof MEMBERSHIP)[keyof typeof MEMBERSHIP];

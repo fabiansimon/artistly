@@ -17,9 +17,9 @@ import {
 } from 'hugeicons-react';
 import AudioEditor from '@/components/AudioEditor';
 import FeedbackContainer from '@/components/FeedbackContainer';
-import { MenuOption } from '@/types';
+import { MenuOption, Project, UsageLimit } from '@/types';
 import SimpleButton from '@/components/SimpleButton';
-import { cn } from '@/lib/utils';
+import { checkUserCapacity, cn } from '@/lib/utils';
 import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
@@ -28,6 +28,7 @@ import InviteDialog from '@/components/InviteDialog';
 import CollaboratorContainer from '@/components/CollaboratorContainer';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
+import PremiumDialog from '@/components/PremiumDialog';
 
 function ProjectPage() {
   const {
@@ -38,6 +39,12 @@ function ProjectPage() {
   } = useDataLayerContext();
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
+
+  // useEffect(() => {
+  //   DialogController.showCustomDialog(
+  //     <PremiumDialog usageLimit={UsageLimit.versions} />
+  //   );
+  // }, []);
 
   const { id } = useParams();
 
@@ -60,7 +67,6 @@ function ProjectPage() {
     if (!project?.versions?.length) return;
     handleVersionChange(project.versions[0].id);
   }, [project]);
-
   if (isLoading || !project)
     return (
       <LoadingView
@@ -83,21 +89,24 @@ function ProjectPage() {
       <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
-            <div
-              className={cn(
-                'flex items-center space-x-2',
-                author && 'cursor-pointer'
-              )}
-            >
-              <h3 className="text-md text-white font-medium">
-                {project.title}
-              </h3>
-              {author && <PencilEdit02Icon size={14} />}
+            <div className="grow flex justify-between w-full relative">
+              <div
+                className={cn(
+                  'flex items-center space-x-2',
+                  author && 'cursor-pointer'
+                )}
+              >
+                <h3 className="text-md text-white font-medium">
+                  {project.title}
+                </h3>
+                {author && <PencilEdit02Icon size={14} />}
+              </div>
+              <CollaboratorContainer className="absolute right-0 bottom-2" />
             </div>
 
             <ProjectOptions
               author={author}
-              projectId={project.id}
+              project={project}
               className="mt-2"
             />
 
@@ -136,7 +145,6 @@ function ProjectPage() {
                   </div>
                 </div>
               </div>
-              <CollaboratorContainer className="border border-white/10 rounded-md p-2" />
             </div>
           </div>
         </div>
@@ -184,18 +192,23 @@ function ProjectPage() {
 }
 
 function ProjectOptions({
-  projectId,
+  project,
   author,
   className,
 }: {
   author: boolean;
-  projectId: string;
+  project: Project;
   className?: string;
 }) {
+  const { user } = useUserContext();
   const handleAddVersion = () => {
-    DialogController.showCustomDialog(
-      <UploadContainer projectId={projectId} />
-    );
+    const { id } = project;
+    if (!checkUserCapacity({ user, check: UsageLimit.versions, project }))
+      return DialogController.showCustomDialog(
+        <PremiumDialog usageLimit={UsageLimit.versions} />
+      );
+
+    DialogController.showCustomDialog(<UploadContainer projectId={id} />);
   };
 
   const options: MenuOption[] = useMemo(

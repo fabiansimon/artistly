@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           session.user.created_at = user.created_at;
           session.user.first_name = user.first_name;
           session.user.last_name = user.last_name;
+          session.user.membership = user.membership;
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

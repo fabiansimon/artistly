@@ -142,3 +142,13 @@ export async function joinCollabProject({ id }: { id: string }) {
     throw error;
   }
 }
+
+export async function openStripSession({ priceId }: { priceId: string }) {
+  try {
+    const res = await _axios.post(`/api/upgrade-plan/${priceId}`);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'getUserProjects' });
+    throw error;
+  }
+}

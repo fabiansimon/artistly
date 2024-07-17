@@ -18,7 +18,7 @@ export default function FeedbackContainer({
   generalComments,
   className,
 }: FeedbackContainerProps) {
-  const { project } = useProjectContext();
+  const { project, users } = useProjectContext();
   const { toggleCommentInput, version } = useProjectContext();
 
   const feedback = useMemo(() => {
@@ -74,10 +74,15 @@ export default function FeedbackContainer({
           )}
 
           {!empty &&
-            [...feedback].map((comment, index) => {
+            feedback.map((comment, index) => {
               return (
                 <div key={comment.id}>
-                  <CommentTile comment={comment} />
+                  <CommentTile
+                    comment={{
+                      ...comment,
+                      creator: users[comment.creator_id],
+                    }}
+                  />
                   {index !== feedback.length - 1 && (
                     <div className="divider my-0" />
                   )}

@@ -12,6 +12,7 @@ import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import ProjectSelection from './ProjectSelection';
 import FileInput from './FileInput';
 import ProjectInput from './ProjectInput';
+import { BackButton } from './Container';
 
 const transition = {
   duration: 500,
@@ -73,7 +74,7 @@ export default function UploadContainer({ projectId }: { projectId?: string }) {
     }
   }, [state, file, project, authored]);
 
-  const updateProject = (id) => {
+  const updateProject = (id: string) => {
     const _project = authored.find((p) => p.id === id);
     if (!_project) return;
     setProject({ id, title: _project.title, versions: _project.versions });
@@ -139,7 +140,9 @@ export default function UploadContainer({ projectId }: { projectId?: string }) {
       onDrop={handleDrop}
       className="flex flex-grow items-center justify-center h-full w-full"
     >
-      <div className="flex flex-grow w-full">{getStateComponent()}</div>
+      <div className="flex flex-grow w-full relative">
+        {getStateComponent()}
+      </div>
       <motion.div
         initial={'hidden'}
         transition={transition}

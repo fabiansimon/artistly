@@ -1,11 +1,14 @@
 'use client';
 
-import { User } from '../types/index';
+import { MEMBERSHIP, MEMBERSHIP_PRICE_ID } from '@/constants/memberships';
+import { MembershipType, User } from '../types/index';
 import { useSession } from 'next-auth/react';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
+import { openStripSession } from '@/lib/api';
 
 interface UserContextType {
   user: User;
+  updateMembership: (membership: MembershipType) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -26,6 +29,7 @@ export default function UserProvider({
         last_name: '',
         email: '',
         image_url: '',
+        membership: MEMBERSHIP.free,
       };
     }
 
@@ -36,6 +40,7 @@ export default function UserProvider({
       last_name,
       email,
       image: image_url,
+      membership,
     } = data.user;
 
     return {
@@ -44,11 +49,24 @@ export default function UserProvider({
       first_name,
       last_name,
       email: email || '',
-      image_url: image_url || '', // Ensure image_url is defined
+      image_url: image_url || '',
+      membership,
     };
   }, [data]);
 
-  const value = { user };
+  const updateMembership = useCallback(async (membership: MembershipType) => {
+    try {
+      const { url } = await openStripSession({
+        priceId: MEMBERSHIP_PRICE_ID[membership],
+      });
+      window.location.replace(url);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }, []);
+
+  const value = { user, updateMembership };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

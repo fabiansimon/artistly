@@ -29,7 +29,7 @@ export default function Container({
   );
 }
 
-function BackButton({ className }: { className?: string }) {
+export function BackButton({ className }: { className?: string }) {
   const router = useRouter();
 
   const navigateBack = () => {

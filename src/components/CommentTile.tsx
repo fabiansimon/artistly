@@ -1,4 +1,4 @@
-import { cn, formatSeconds } from '@/lib/utils';
+import { cn, concatName, formatSeconds } from '@/lib/utils';
 import { Comment, MenuOption } from '@/types';
 import { Delete01Icon } from 'hugeicons-react';
 import DropDown from './Dropdown';
@@ -11,7 +11,12 @@ export default function CommentTile({ comment }: { comment: Comment }) {
   const { jumpTo } = useAudioContext();
   const { highlightedComment, removeFeedback } = useProjectContext();
 
-  const { id, timestamp, text } = comment;
+  const {
+    id,
+    timestamp,
+    text,
+    creator: { image_url, first_name, last_name },
+  } = comment;
 
   const options: MenuOption[] = useMemo(
     () => [
@@ -40,7 +45,11 @@ export default function CommentTile({ comment }: { comment: Comment }) {
       key={id}
     >
       <div className="flex min-w-14 justify-center">
-        <Avatar className="size-8" />
+        <Avatar
+          hoverText={concatName(first_name, last_name)}
+          className="size-8"
+          src={image_url}
+        />
       </div>
       <div className="text-xs flex-grow">{text}</div>
       <div className={cn('text-xs text-center', !timestamp && 'opacity-20')}>

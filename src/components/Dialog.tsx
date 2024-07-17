@@ -11,6 +11,7 @@ import {
 
 import DialogController from '@/controllers/DialogController';
 import DialogModal from './DialogModal';
+import { BackButton } from './Container';
 
 const DEFAULT_TITLE = 'Are you sure?';
 const DEFAULT_DESCRIPTION = 'This cannot be reverted.';
