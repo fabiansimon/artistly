@@ -39,6 +39,12 @@ export enum InputType {
   ADD_EMAIL,
 }
 
+export type EditProjectInput = { versions: VersionInputData[] } & Omit<
+  Project,
+  'id' | 'created_at' | 'creator_id' | 'versions'
+> &
+  Invites;
+
 export interface ProjectInputData {
   title: string;
   description: string;

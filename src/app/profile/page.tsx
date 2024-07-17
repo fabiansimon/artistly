@@ -76,6 +76,7 @@ export default function ProfilePage() {
           }
           selected={membership}
         />
+
         <SimpleButton
           className="mx-auto mt-2 opacity-80 border-error/30 text-error/50"
           text="cancel subscription"
