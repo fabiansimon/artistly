@@ -24,8 +24,25 @@ export default function EditProjectDialog({ project }: { project: Project }) {
   const handleVersionChange = (step: number) => {
     setVersionIndex((prev) => {
       if (step < 0) return Math.max(0, prev - 1);
+      return Math.min(project.versions.length - 1, step + 1);
+    });
+  };
 
-      return Math.min(project.versions.length - 1, prev + 1);
+  const handleRemoveVersion = () => {
+    setInputData((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        versions: prev.versions.map((v, i) => {
+          if (i === versionIndex)
+            return {
+              ...v,
+              remove: !v.remove,
+            };
+
+          return v;
+        }),
+      };
     });
   };
 
@@ -76,6 +93,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
   }, [project]);
 
   if (!project || !inputData) return;
+  const currentVersion = inputData.versions[versionIndex];
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-4">
@@ -128,24 +146,34 @@ export default function EditProjectDialog({ project }: { project: Project }) {
           {/* Edit Versions Container */}
           <div
             className={cn(
-              'border relative overflow-hidden bg-neutral-900 rounded-lg p-2 flex justify-center flex-col items-center px-2',
-              true && 'border-error/60'
+              'border relative overflow-hidden bg-neutral-900 border-white/10 rounded-lg p-2 flex justify-center flex-col items-center px-2',
+              currentVersion.remove && 'border-error/60'
             )}
           >
-            <div className="absolute cursor-pointer bg-red-900/10 overflow-hidden rounded-lg w-full h-full backdrop-blur-md flex items-center justify-center">
-              <div className="flex space-x-2 items-center">
-                <RestoreBinIcon
-                  className="text-white"
-                  size={16}
-                />
-                <p className="text-xs font-medium text-white">click to undo</p>
+            {currentVersion.remove && (
+              <div
+                onClick={handleRemoveVersion}
+                className="absolute cursor-pointer bg-red-900/10 overflow-hidden rounded-lg w-full h-full backdrop-blur-md flex items-center justify-center"
+              >
+                <div className="flex space-x-2 items-center">
+                  <RestoreBinIcon
+                    className="text-white"
+                    size={16}
+                  />
+                  <p className="text-xs font-medium text-white">
+                    click to undo
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex justify-between w-full">
               <p className="prose ml-2 text-white/70 text-xs font-medium text-center">
                 Edit Version
               </p>
-              <div className="-my-1 cursor-pointer hover:bg-neutral-800 rounded-full px-2 flex items-center space-x-1">
+              <button
+                onClick={handleRemoveVersion}
+                className="-my-1 hover:bg-neutral-800 rounded-full px-2 flex items-center space-x-1"
+              >
                 <p className="prose text-error/60 text-[11px] font-medium text-center">
                   Remove
                 </p>
@@ -153,7 +181,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
                   size={12}
                   className="text-error/60"
                 />
-              </div>
+              </button>
             </div>
             <div className="divider my-0" />
             <div className="flex space-x-2">
@@ -205,7 +233,8 @@ export default function EditProjectDialog({ project }: { project: Project }) {
             <div
               className={cn(
                 'min-w-[6px] min-h-[6px] bg-neutral-400 rounded-full',
-                v.versionIndex !== i && 'opacity-25'
+                v.remove && 'bg-error/60',
+                versionIndex !== i && 'opacity-25'
               )}
               key={i}
             />

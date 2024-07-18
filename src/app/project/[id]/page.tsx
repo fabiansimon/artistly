@@ -79,8 +79,6 @@ function ProjectPage() {
 
   const empty = !file || !version;
 
-  console.log(project);
-
   const author = project.creator_id === userId;
   return (
     <Container
