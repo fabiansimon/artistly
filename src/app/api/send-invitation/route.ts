@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const users = await fetchUsersByIds(userIds);
     const usersEmails = users.map((user) => user.email);
 
-    const oldInvites = await fetchInvitesByProject(projectId);
+    const oldInvites = (await fetchInvitesByProject(projectId)) || [];
     const oldEmails = oldInvites.map((i) => i.email) || [];
 
     const userSet = new Set(usersEmails);

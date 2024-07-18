@@ -142,11 +142,6 @@ export default function InviteDialog({
             <CollaboratorChip
               key={id}
               email={email}
-              onDelete={() =>
-                DialogController.showDialog('Remove invitation?', '', () =>
-                  console.log('hdll')
-                )
-              }
             />
           ))}
         </div>
