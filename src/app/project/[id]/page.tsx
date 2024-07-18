@@ -228,7 +228,10 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<InviteDialog />),
+        onClick: () =>
+          DialogController.showCustomDialog(
+            <InviteDialog projectId={project.id} />
+          ),
         ignore: !author,
       },
       {
@@ -237,7 +240,7 @@ function ProjectOptions({
         onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
       },
     ],
-    [author]
+    [author, project]
   );
 
   return (

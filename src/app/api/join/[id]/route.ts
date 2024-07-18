@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   joinCollabProject,
-  projectIncludesUser,
+  projectIncludesUserId,
 } from '../../controllers/collabController';
 import { getUserData } from '../../controllers/userController';
 import {
@@ -16,7 +16,7 @@ export async function POST(
 ) {
   try {
     const { userId, email } = await getUserData(req);
-    if (!userId) {
+    if (!userId || !email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -39,7 +39,7 @@ export async function POST(
       return NextResponse.json({ error: 'Invite is expired' }, { status: 410 });
     }
 
-    const exists = await projectIncludesUser(projectId, userId);
+    const exists = await projectIncludesUserId(projectId, userId);
     if (exists) {
       await deleteInvite(id);
       return NextResponse.json({ status: 204 });

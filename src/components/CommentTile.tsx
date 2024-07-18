@@ -6,8 +6,12 @@ import { useMemo } from 'react';
 import { useAudioContext } from '@/providers/AudioProvider';
 import Avatar from './Avatar';
 import { useProjectContext } from '@/providers/ProjectProvider';
+import { useUserContext } from '@/providers/UserProvider';
 
 export default function CommentTile({ comment }: { comment: Comment }) {
+  const {
+    user: { id: userId },
+  } = useUserContext();
   const { jumpTo } = useAudioContext();
   const { highlightedComment, removeFeedback } = useProjectContext();
 
@@ -15,6 +19,7 @@ export default function CommentTile({ comment }: { comment: Comment }) {
     id,
     timestamp,
     text,
+    creator_id: creatorId,
     creator: { image_url, first_name, last_name },
   } = comment;
 
@@ -55,7 +60,10 @@ export default function CommentTile({ comment }: { comment: Comment }) {
       <div className={cn('text-xs text-center', !timestamp && 'opacity-20')}>
         {timestamp ? formatSeconds(timestamp) : 'n/A'}
       </div>
-      <DropDown options={options} />
+      <DropDown
+        options={options}
+        className={creatorId === userId ? 'opacity-0' : ''}
+      />
     </div>
   );
 }

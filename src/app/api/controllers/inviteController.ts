@@ -18,6 +18,34 @@ export async function createInvites(projectId: string, emails: string[]) {
   return data;
 }
 
+export async function updateInvites(inviteIds: string[]) {
+  const currentTime = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update({ created_at: currentTime })
+    .in('id', inviteIds);
+
+  if (error) {
+    throw new Error(`Error updating invites: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function fetchInvitesByProject(projectId: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('id, email')
+    .eq('project_id', projectId);
+
+  if (error && error.code !== 'PGRST116') {
+    throw new Error(`Error checking for valid invite: ${error.message}`);
+  }
+
+  return data;
+}
+
 export async function deleteInvite(id: string) {
   const { error } = await supabase.from(TABLE).delete().eq('id', id);
 

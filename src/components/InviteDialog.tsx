@@ -4,8 +4,9 @@ import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import DialogController from '@/controllers/DialogController';
 import CollaboratorChip from './CollaboratorChip';
+import { sendInvites } from '@/lib/api';
 
-export default function InviteDialog() {
+export default function InviteDialog({ projectId }: { projectId: string }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const [emails, setEmails] = useState<Set<string>>(new Set<string>());
@@ -19,7 +20,7 @@ export default function InviteDialog() {
     const invitees = JSON.stringify(Array.from(emails));
 
     try {
-      const res = await sendInvites(invitees);
+      await sendInvites(projectId, invitees);
       ToastController.showSuccessToast(
         'Invites were sent out.',
         'They will expire in 30 days.'
