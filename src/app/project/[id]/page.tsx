@@ -217,7 +217,10 @@ function ProjectOptions({
       {
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<EditProjectDialog />),
+        onClick: () =>
+          DialogController.showCustomDialog(
+            <EditProjectDialog project={project} />
+          ),
         ignore: !author,
       },
       {
