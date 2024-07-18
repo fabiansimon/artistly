@@ -1,11 +1,17 @@
 import DialogController from '@/controllers/DialogController';
-import { _ } from '@/lib/utils';
+import { _, cn } from '@/lib/utils';
 import { MenuOption } from '@/types';
 import { MoreHorizontalIcon } from 'hugeicons-react';
 
-export default function DropDown({ options }: { options: MenuOption[] }) {
+export default function DropDown({
+  options,
+  className,
+}: {
+  options: MenuOption[];
+  className?: string;
+}) {
   return (
-    <div className="dropdown dropdown-left">
+    <div className={cn('dropdown dropdown-left', className)}>
       <div
         onClick={(e) => e.stopPropagation()}
         tabIndex={0}

@@ -47,6 +47,21 @@ export async function fetchProject(projectId: string) {
   }
 }
 
+export async function sendInvites(projectId: string, invitees: string) {
+  try {
+    const res = await _axios.post(
+      `api/send-invitation?projectId=${projectId}`,
+      {
+        invitees,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'sendInvites' });
+    throw error;
+  }
+}
+
 export async function fetchInvitation(projectId: string) {
   try {
     const res = await _axios.get(`api/invitation/${projectId}`);

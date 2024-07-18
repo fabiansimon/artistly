@@ -2,13 +2,14 @@
 
 import { MEMBERSHIP, MEMBERSHIP_PRICE_ID } from '@/constants/memberships';
 import { MembershipType, User } from '../types/index';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { createContext, useCallback, useContext, useMemo } from 'react';
 import { openStripSession } from '@/lib/api';
 
 interface UserContextType {
   user: User;
   updateMembership: (membership: MembershipType) => Promise<void>;
+  logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -66,7 +67,11 @@ export default function UserProvider({
     }
   }, []);
 
-  const value = { user, updateMembership };
+  const logout = useCallback(() => {
+    signOut();
+  }, []);
+
+  const value = { user, updateMembership, logout };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

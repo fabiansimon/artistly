@@ -157,7 +157,6 @@ export default function ProjectProvider({
   const users = useMemo(() => {
     if (!project) return {};
     const map: { [id: string]: User } = {};
-
     project.authors.forEach((u) => (map[u.id] = u));
     project.collaborators.forEach((u) => (map[u.id] = u));
     return map;

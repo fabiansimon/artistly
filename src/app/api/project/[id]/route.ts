@@ -3,8 +3,8 @@ import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  fetchCollaboratorsByProject,
-  projectIncludesUser,
+  fetchCollaboratorsIdsByProject,
+  projectIncludesUserId,
 } from '../../controllers/collabController';
 import { fetchUsersByIds, getUserData } from '../../controllers/userController';
 
@@ -31,7 +31,7 @@ export async function GET(
 
     if (
       project.creator_id !== userId &&
-      !(await projectIncludesUser(id, userId))
+      !(await projectIncludesUserId(id, userId))
     ) {
       return NextResponse.json(
         { error: 'User is not a member of this project.' },
@@ -40,7 +40,7 @@ export async function GET(
     }
 
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
-    const collaboratorsIds = await fetchCollaboratorsByProject(project.id);
+    const collaboratorsIds = await fetchCollaboratorsIdsByProject(project.id);
     const users = await fetchUsersByIds([
       project.creator_id,
       ...collaboratorsIds,
@@ -58,6 +58,7 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (error: unknown) {
+    console.log(error);
     return NextResponse.json({
       error,
       status: 500,
