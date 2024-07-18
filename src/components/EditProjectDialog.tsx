@@ -1,17 +1,36 @@
-import { EditProjectInput, InputType, ProjectInputData } from '@/types';
+import {
+  EditProjectInput,
+  InputType,
+  Project,
+  ProjectInputData,
+} from '@/types';
 import { useEffect, useMemo, useState } from 'react';
-import { Mail01Icon, PencilEdit02Icon } from 'hugeicons-react';
+import {
+  ArrowLeft02Icon,
+  ArrowRight02Icon,
+  Mail01Icon,
+  PencilEdit02Icon,
+  TimeScheduleIcon,
+} from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
-import { useProjectContext } from '@/providers/ProjectProvider';
+import { cn } from '@/lib/utils';
 
-export default function EditProjectDialog({}: {}) {
-  const { project } = useProjectContext();
+export default function EditProjectDialog({ project }: { project: Project }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<EditProjectInput | null>();
+  const [versionIndex, setVersionIndex] = useState<number>(0);
 
   const handleError = (title: string, description?: string) => {
     ToastController.showErrorToast(title, description);
+  };
+
+  const handleVersionChange = (step: number) => {
+    setVersionIndex((prev) => {
+      if (step < 0) return Math.max(0, prev - 1);
+
+      return Math.min(project.versions.length - 1, prev + 1);
+    });
   };
 
   const handleInput = (type: InputType, value?: string) => {
@@ -44,25 +63,23 @@ export default function EditProjectDialog({}: {}) {
     const {
       authors,
       collaborators,
-      created_at,
-      creator_id,
+      openInvites,
       description,
-      id,
       title,
       versions,
     } = project;
 
     setInputData({
       authors,
+      openInvites,
       collaborators,
       description,
-      invites,
       title,
       versions,
     });
   }, [project]);
 
-  if (!project) return;
+  if (!project || !inputData) return;
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center">
@@ -92,47 +109,67 @@ export default function EditProjectDialog({}: {}) {
             handleInput(InputType.DESCRIPTION, value)
           }
           className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
-          placeholder="Add some project notes (optional)"
+          placeholder="Update project notes (optional)"
         ></textarea>
-
-        <div className="w-full flex flex-col space-y-1">
-          <article className="prose text-left text-white">
-            <p className="text-white/80 text-sm">{'Invite collaborators'}</p>
-          </article>
-        </div>
-
-        <div className="flex gap-4 w-full flex-col md:flex-row">
-          <label className="input input-bordered bg-transparent flex items-center gap-2 flex-grow">
-            <Mail01Icon size={16} />
-            <input
-              onInput={({ currentTarget: { value } }) =>
-                handleInput(InputType.EMAIL, value)
-              }
-              value={inputData.email}
-              type="text"
-              className="grow text-sm bg-transparent"
-              placeholder="Email"
-            />
-          </label>
-          <button
-            disabled={inputData.email.trim().length === 0}
-            onClick={() => handleInput(InputType.ADD_EMAIL)}
-            className="btn btn-outline btn-primary text-white flex-grow"
-          >
-            {'Add Collborator'}
-          </button>
-        </div>
       </div>
 
-      <button
-        disabled={!inputValid}
-        className="btn btn-active btn-primary text-white mt-4 w-full"
-      >
+      <div className="flex items-end space-x-2 w-full">
+        <button
+          onClick={() => handleVersionChange(-1)}
+          className={cn(
+            'flex hover:bg-neutral-950 border mb-8 rounded-full border-white/10 items-center justify-center h-8 w-8',
+            versionIndex === 0 && 'opacity-0'
+          )}
+        >
+          {<ArrowLeft02Icon size={12} />}
+        </button>
+        <div className="border border-white/10 rounded-lg p-2 mt-4 flex justify-center flex-col items-center">
+          <div className="flex items-center space-x-2">
+            <TimeScheduleIcon size={12} />
+            <p className="prose text-white/70 text-xs font-medium text-center">
+              Edit Versions
+            </p>
+          </div>
+          <div className="divider my-0" />
+          <div>
+            <input
+              onInput={({ currentTarget: { value } }) =>
+                handleInput(InputType.VERSION_TITLE, value)
+              }
+              type="text"
+              className="input bg-transparent text-xs input-sm w-full max-w-xs"
+              placeholder="Name of Version"
+              value={inputData.versions[versionIndex].title}
+            />
+            <input
+              onInput={({ currentTarget: { value } }) =>
+                handleInput(InputType.VERSION_DESCRIPTION, value)
+              }
+              type="text"
+              className="input bg-transparent text-xs input-sm w-full max-w-xs"
+              placeholder="update version notes"
+              value={inputData.versions[versionIndex].notes}
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleVersionChange(1)}
+          className={cn(
+            'flex hover:bg-neutral-950 border mb-8 rounded-full border-white/10 items-center justify-center h-8 w-8',
+            versionIndex === project.versions.length - 1 && 'opacity-0'
+          )}
+        >
+          {<ArrowRight02Icon size={12} />}
+        </button>
+      </div>
+
+      <button className="btn btn-active btn-primary text-white mt-4 w-full">
         {loading ? (
           <span className="loading loading-spinner"></span>
         ) : (
           <article className="prose text-white">
-            <p>{'Create'}</p>
+            <p>{'Update'}</p>
           </article>
         )}
       </button>

@@ -41,11 +41,9 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
-  // useEffect(() => {
-  //   DialogController.showCustomDialog(
-  //     <PremiumDialog usageLimit={UsageLimit.versions} />
-  //   );
-  // }, []);
+  useEffect(() => {
+    DialogController.showCustomDialog(<EditProjectDialog project={project!} />);
+  }, [project]);
 
   const { id } = useParams();
 

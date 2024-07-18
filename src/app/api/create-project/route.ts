@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
 
     await createInvites(project.id, emails);
     await sendInvitations({ emails, projectId: project.id });
+
     return NextResponse.json({
       project,
     });
