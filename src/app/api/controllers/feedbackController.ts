@@ -26,6 +26,20 @@ export async function createFeedback(feedback: FeedbackUpload) {
   return data;
 }
 
+export async function fetchFeedbackById(id: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching feedback: ${error.message}`);
+  }
+
+  return data;
+}
+
 export async function deleteFeedback(id: string) {
   const { error } = await supabase.from(TABLE).delete().eq('id', id);
 

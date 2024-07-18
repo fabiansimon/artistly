@@ -81,6 +81,8 @@ function ProjectPage() {
 
   const empty = !file || !version;
 
+  console.log(project);
+
   const author = project.creator_id === userId;
   return (
     <Container
@@ -229,9 +231,7 @@ function ProjectOptions({
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
         onClick: () =>
-          DialogController.showCustomDialog(
-            <InviteDialog projectId={project.id} />
-          ),
+          DialogController.showCustomDialog(<InviteDialog project={project} />),
         ignore: !author,
       },
       {
