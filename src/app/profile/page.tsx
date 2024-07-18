@@ -18,7 +18,7 @@ import {
 } from 'hugeicons-react';
 
 export default function ProfilePage() {
-  const { user } = useUserContext();
+  const { user, logout } = useUserContext();
   const {
     projects: { data, fetch, isLoading },
   } = useDataLayerContext();
@@ -55,6 +55,7 @@ export default function ProfilePage() {
         className="mx-auto mt-4"
         text="Log out"
         iconPosition="left"
+        onClick={logout}
         icon={<ArrowLeft02Icon size={16} />}
       />
 
@@ -76,6 +77,7 @@ export default function ProfilePage() {
           }
           selected={membership}
         />
+
         <SimpleButton
           className="mx-auto mt-2 opacity-80 border-error/30 text-error/50"
           text="cancel subscription"

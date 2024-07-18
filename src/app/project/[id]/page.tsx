@@ -29,6 +29,7 @@ import CollaboratorContainer from '@/components/CollaboratorContainer';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import PremiumDialog from '@/components/PremiumDialog';
+import EditProjectDialog from '@/components/EditProjectDialog';
 
 function ProjectPage() {
   const {
@@ -40,11 +41,9 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
-  // useEffect(() => {
-  //   DialogController.showCustomDialog(
-  //     <PremiumDialog usageLimit={UsageLimit.versions} />
-  //   );
-  // }, []);
+  useEffect(() => {
+    DialogController.showCustomDialog(<EditProjectDialog project={project!} />);
+  }, [project]);
 
   const { id } = useParams();
 
@@ -79,6 +78,8 @@ function ProjectPage() {
     );
 
   const empty = !file || !version;
+
+  console.log(project);
 
   const author = project.creator_id === userId;
   return (
@@ -216,7 +217,7 @@ function ProjectOptions({
       {
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => DialogController.showCustomDialog(<EditProjectDialog />),
         ignore: !author,
       },
       {
@@ -227,7 +228,9 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<InviteDialog />),
+        onClick: () =>
+          DialogController.showCustomDialog(<InviteDialog project={project} />),
+        ignore: !author,
       },
       {
         text: 'Download',
@@ -235,7 +238,7 @@ function ProjectOptions({
         onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
       },
     ],
-    [author]
+    [author, project]
   );
 
   return (

@@ -95,7 +95,7 @@ export async function updateUserMembership({
     const data = await updateUser({ id, updates: { membership } });
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
     console.log('error', error);
     throw new Error(`Error upgrading user membership: ${error.message}`);
   }
@@ -104,7 +104,7 @@ export async function updateUserMembership({
 export async function getUserData(request: NextRequest) {
   const session = await getServerSession({ req: request, ...authOptions });
   if (!session || !session.user) {
-    return;
+    return { userId: '', email: '' };
   }
 
   return {

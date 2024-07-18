@@ -30,7 +30,7 @@ export async function fetchCollabProjects(
   return data.map((collab) => collab.projects);
 }
 
-export async function projectIncludesUser(projectId: string, userId: string) {
+export async function projectIncludesUserId(projectId: string, userId: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('*')
@@ -40,7 +40,7 @@ export async function projectIncludesUser(projectId: string, userId: string) {
 
   // PGRST116 is the code for no rows found in Supabase
   if (error && error.code !== 'PGRST116') {
-    throw new Error(`Error checking for user in project: ${error.message}`);
+    throw new Error(`Error checking for userId in project: ${error.message}`);
   }
 
   return data !== null;
@@ -58,7 +58,7 @@ export async function joinCollabProject(projectId: string, userId: string) {
   return data;
 }
 
-export async function fetchCollaboratorsByProject(projectId: string) {
+export async function fetchCollaboratorsIdsByProject(projectId: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('user_id')
@@ -68,5 +68,5 @@ export async function fetchCollaboratorsByProject(projectId: string) {
     throw new Error(`Error fetching collaborators: ${error.message}`);
   }
 
-  return data.map((u) => u.user_id);
+  return data.map((user) => user.user_id);
 }

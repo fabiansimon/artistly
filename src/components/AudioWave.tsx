@@ -19,7 +19,7 @@ export default function AudioWave({
 }: AudioWaveProps) {
   const { time, settings, file, audioRef, setTime, setSettings } =
     useAudioContext();
-  const { project, version } = useProjectContext();
+  const { version, project } = useProjectContext();
 
   const [cursorVisible, setCursorVisible] = useState<boolean>(false);
 

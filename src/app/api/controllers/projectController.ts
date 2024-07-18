@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import { getPaginationRange } from '@/lib/utils';
 import { Pagination } from '@/types';
-import { v4 as uuidv4 } from 'uuid';
 
 const TABLE = 'projects';
 

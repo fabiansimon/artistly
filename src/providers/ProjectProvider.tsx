@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { useAudioContext } from './AudioProvider';
 import { useDataLayerContext } from './DataLayerProvider';
+import { useUserContext } from './UserProvider';
 
 interface ProjectContextType {
   project: Project | null;
@@ -34,6 +35,7 @@ export default function ProjectProvider({
   children: React.ReactNode;
 }) {
   const { file, time, onVersionChange } = useAudioContext();
+  const { user } = useUserContext();
   const {
     project: { data: project },
   } = useDataLayerContext();
@@ -98,6 +100,8 @@ export default function ProjectProvider({
         id: tempId,
         text,
         timestamp,
+        creator: user,
+        creator_id: user.id,
       };
 
       try {
@@ -153,7 +157,6 @@ export default function ProjectProvider({
   const users = useMemo(() => {
     if (!project) return {};
     const map: { [id: string]: User } = {};
-
     project.authors.forEach((u) => (map[u.id] = u));
     project.collaborators.forEach((u) => (map[u.id] = u));
     return map;

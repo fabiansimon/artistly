@@ -1,11 +1,17 @@
 import { useMemo, useState } from 'react';
-import { Mail01Icon, MehIcon } from 'hugeicons-react';
+import { Mail01Icon, MehIcon, TimeScheduleIcon } from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import DialogController from '@/controllers/DialogController';
 import CollaboratorChip from './CollaboratorChip';
+import { sendInvites } from '@/lib/api';
+import { Project } from '@/types';
 
-export default function InviteDialog() {
+export default function InviteDialog({
+  project: { id: projectId, openInvites },
+}: {
+  project: Project;
+}) {
   const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const [emails, setEmails] = useState<Set<string>>(new Set<string>());
@@ -19,7 +25,7 @@ export default function InviteDialog() {
     const invitees = JSON.stringify(Array.from(emails));
 
     try {
-      const res = await sendInvites(invitees);
+      await sendInvites(projectId, invitees);
       ToastController.showSuccessToast(
         'Invites were sent out.',
         'They will expire in 30 days.'
@@ -110,7 +116,6 @@ export default function InviteDialog() {
           </button>
         </div>
       </div>
-
       <button
         disabled={!inputValid}
         onClick={handleSubmit}
@@ -124,6 +129,23 @@ export default function InviteDialog() {
           </article>
         )}
       </button>
+      <div className="border border-white/10 rounded-lg p-2 mt-4 flex justify-center flex-col items-center">
+        <div className="flex items-center space-x-2">
+          <TimeScheduleIcon size={12} />
+          <p className="prose text-white/70 text-xs font-medium text-center">
+            Outstanding invites
+          </p>
+        </div>
+        <div className="divider my-0" />
+        <div className="flex flex-wrap justify-center gap-2">
+          {openInvites.map(({ email, id }) => (
+            <CollaboratorChip
+              key={id}
+              email={email}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

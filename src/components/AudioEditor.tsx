@@ -26,6 +26,7 @@ export default function AudioEditor({
       <WaveContainer amplifyBy={200} />
       <RangeIndicator className="w-full" />
       <CommentsSection comments={comments} />
+
       <AudioControls className="mx-auto border-t border-neutral-800/70 w-full py-2 pt-4 justify-center" />
     </div>
   );
