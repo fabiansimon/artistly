@@ -39,11 +39,17 @@ export enum InputType {
   ADD_EMAIL,
 }
 
-export type EditProjectInput = { versions: VersionInputData[] } & Omit<
-  Project,
-  'id' | 'created_at' | 'creator_id' | 'versions'
-> &
-  Invites;
+export type EditProjectInput = {
+  versions: Omit<VersionInputData, 'file'>[];
+} & Omit<Project, 'id' | 'created_at' | 'creator_id' | 'versions'> & {
+    invites: Invite[];
+  };
+
+interface Invite {
+  id: string;
+  email: string;
+  created_at: Date;
+}
 
 export interface ProjectInputData {
   title: string;
@@ -112,6 +118,7 @@ export interface Project {
   description: string;
   versions: Version[];
   collaborators: User[];
+  openInvites: Invite[];
 }
 
 export type LeanProject = Omit<

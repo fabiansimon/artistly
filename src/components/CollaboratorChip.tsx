@@ -10,12 +10,12 @@ export default function CollaboratorChip({
   return (
     <div
       onClick={onDelete}
-      className="flex cursor-pointer bg-primary/10 rounded-md px-2 py-1 items-center space-x-2"
+      className="flex cursor-pointer bg-neutral-950/70 rounded-md px-2 py-1 items-center space-x-2"
     >
       <article className="prose">
-        <p className="prose-sm text-white/70">{email}</p>
+        <p className="prose text-xs font-medium text-white/70">{email}</p>
       </article>
-      <Cancel01Icon size={16} />
+      <Cancel01Icon size={14} />
     </div>
   );
 }

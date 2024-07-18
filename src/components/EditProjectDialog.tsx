@@ -1,5 +1,5 @@
-import { InputType, ProjectInputData } from '@/types';
-import { useMemo, useState } from 'react';
+import { EditProjectInput, InputType, ProjectInputData } from '@/types';
+import { useEffect, useMemo, useState } from 'react';
 import { Mail01Icon, PencilEdit02Icon } from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
@@ -8,17 +8,7 @@ import { useProjectContext } from '@/providers/ProjectProvider';
 export default function EditProjectDialog({}: {}) {
   const { project } = useProjectContext();
   const [loading, setLoading] = useState<boolean>(false);
-  const [inputData, setInputData] = useState<ProjectInputData>({
-    title: '',
-    description: '',
-    emailList: new Set<string>(),
-    email: '',
-  });
-
-  const inputValid = useMemo(() => {
-    const { title, emailList } = inputData;
-    return !(title.trim().length === 0 || emailList.size === 0);
-  }, [inputData]);
+  const [inputData, setInputData] = useState<EditProjectInput | null>();
 
   const handleError = (title: string, description?: string) => {
     ToastController.showErrorToast(title, description);
@@ -48,6 +38,31 @@ export default function EditProjectDialog({}: {}) {
       }
     });
   };
+
+  useEffect(() => {
+    if (!project) return;
+    const {
+      authors,
+      collaborators,
+      created_at,
+      creator_id,
+      description,
+      id,
+      title,
+      versions,
+    } = project;
+
+    setInputData({
+      authors,
+      collaborators,
+      description,
+      invites,
+      title,
+      versions,
+    });
+  }, [project]);
+
+  if (!project) return;
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center">

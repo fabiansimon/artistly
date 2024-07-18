@@ -7,6 +7,7 @@ import {
   projectIncludesUserId,
 } from '../../controllers/collabController';
 import { fetchUsersByIds, getUserData } from '../../controllers/userController';
+import { fetchInvitesByProject } from '../../controllers/inviteController';
 
 export async function GET(
   req: NextRequest,
@@ -40,7 +41,7 @@ export async function GET(
     }
 
     const versions = await fetchVersionWithFeedbackByProjectId(projectId);
-    const collaboratorsIds = await fetchCollaboratorsIdsByProject(project.id);
+    const collaboratorsIds = await fetchCollaboratorsIdsByProject(projectId);
     const users = await fetchUsersByIds([
       project.creator_id,
       ...collaboratorsIds,
@@ -49,11 +50,14 @@ export async function GET(
     const authors = users.slice(0, 1);
     const collaborators = users.slice(1);
 
+    const openInvites = await fetchInvitesByProject(projectId);
+
     const data: Project = {
       ...project,
       authors,
       versions,
       collaborators,
+      openInvites,
     };
 
     return NextResponse.json(data);

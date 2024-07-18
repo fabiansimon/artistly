@@ -62,7 +62,7 @@ export default function CommentTile({ comment }: { comment: Comment }) {
       </div>
       <DropDown
         options={options}
-        className={creatorId === userId ? 'opacity-0' : ''}
+        className={creatorId !== userId ? 'opacity-0' : ''}
       />
     </div>
   );
