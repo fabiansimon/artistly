@@ -41,9 +41,12 @@ export enum InputType {
   VERSION_DESCRIPTION,
 }
 
-export type EditProjectInput = {
-  versions: Omit<VersionInputData, 'file'>[];
-} & Omit<Project, 'id' | 'created_at' | 'creator_id' | 'versions'>;
+export type EditProjectInput = Omit<
+  Project,
+  'id' | 'created_at' | 'creator_id' | 'versions'
+> & {
+  versions: Array<Omit<VersionInputData, 'file'> & { remove: boolean }>;
+};
 
 interface Invite {
   id: string;

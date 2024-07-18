@@ -1,16 +1,12 @@
-import {
-  EditProjectInput,
-  InputType,
-  Project,
-  ProjectInputData,
-} from '@/types';
-import { useEffect, useMemo, useState } from 'react';
+import { EditProjectInput, InputType, Project } from '@/types';
+import { useEffect, useState } from 'react';
 import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
-  Mail01Icon,
+  Delete01Icon,
+  FileEditIcon,
   PencilEdit02Icon,
-  TimeScheduleIcon,
+  RestoreBinIcon,
 } from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
@@ -75,17 +71,19 @@ export default function EditProjectDialog({ project }: { project: Project }) {
       collaborators,
       description,
       title,
-      versions,
+      versions: versions.map((v) => ({ ...v, remove: false })),
     });
   }, [project]);
 
   if (!project || !inputData) return;
 
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center">
-      <article className="prose mb-4">
+    <div className="flex flex-col w-full max-w-screen-md items-center space-y-4">
+      <article className="prose">
         <h3 className="text-white text-sm text-center">Edit Project</h3>
       </article>
+
+      {/* Title & Description */}
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
@@ -108,61 +106,113 @@ export default function EditProjectDialog({ project }: { project: Project }) {
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
+          className="textarea text-xs textarea-bordered bg-transparent w-full max-h-44 text-white/70"
           placeholder="Update project notes (optional)"
         ></textarea>
       </div>
+      {/*  */}
 
-      <div className="flex items-end space-x-2 w-full">
-        <button
-          onClick={() => handleVersionChange(-1)}
-          className={cn(
-            'flex hover:bg-neutral-950 border mb-8 rounded-full border-white/10 items-center justify-center h-8 w-8',
-            versionIndex === 0 && 'opacity-0'
-          )}
-        >
-          {<ArrowLeft02Icon size={12} />}
-        </button>
-        <div className="border border-white/10 rounded-lg p-2 mt-4 flex justify-center flex-col items-center">
-          <div className="flex items-center space-x-2">
-            <TimeScheduleIcon size={12} />
-            <p className="prose text-white/70 text-xs font-medium text-center">
-              Edit Versions
-            </p>
+      {/* Versions */}
+      <div className="flex flex-col items-center border rounded-lg bg-neutral-950 border-white/10 px-2 py-4 space-y-3">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleVersionChange(-1)}
+            className={cn(
+              'flex bg-neutral-900 hover:bg-neutral-800 border rounded-full border-white/10 items-center justify-center min-h-8 min-w-8',
+              versionIndex === 0 && 'opacity-0'
+            )}
+          >
+            <ArrowLeft02Icon size={12} />
+          </button>
+
+          {/* Edit Versions Container */}
+          <div
+            className={cn(
+              'border relative overflow-hidden bg-neutral-900 rounded-lg p-2 flex justify-center flex-col items-center px-2',
+              true && 'border-error/60'
+            )}
+          >
+            <div className="absolute cursor-pointer bg-red-900/10 overflow-hidden rounded-lg w-full h-full backdrop-blur-md flex items-center justify-center">
+              <div className="flex space-x-2 items-center">
+                <RestoreBinIcon
+                  className="text-white"
+                  size={16}
+                />
+                <p className="text-xs font-medium text-white">click to undo</p>
+              </div>
+            </div>
+            <div className="flex justify-between w-full">
+              <p className="prose ml-2 text-white/70 text-xs font-medium text-center">
+                Edit Version
+              </p>
+              <div className="-my-1 cursor-pointer hover:bg-neutral-800 rounded-full px-2 flex items-center space-x-1">
+                <p className="prose text-error/60 text-[11px] font-medium text-center">
+                  Remove
+                </p>
+                <Delete01Icon
+                  size={12}
+                  className="text-error/60"
+                />
+              </div>
+            </div>
+            <div className="divider my-0" />
+            <div className="flex space-x-2">
+              <div>
+                <input
+                  onInput={({ currentTarget: { value } }) =>
+                    handleInput(InputType.VERSION_TITLE, value)
+                  }
+                  type="text"
+                  className="input bg-transparent text-xs input-sm w-full max-w-xs"
+                  placeholder="Name of Version"
+                  value={inputData.versions[versionIndex].title}
+                />
+                <input
+                  onInput={({ currentTarget: { value } }) =>
+                    handleInput(InputType.VERSION_DESCRIPTION, value)
+                  }
+                  type="text"
+                  className="input bg-transparent text-xs input-sm w-full max-w-xs placeholder-white/70"
+                  placeholder="update version notes"
+                  value={inputData.versions[versionIndex].notes}
+                />
+              </div>
+              <button className="flex hover:bg-neutral-800 items-center border border-white/10 flex-col p-2 rounded-md space-y-1">
+                <FileEditIcon
+                  size={18}
+                  className="text-white mt-1"
+                />
+                <p className="prose text-[11px] text-white/70 font-medium">
+                  replace
+                </p>
+              </button>
+            </div>
           </div>
-          <div className="divider my-0" />
-          <div>
-            <input
-              onInput={({ currentTarget: { value } }) =>
-                handleInput(InputType.VERSION_TITLE, value)
-              }
-              type="text"
-              className="input bg-transparent text-xs input-sm w-full max-w-xs"
-              placeholder="Name of Version"
-              value={inputData.versions[versionIndex].title}
-            />
-            <input
-              onInput={({ currentTarget: { value } }) =>
-                handleInput(InputType.VERSION_DESCRIPTION, value)
-              }
-              type="text"
-              className="input bg-transparent text-xs input-sm w-full max-w-xs"
-              placeholder="update version notes"
-              value={inputData.versions[versionIndex].notes}
-            />
-          </div>
+          {/*  */}
+
+          <button
+            onClick={() => handleVersionChange(1)}
+            className={cn(
+              'flex bg-neutral-900 hover:bg-neutral-800 border rounded-full border-white/10 items-center justify-center min-h-8 min-w-8',
+              versionIndex === project.versions.length - 1 && 'opacity-0'
+            )}
+          >
+            <ArrowRight02Icon size={12} />
+          </button>
         </div>
-
-        <button
-          onClick={() => handleVersionChange(1)}
-          className={cn(
-            'flex hover:bg-neutral-950 border mb-8 rounded-full border-white/10 items-center justify-center h-8 w-8',
-            versionIndex === project.versions.length - 1 && 'opacity-0'
-          )}
-        >
-          {<ArrowRight02Icon size={12} />}
-        </button>
+        <div className="flex space-x-1">
+          {inputData.versions.map((v, i) => (
+            <div
+              className={cn(
+                'min-w-[6px] min-h-[6px] bg-neutral-400 rounded-full',
+                v.versionIndex !== i && 'opacity-25'
+              )}
+              key={i}
+            />
+          ))}
+        </div>
       </div>
+      {/*  */}
 
       <button className="btn btn-active btn-primary text-white mt-4 w-full">
         {loading ? (
