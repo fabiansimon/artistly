@@ -52,10 +52,13 @@ export async function POST(req: NextRequest) {
       .filter((invite) => newSet.has(invite.email))
       .map((invite) => invite.id);
 
-    if (newInvites.length > 0) await createInvites(projectId, newInvites);
+    let invites;
+    if (newInvites.length > 0) {
+      invites = await createInvites(projectId, newInvites);
+    }
     if (toUpdate.length > 0) await updateInvites(toUpdate);
 
-    return NextResponse.json({ status: 200 });
+    return NextResponse.json({ status: 200, invites });
   } catch (error) {
     console.log(error);
     return NextResponse.json({
