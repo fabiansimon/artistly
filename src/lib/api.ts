@@ -55,6 +55,7 @@ export async function sendInvites(projectId: string, invitees: string) {
         invitees,
       }
     );
+    console.log(res.data);
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'sendInvites' });

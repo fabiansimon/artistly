@@ -43,7 +43,7 @@ function ProjectPage() {
 
   useEffect(() => {
     if (!project) return;
-    ModalController.show(<InviteDialog project={project} />, true);
+    ModalController.show(<InviteDialog />);
   }, [project]);
 
   const { id } = useParams();
