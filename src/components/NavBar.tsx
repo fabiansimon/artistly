@@ -13,11 +13,11 @@ import {
 } from 'hugeicons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import DialogController from '@/controllers/DialogController';
 import UploadContainer from './UploadContainer';
 import Avatar from './Avatar';
 import { useUserContext } from '@/providers/UserProvider';
 import MembershipBadge from './MembershipBadge';
+import ModalController from '@/controllers/ModalController';
 
 function NavBar({ className }: { className?: string }): JSX.Element {
   const { user } = useUserContext();
@@ -48,8 +48,7 @@ function NavBar({ className }: { className?: string }): JSX.Element {
                 className="text-white"
               />
             ),
-            onClick: () =>
-              DialogController.showCustomDialog(<UploadContainer />),
+            onClick: () => ModalController.show(<UploadContainer />),
           },
         ],
       },

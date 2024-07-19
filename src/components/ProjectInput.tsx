@@ -5,9 +5,9 @@ import { LocalStorage } from '@/lib/localStorage';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
 import { inputDataEmpty } from '@/types/typeFunc';
-import DialogController from '@/controllers/DialogController';
 import { createProject } from '@/lib/api';
 import CollaboratorChip from './CollaboratorChip';
+import ModalController from '@/controllers/ModalController';
 
 export default function ProjectInput({
   onSuccess,
@@ -54,7 +54,7 @@ export default function ProjectInput({
       onSuccess({ id: res.project.id, title, versions: [] });
     } catch (error) {
       console.log(error);
-      DialogController.closeDialog();
+      ModalController.close();
     } finally {
       setLoading(false);
     }

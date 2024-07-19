@@ -62,6 +62,21 @@ export async function sendInvites(projectId: string, invitees: string) {
   }
 }
 
+export async function removeInvite(projectId: string, inviteId: string) {
+  try {
+    const res = await _axios.post(
+      `api/remove-invitation?projectId=${projectId}`,
+      {
+        inviteId,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'removeInvite' });
+    throw error;
+  }
+}
+
 export async function fetchInvitation(projectId: string) {
   try {
     const res = await _axios.get(`api/invitation/${projectId}`);

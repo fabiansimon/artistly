@@ -48,7 +48,7 @@ export type EditProjectInput = Omit<
   versions: Array<Omit<VersionInputData, 'file'> & { remove: boolean }>;
 };
 
-interface Invite {
+export interface Invite {
   id: string;
   email: string;
   created_at: Date;
@@ -126,7 +126,12 @@ export interface Project {
 
 export type LeanProject = Omit<
   Project,
-  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'authors'
+  | 'created_at'
+  | 'creator_id'
+  | 'collaborators'
+  | 'description'
+  | 'authors'
+  | 'openInvites'
 >;
 
 export interface FeedbackUpload {

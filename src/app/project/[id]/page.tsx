@@ -20,7 +20,6 @@ import FeedbackContainer from '@/components/FeedbackContainer';
 import { MenuOption, Project, UsageLimit } from '@/types';
 import SimpleButton from '@/components/SimpleButton';
 import { checkUserCapacity, cn } from '@/lib/utils';
-import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
 import { useUserContext } from '@/providers/UserProvider';
@@ -30,6 +29,7 @@ import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import PremiumDialog from '@/components/PremiumDialog';
 import EditProjectDialog from '@/components/EditProjectDialog';
+import ModalController from '@/controllers/ModalController';
 
 function ProjectPage() {
   const {
@@ -42,7 +42,8 @@ function ProjectPage() {
   const { version, handleVersionChange } = useProjectContext();
 
   useEffect(() => {
-    DialogController.showCustomDialog(<EditProjectDialog project={project!} />);
+    if (!project) return;
+    ModalController.show(<InviteDialog project={project} />, true);
   }, [project]);
 
   const { id } = useParams();
@@ -161,7 +162,7 @@ function ProjectPage() {
             </article>
             <button
               onClick={() =>
-                DialogController.showCustomDialog(
+                ModalController.show(
                   <UploadContainer projectId={id as string} />
                 )
               }
@@ -203,11 +204,11 @@ function ProjectOptions({
   const handleAddVersion = () => {
     const { id } = project;
     if (!checkUserCapacity({ user, check: UsageLimit.versions, project }))
-      return DialogController.showCustomDialog(
+      return ModalController.show(
         <PremiumDialog usageLimit={UsageLimit.versions} />
       );
 
-    DialogController.showCustomDialog(<UploadContainer projectId={id} />);
+    ModalController.show(<UploadContainer projectId={id} />);
   };
 
   const options: MenuOption[] = useMemo(
@@ -216,9 +217,7 @@ function ProjectOptions({
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
         onClick: () =>
-          DialogController.showCustomDialog(
-            <EditProjectDialog project={project} />
-          ),
+          ModalController.show(<EditProjectDialog project={project} />),
         ignore: !author,
       },
       {
@@ -230,13 +229,13 @@ function ProjectOptions({
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
         onClick: () =>
-          DialogController.showCustomDialog(<InviteDialog project={project} />),
+          ModalController.show(<InviteDialog project={project} />, true),
         ignore: !author,
       },
       {
         text: 'Download',
         icon: <Download04Icon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
+        onClick: () => ModalController.show(<DownloadDialog />),
       },
     ],
     [author, project]

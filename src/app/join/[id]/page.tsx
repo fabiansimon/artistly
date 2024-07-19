@@ -2,7 +2,7 @@
 
 import { PlayButton } from '@/components/PlayButton';
 import { route, ROUTES } from '@/constants/routes';
-import DialogController from '@/controllers/DialogController';
+import ModalController from '@/controllers/ModalController';
 import ToastController from '@/controllers/ToastController';
 import { fetchInvitation, joinCollabProject } from '@/lib/api';
 import { getReadableDate } from '@/lib/utils';
@@ -17,7 +17,7 @@ export default function JoinPage() {
 
   const handleChoice = (decision: boolean) => {
     if (decision) return handleJoin();
-    DialogController.closeDialog();
+    ModalController.close();
     router.back();
   };
 
@@ -37,7 +37,7 @@ export default function JoinPage() {
   useEffect(() => {
     (async () => {
       const project = await fetchInvitation(id as string);
-      DialogController.showCustomDialog(
+      ModalController.show(
         <InvitationCard
           isLoading={isLoading}
           project={project}
@@ -72,7 +72,9 @@ function InvitationCard({
           <span className="flex space-x-1">
             <p className="text-white text-sm">{title}</p>
             <p className="text-white/60 text-sm">{'by'}</p>
-            <p className="text-white text-sm">{project.author.first_name}</p>
+            <p className="text-white text-sm">
+              {project.authors[0].first_name}
+            </p>
           </span>
           <p className="text-white/80 text-sm">
             {getReadableDate(created_at, true)}
