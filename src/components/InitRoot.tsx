@@ -1,10 +1,11 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import Dialog from './Dialog';
+import Modal from './Modal';
 import NavBar from './NavBar';
 import Toast from './Toast';
 import AuthPage from '@/app/auth/page';
+import Alert from './Alert';
 
 export default function InitRoot({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -16,7 +17,8 @@ export default function InitRoot({ children }: { children: React.ReactNode }) {
       <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
         {children}
         <Toast />
-        <Dialog />
+        <Modal />
+        <Alert />
       </main>
     </div>
   );

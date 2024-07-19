@@ -7,12 +7,18 @@ import {
   FileEditIcon,
   PencilEdit02Icon,
   RestoreBinIcon,
+  TimeScheduleIcon,
 } from 'hugeicons-react';
-import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
-import { cn } from '@/lib/utils';
+import { _, cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import CollaboratorChip from './CollaboratorChip';
+import AlertController from '@/controllers/AlertController';
+import { removeInvite } from '@/lib/api';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
-export default function EditProjectDialog({ project }: { project: Project }) {
+export default function EditProjectDialog() {
+  const { project, removeInvitation } = useProjectContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<EditProjectInput | null>();
   const [versionIndex, setVersionIndex] = useState<number>(0);
@@ -20,6 +26,29 @@ export default function EditProjectDialog({ project }: { project: Project }) {
   const handleError = (title: string, description?: string) => {
     ToastController.showErrorToast(title, description);
   };
+
+  useEffect(() => {
+    if (!project) return;
+    const {
+      authors,
+      collaborators,
+      openInvites,
+      description,
+      title,
+      versions,
+    } = project;
+
+    setInputData({
+      authors,
+      openInvites,
+      collaborators,
+      description,
+      title,
+      versions: versions.map((v) => ({ ...v, remove: false })),
+    });
+  }, [project]);
+
+  if (!project || !inputData) return;
 
   const handleVersionChange = (step: number) => {
     setVersionIndex((prev) => {
@@ -48,21 +77,26 @@ export default function EditProjectDialog({ project }: { project: Project }) {
 
   const handleInput = (type: InputType, value?: string) => {
     setInputData((prev) => {
+      if (!prev) return;
       switch (type) {
-        case InputType.ADD_EMAIL:
-          const input = prev.email.trim();
-          if (!REGEX.email.test(input)) {
-            handleError('Not a valid email', 'Try again with a valid email.');
-            return prev;
-          }
-
-          const newEmailList = new Set(prev.emailList);
-          newEmailList.add(input);
-          return { ...prev, email: '', emailList: newEmailList };
         case InputType.TITLE:
           return { ...prev, title: value ?? '' };
         case InputType.DESCRIPTION:
           return { ...prev, description: value ?? '' };
+        case InputType.VERSION_TITLE:
+          return {
+            ...prev,
+            versions: prev.versions.map((v, i) =>
+              i === versionIndex ? { ...v, title: value } : v
+            ),
+          };
+        case InputType.VERSION_DESCRIPTION:
+          return {
+            ...prev,
+            versions: prev.versions.map((v, i) =>
+              i === versionIndex ? { ...v, notes: value } : v
+            ),
+          };
         case InputType.EMAIL:
           return { ...prev, email: value ?? '' };
         default:
@@ -71,39 +105,17 @@ export default function EditProjectDialog({ project }: { project: Project }) {
     });
   };
 
-  useEffect(() => {
-    if (!project) return;
-    const {
-      authors,
-      collaborators,
-      openInvites,
-      description,
-      title,
-      versions,
-    } = project;
-
-    setInputData({
-      authors,
-      openInvites,
-      collaborators,
-      description,
-      title,
-      versions: versions.map((v) => ({ ...v, remove: false })),
-    });
-  }, [project]);
-
-  if (!project || !inputData) return;
   const currentVersion = inputData.versions[versionIndex];
 
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center space-y-4">
+    <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
       <article className="prose">
         <h3 className="text-white text-sm text-center">Edit Project</h3>
       </article>
 
       {/* Title & Description */}
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
-        <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
+        <label className="input input-bordered bg-neutral-950 flex items-center  justify-center gap-2 w-full relative -mb-2">
           <PencilEdit02Icon
             size={18}
             className="absolute left-4"
@@ -113,7 +125,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
               handleInput(InputType.TITLE, value)
             }
             type="text"
-            className="grow text-sm max-w-xs bg-transparent text-center"
+            className="grow text-sm text-center placeholder-white/60"
             placeholder="Name of song/project"
             value={inputData.title}
           />
@@ -124,7 +136,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea text-xs textarea-bordered bg-transparent w-full max-h-44 text-white/70"
+          className="textarea text-xs textarea-bordered bg-neutral-950 w-full max-h-44 text-white/70"
           placeholder="Update project notes (optional)"
         ></textarea>
       </div>
@@ -151,7 +163,11 @@ export default function EditProjectDialog({ project }: { project: Project }) {
             )}
           >
             {currentVersion.remove && (
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.1 }}
                 onClick={handleRemoveVersion}
                 className="absolute cursor-pointer bg-red-900/10 overflow-hidden rounded-lg w-full h-full backdrop-blur-md flex items-center justify-center"
               >
@@ -164,7 +180,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
                     click to undo
                   </p>
                 </div>
-              </div>
+              </motion.div>
             )}
             <div className="flex justify-between w-full">
               <p className="prose ml-2 text-white/70 text-xs font-medium text-center">
@@ -200,7 +216,7 @@ export default function EditProjectDialog({ project }: { project: Project }) {
                     handleInput(InputType.VERSION_DESCRIPTION, value)
                   }
                   type="text"
-                  className="input bg-transparent text-xs input-sm w-full max-w-xs placeholder-white/70"
+                  className="input bg-transparent text-xs input-sm w-full max-w-xs placeholder-white/60 text-white/70"
                   placeholder="update version notes"
                   value={inputData.versions[versionIndex].notes}
                 />
@@ -242,6 +258,30 @@ export default function EditProjectDialog({ project }: { project: Project }) {
         </div>
       </div>
       {/*  */}
+
+      {/* Invite Container */}
+      <div className="flex flex-col w-full items-center border rounded-lg bg-neutral-950 border-white/10 p-2">
+        <div className="flex items-center space-x-2">
+          <TimeScheduleIcon size={12} />
+          <p className="prose text-white/70 text-xs font-medium text-center">
+            Outstanding invites
+          </p>
+        </div>
+        <div className="divider my-0" />
+        <div className="flex flex-wrap gap-2">
+          {inputData.openInvites.map(({ email, id }) => (
+            <CollaboratorChip
+              key={id}
+              email={email}
+              onDelete={() =>
+                AlertController.show({
+                  callback: () => removeInvitation(id),
+                })
+              }
+            />
+          ))}
+        </div>
+      </div>
 
       <button className="btn btn-active btn-primary text-white mt-4 w-full">
         {loading ? (

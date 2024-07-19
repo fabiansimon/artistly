@@ -1,4 +1,4 @@
-import DialogController from '@/controllers/DialogController';
+import AlertController from '@/controllers/AlertController';
 import { _, cn } from '@/lib/utils';
 import { MenuOption } from '@/types';
 import { MoreHorizontalIcon } from 'hugeicons-react';
@@ -29,7 +29,7 @@ export default function DropDown({
             className="rounded-lg"
             onClick={(e) => {
               e.stopPropagation();
-              confirm ? DialogController.showDialog(_, _, onClick) : onClick();
+              confirm ? AlertController.show({ callback: onClick }) : onClick();
             }}
           >
             <div>

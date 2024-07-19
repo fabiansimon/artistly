@@ -1,19 +1,21 @@
 'use client';
 
 import FeedbackInputModal from '@/components/FeedbackInputModal';
-import { deleteFeedback, uploadFeeback } from '@/lib/api';
+import { deleteFeedback, removeInvite, uploadFeeback } from '@/lib/api';
 import { generateId, withinRange } from '@/lib/utils';
-import { Comment, Input, Project, User, Version } from '@/types';
+import { Comment, Input, Invite, Project, User, Version } from '@/types';
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 import { useAudioContext } from './AudioProvider';
 import { useDataLayerContext } from './DataLayerProvider';
 import { useUserContext } from './UserProvider';
+import ToastController from '@/controllers/ToastController';
 
 interface ProjectContextType {
   project: Project | null;
@@ -25,6 +27,7 @@ interface ProjectContextType {
   handleVersionChange: (id: string) => void;
   removeFeedback: (id: string) => void;
   addFeedback: (input: Input) => void;
+  removeInvitation: (id: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -37,9 +40,10 @@ export default function ProjectProvider({
   const { file, time, onVersionChange } = useAudioContext();
   const { user } = useUserContext();
   const {
-    project: { data: project },
+    project: { data },
   } = useDataLayerContext();
 
+  const [project, setProject] = useState<Project | null>();
   const [commentInput, setCommentInput] = useState<{
     isVisible: boolean;
     timestamp?: number;
@@ -47,6 +51,11 @@ export default function ProjectProvider({
   const [version, setVersion] = useState<(Version & { index: number }) | null>(
     null
   );
+
+  useEffect(() => {
+    if (!data) return;
+    setProject(data);
+  }, [data]);
 
   const handleVersionChange = useCallback(
     async (id: string) => {
@@ -117,7 +126,7 @@ export default function ProjectProvider({
         removeComment(tempId);
       }
     },
-    [version, addComment, removeComment, updateComment]
+    [version, addComment, removeComment, updateComment, user]
   );
 
   const removeFeedback = useCallback(
@@ -136,6 +145,43 @@ export default function ProjectProvider({
       }
     },
     [version, addComment, removeComment]
+  );
+
+  const deleteInvite = useCallback((inviteId: string) => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        openInvites: prev.openInvites.filter(({ id }) => id !== inviteId),
+      };
+    });
+  }, []);
+
+  const addInvite = useCallback((invite: Invite, index: number) => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        openInvites: prev.openInvites.splice(index, 0, invite),
+      };
+    });
+  }, []);
+
+  const removeInvitation = useCallback(
+    async (id: string) => {
+      if (!project) return;
+      const { openInvites } = project;
+      const inviteIndex = openInvites.findIndex(({ id: _id }) => _id === id);
+      const invite = openInvites[inviteIndex];
+      try {
+        deleteInvite(id);
+        await removeInvite(project.id, id);
+      } catch (error) {
+        ToastController.showErrorToast(error.message);
+        addInvite(invite, inviteIndex);
+      }
+    },
+    [addInvite, deleteInvite, project]
   );
 
   const toggleCommentInput = useCallback((timestamp?: number) => {
@@ -172,6 +218,7 @@ export default function ProjectProvider({
     addFeedback,
     toggleCommentInput,
     removeFeedback,
+    removeInvitation,
   };
   return (
     <ProjectContext.Provider value={value}>
