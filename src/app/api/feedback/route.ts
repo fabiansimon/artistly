@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createFeedback } from '../../controllers/feedbackController';
-import { getUserData } from '../../controllers/userController';
+import { getUserData } from '../controllers/userController';
+import { createFeedback } from '../controllers/feedbackController';
 
 export async function POST(req: NextRequest) {
   try {

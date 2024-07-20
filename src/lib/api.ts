@@ -63,7 +63,7 @@ export async function sendInvites(projectId: string, invitees: string) {
   }
 }
 
-export async function removeInvite(projectId: string, inviteId: string) {
+export async function deleteInvite(projectId: string, inviteId: string) {
   try {
     const res = await _axios.post(
       `api/remove-invitation?projectId=${projectId}`,
@@ -126,7 +126,7 @@ export async function uploadFeeback({
   timestamp?: number;
 }) {
   try {
-    const res = await _axios.post('/api/feedback/create', {
+    const res = await _axios.post('/api/feedback', {
       versionId,
       text,
       timestamp,
@@ -140,7 +140,7 @@ export async function uploadFeeback({
 
 export async function deleteFeedback({ id }: { id: string }) {
   try {
-    const res = await _axios.delete(`/api/feedback/delete/${id}`);
+    const res = await _axios.delete(`/api/feedback/${id}`);
     return res.status;
   } catch (error) {
     handleError({ error, callName: 'deleteFeedback' });

@@ -6,9 +6,11 @@ export default class AlertController {
     title,
     description,
     callback,
+    buttonText,
   }: {
     title?: string;
     description?: string;
     callback?: (args?: any) => any | void;
-  }) => this.ref.current?.show({ title, description, callback });
+    buttonText?: string;
+  }) => this.ref.current?.show({ title, description, callback, buttonText });
 }

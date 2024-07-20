@@ -13,23 +13,18 @@ import DialogModal from './DialogModal';
 import ModalController from '@/controllers/ModalController';
 
 export interface ModalMethods {
-  show: (children: React.ReactNode, ignoreDesign: boolean) => void;
+  show: (children: React.ReactNode) => void;
   close: () => void;
 }
 function Modal(): JSX.Element {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [content, setContent] = useState<{
-    render: React.ReactNode;
-    ignoreDesign: boolean;
-  } | null>(null);
+  const [content, setContent] = useState<React.ReactNode | null>(null);
 
   const ref = useRef<ModalMethods>();
 
   const closeModal = useCallback(() => {
     setIsVisible(false);
-    setTimeout(() => {
-      setContent(null);
-    }, 300);
+    setContent(null);
   }, []);
 
   useLayoutEffect(() => {
@@ -39,11 +34,8 @@ function Modal(): JSX.Element {
   useImperativeHandle(
     ref,
     () => ({
-      show: (children: React.ReactNode, ignoreDesign: boolean) => {
-        setContent({
-          render: children,
-          ignoreDesign,
-        });
+      show: (children: React.ReactNode) => {
+        setContent(children);
         setIsVisible(true);
       },
       close: () => closeModal(),
@@ -53,11 +45,10 @@ function Modal(): JSX.Element {
 
   return (
     <DialogModal
-      ignoreDesign={content?.ignoreDesign || false}
       onRequestClose={closeModal}
       isVisible={isVisible}
     >
-      {content && content.render}
+      {content && content}
     </DialogModal>
   );
 }

@@ -1,10 +1,16 @@
 import { cn, concatName } from '@/lib/utils';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import Avatar from './Avatar';
-import { PaintBrush01Icon, UserGroupIcon } from 'hugeicons-react';
+import {
+  PaintBrush01Icon,
+  PencilEdit02Icon,
+  UserGroupIcon,
+} from 'hugeicons-react';
 import { useState } from 'react';
 import { User } from '@/types';
 import { motion } from 'framer-motion';
+import ModalController from '@/controllers/ModalController';
+import UserListDialog from './UserListDialog';
 
 export default function CollaboratorContainer({
   className,
@@ -19,30 +25,43 @@ export default function CollaboratorContainer({
 
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={() => setHovered(true)}
       className={cn(
-        'flex cursor-pointer bg-neutral-950 border-white/10 border rounded-full items-start justify-between p-2 -space-x-2',
+        'flex bg-neutral-950 border-white/10 border rounded-full items-start justify-between p-2',
         className
       )}
     >
-      {authors.map(({ image_url, id }) => (
-        <Avatar
-          key={id}
-          size={18}
-          src={image_url}
-          className="rounded-full"
+      <div
+        onClick={() => ModalController.show(<UserListDialog />)}
+        className="hover:bg-neutral-900 cursor-pointer border border-white/10 rounded-full size-[26px] justify-center items-center flex mr-1"
+      >
+        <PencilEdit02Icon
+          size={12}
+          className="text-white/50"
         />
-      ))}
-      {collaborators.map(({ image_url, id }) => (
-        <Avatar
-          key={id}
-          size={18}
-          src={image_url}
-          className="rounded-full"
-        />
-      ))}
+      </div>
+      <div
+        className="-space-x-2 -mb-2 cursor-pointer"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={() => setHovered(true)}
+      >
+        {authors.map(({ image_url, id }) => (
+          <Avatar
+            key={id}
+            size={18}
+            src={image_url}
+            className="rounded-full"
+          />
+        ))}
+        {collaborators.map(({ image_url, id }) => (
+          <Avatar
+            key={id}
+            size={18}
+            src={image_url}
+            className="rounded-full"
+          />
+        ))}
+      </div>
       {hovered && (
         <motion.div
           initial={{ height: 0, opacity: 0 }}

@@ -59,7 +59,7 @@ export default function InviteDialog() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center modal-box mx-auto bg-neutral-900">
+    <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Invite Collaborators</h3>
       </article>

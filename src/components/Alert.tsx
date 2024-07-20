@@ -10,7 +10,7 @@ import {
 
 import DialogModal from './DialogModal';
 import AlertController from '@/controllers/AlertController';
-import ToastController from '@/controllers/ToastController';
+import { cn } from '@/lib/utils';
 
 const DEFAULT_TITLE = 'Are you sure?';
 const DEFAULT_DESCRIPTION = 'This cannot be reverted.';
@@ -19,6 +19,7 @@ interface AlertInfo {
   title?: string;
   description?: string;
   callback?: (args?: any) => any | void;
+  buttonText?: string;
 }
 
 export interface AlertMethods {
@@ -26,10 +27,12 @@ export interface AlertMethods {
     title,
     description,
     callback,
+    buttonText,
   }: {
     title?: string;
     description?: string;
     callback?: (args?: any) => any | void;
+    buttonText?: string;
   }) => void;
 }
 
@@ -72,12 +75,14 @@ function Alert(): JSX.Element {
         title,
         description,
         callback,
+        buttonText = 'Remove',
       }: {
         title?: string;
         description?: string;
         callback?: (args?: any) => any | void;
+        buttonText?: string;
       }) => {
-        setInfo({ title, description, callback });
+        setInfo({ title, description, callback, buttonText });
         setIsVisible(true);
       },
     }),
@@ -111,12 +116,15 @@ function Alert(): JSX.Element {
               <button
                 disabled={isLoading}
                 onClick={onClick}
-                className="btn btn-error ml-2"
+                className={cn(
+                  'btn ml-2',
+                  info.buttonText === 'Remove' ? 'btn-error' : 'btn-primary'
+                )}
               >
                 {isLoading ? (
                   <span className="loading loading-spinner"></span>
                 ) : (
-                  <>Delete</>
+                  <p>{info.buttonText}</p>
                 )}
               </button>
             )}
