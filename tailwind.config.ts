@@ -25,7 +25,7 @@ const config: Config = {
         xs: '0.8rem',
       },
       boxShadow: {
-        simple: '-20px 22px 0px -15px rgba(0,0,0,1)',
+        simple: '0px 0px 0px 5px 10px rgba(0,0,0,0.10)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

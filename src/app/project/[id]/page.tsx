@@ -41,10 +41,10 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
-  useEffect(() => {
-    if (!project) return;
-    ModalController.show(<InviteDialog />);
-  }, [project]);
+  // useEffect(() => {
+  //   if (!project) return;
+  //   ModalController.show(<InviteDialog />);
+  // }, [project]);
 
   const { id } = useParams();
 
@@ -67,6 +67,7 @@ function ProjectPage() {
     if (!project?.versions?.length) return;
     handleVersionChange(project.versions[0].id);
   }, [project]);
+
   if (isLoading || !project)
     return (
       <LoadingView
@@ -90,17 +91,9 @@ function ProjectPage() {
         <div className="flex w-full justify-between px-4">
           <div className="grow">
             <div className="grow flex justify-between w-full relative">
-              <div
-                className={cn(
-                  'flex items-center space-x-2',
-                  author && 'cursor-pointer'
-                )}
-              >
-                <h3 className="text-md text-white font-medium">
-                  {project.title}
-                </h3>
-                {author && <PencilEdit02Icon size={14} />}
-              </div>
+              <h3 className="text-md text-white font-medium">
+                {project.title}
+              </h3>
               <CollaboratorContainer className="absolute right-0 bottom-2" />
             </div>
 
@@ -216,8 +209,7 @@ function ProjectOptions({
       {
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
-        onClick: () =>
-          ModalController.show(<EditProjectDialog project={project} />),
+        onClick: () => ModalController.show(<EditProjectDialog />),
         ignore: !author,
       },
       {
@@ -228,8 +220,7 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () =>
-          ModalController.show(<InviteDialog project={project} />, true),
+        onClick: () => ModalController.show(<InviteDialog />),
         ignore: !author,
       },
       {

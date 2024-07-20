@@ -26,15 +26,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextAuthProvider session={session}>
-          <DataLayerProvider>
-            <UserProvider>
-              <AudioProvider>
-                <ProjectProvider>
-                  <InitRoot>{children}</InitRoot>
-                </ProjectProvider>
-              </AudioProvider>
-            </UserProvider>
-          </DataLayerProvider>
+          <InitRoot>{children}</InitRoot>
         </NextAuthProvider>
       </body>
     </html>

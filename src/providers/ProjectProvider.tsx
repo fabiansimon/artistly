@@ -3,7 +3,7 @@
 import FeedbackInputModal from '@/components/FeedbackInputModal';
 import {
   deleteFeedback,
-  removeInvite,
+  deleteInvite,
   sendInvites,
   uploadFeeback,
 } from '@/lib/api';
@@ -20,7 +20,6 @@ import {
 import { useAudioContext } from './AudioProvider';
 import { useDataLayerContext } from './DataLayerProvider';
 import { useUserContext } from './UserProvider';
-import ToastController from '@/controllers/ToastController';
 
 interface ProjectContextType {
   project: Project | null;
@@ -32,7 +31,7 @@ interface ProjectContextType {
   handleVersionChange: (id: string) => void;
   removeFeedback: (id: string) => void;
   addFeedback: (input: Input) => void;
-  removeInvitation: (id: string) => void;
+  removeInvite: (id: string) => void;
   addInvites: (emails: string[]) => Promise<void>;
 }
 
@@ -179,6 +178,7 @@ export default function ProjectProvider({
   );
 
   const _addInvites = useCallback((invites: Invite[]) => {
+    if (!invites) return;
     setProject((prev) => {
       if (!prev) return;
       return {
@@ -196,7 +196,7 @@ export default function ProjectProvider({
       const invite = openInvites[index];
       try {
         _removeInvite(id);
-        await removeInvite(project.id, id);
+        await deleteInvite(project.id, id);
       } catch (error) {
         _addInvite({ invite, index });
       }
@@ -209,13 +209,13 @@ export default function ProjectProvider({
       if (!project) return;
       const invitees = JSON.stringify(Array.from(emails));
       try {
-        const res = await sendInvites(project.id, invitees);
-        console.log(res);
+        const { invites } = await sendInvites(project.id, invitees);
+        _addInvites(invites);
       } catch (error) {
         console.error(error);
       }
     },
-    [_addInvites, project]
+    [project, _addInvites]
   );
 
   const toggleCommentInput = useCallback((timestamp?: number) => {

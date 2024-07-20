@@ -14,11 +14,10 @@ import { _, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import CollaboratorChip from './CollaboratorChip';
 import AlertController from '@/controllers/AlertController';
-import { removeInvite } from '@/lib/api';
 import { useProjectContext } from '@/providers/ProjectProvider';
 
 export default function EditProjectDialog() {
-  const { project, removeInvitation } = useProjectContext();
+  const { project, removeInvite } = useProjectContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<EditProjectInput | null>();
   const [versionIndex, setVersionIndex] = useState<number>(0);
@@ -49,6 +48,19 @@ export default function EditProjectDialog() {
   }, [project]);
 
   if (!project || !inputData) return;
+
+  const handleSubmit = () => {
+    AlertController.show({
+      title: 'Is everything correct?',
+      description: 'Once updated it cannot be reverted.',
+      callback: async () => await handleUpdate(),
+      buttonText: 'Update',
+    });
+  };
+
+  const handleUpdate = async () => {
+    console.log(inputData);
+  };
 
   const handleVersionChange = (step: number) => {
     setVersionIndex((prev) => {
@@ -81,8 +93,10 @@ export default function EditProjectDialog() {
       switch (type) {
         case InputType.TITLE:
           return { ...prev, title: value ?? '' };
+
         case InputType.DESCRIPTION:
           return { ...prev, description: value ?? '' };
+
         case InputType.VERSION_TITLE:
           return {
             ...prev,
@@ -90,6 +104,7 @@ export default function EditProjectDialog() {
               i === versionIndex ? { ...v, title: value } : v
             ),
           };
+
         case InputType.VERSION_DESCRIPTION:
           return {
             ...prev,
@@ -97,8 +112,7 @@ export default function EditProjectDialog() {
               i === versionIndex ? { ...v, notes: value } : v
             ),
           };
-        case InputType.EMAIL:
-          return { ...prev, email: value ?? '' };
+
         default:
           return prev;
       }
@@ -106,6 +120,7 @@ export default function EditProjectDialog() {
   };
 
   const currentVersion = inputData.versions[versionIndex];
+  const baseClass = 'bg-neutral-950/50 shadow shadow-black/10';
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
@@ -114,8 +129,17 @@ export default function EditProjectDialog() {
       </article>
 
       {/* Title & Description */}
-      <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
-        <label className="input input-bordered bg-neutral-950 flex items-center  justify-center gap-2 w-full relative -mb-2">
+      <div
+        className={
+          'flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full'
+        }
+      >
+        <label
+          className={cn(
+            'input input-bordered flex items-center justify-center gap-2 w-full relative -mb-2',
+            baseClass
+          )}
+        >
           <PencilEdit02Icon
             size={18}
             className="absolute left-4"
@@ -136,14 +160,22 @@ export default function EditProjectDialog() {
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea text-xs textarea-bordered bg-neutral-950 w-full max-h-44 text-white/70"
+          className={cn(
+            'textarea text-xs textarea-bordered w-full max-h-44 text-white/70',
+            baseClass
+          )}
           placeholder="Update project notes (optional)"
         ></textarea>
       </div>
       {/*  */}
 
       {/* Versions */}
-      <div className="flex flex-col items-center border rounded-lg bg-neutral-950 border-white/10 px-2 py-4 space-y-3">
+      <div
+        className={cn(
+          'flex flex-col items-center border rounded-lg border-white/10 px-2 py-4 space-y-3',
+          baseClass
+        )}
+      >
         <div className="flex items-center space-x-2">
           <button
             onClick={() => handleVersionChange(-1)}
@@ -260,7 +292,12 @@ export default function EditProjectDialog() {
       {/*  */}
 
       {/* Invite Container */}
-      <div className="flex flex-col w-full items-center border rounded-lg bg-neutral-950 border-white/10 p-2">
+      <div
+        className={cn(
+          'flex flex-col w-full items-center border rounded-lg border-white/10 p-2',
+          baseClass
+        )}
+      >
         <div className="flex items-center space-x-2">
           <TimeScheduleIcon size={12} />
           <p className="prose text-white/70 text-xs font-medium text-center">
@@ -268,14 +305,17 @@ export default function EditProjectDialog() {
           </p>
         </div>
         <div className="divider my-0" />
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {!inputData.openInvites.length && (
+            <p className="prose text-white/40 text-xs">No invites</p>
+          )}
           {inputData.openInvites.map(({ email, id }) => (
             <CollaboratorChip
               key={id}
               email={email}
               onDelete={() =>
                 AlertController.show({
-                  callback: () => removeInvitation(id),
+                  callback: () => removeInvite(id),
                 })
               }
             />
@@ -283,7 +323,10 @@ export default function EditProjectDialog() {
         </div>
       </div>
 
-      <button className="btn btn-active btn-primary text-white mt-4 w-full">
+      <button
+        onClick={handleSubmit}
+        className="btn btn-active btn-primary text-white mt-4 w-full"
+      >
         {loading ? (
           <span className="loading loading-spinner"></span>
         ) : (

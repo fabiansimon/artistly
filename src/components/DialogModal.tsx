@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 function DialogModal({
   isVisible,
   onRequestClose,
-  ignoreDesign,
   children,
   className,
   contentClassName,
@@ -13,7 +12,6 @@ function DialogModal({
   onRequestClose?: () => void;
   children: React.ReactNode;
   className?: string;
-  ignoreDesign?: boolean;
   contentClassName?: string;
 }): JSX.Element {
   return (
@@ -35,19 +33,16 @@ function DialogModal({
         className
       )}
     >
-      {ignoreDesign && children}
-      {!ignoreDesign && (
-        <motion.div
-          onClick={(e) => e.stopPropagation()}
-          initial="hidden"
-          transition={{ duration: 0.08 }}
-          animate={isVisible ? 'visible' : 'hidden'}
-          variants={{ visible: { scale: 1 }, hidden: { scale: 0.7 } }}
-          className={cn('modal-box mx-auto bg-neutral-900', contentClassName)}
-        >
-          {children}
-        </motion.div>
-      )}
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial="hidden"
+        transition={{ duration: 0.08 }}
+        animate={isVisible ? 'visible' : 'hidden'}
+        variants={{ visible: { scale: 1 }, hidden: { scale: 0.7 } }}
+        className={cn('modal-box mx-auto bg-neutral-900', contentClassName)}
+      >
+        {children}
+      </motion.div>
     </motion.div>
   );
 }

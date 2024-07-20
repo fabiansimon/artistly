@@ -9,7 +9,7 @@ export async function createInvites(projectId: string, emails: string[]) {
     email,
   }));
 
-  const { data, error } = await supabase.from(TABLE).insert(invites);
+  const { data, error } = await supabase.from(TABLE).insert(invites).select();
 
   if (error) {
     throw new Error(`Error adding invites: ${error.message}`);
