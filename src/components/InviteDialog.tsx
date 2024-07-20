@@ -1,17 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Mail01Icon, MehIcon, TimeScheduleIcon } from 'hugeicons-react';
+import { Mail01Icon, MehIcon } from 'hugeicons-react';
 import { REGEX } from '@/constants/regex';
 import ToastController from '@/controllers/ToastController';
-import DialogController from '@/controllers/DialogController';
 import CollaboratorChip from './CollaboratorChip';
-import { sendInvites } from '@/lib/api';
-import { Project } from '@/types';
+import ModalController from '@/controllers/ModalController';
+import { useProjectContext } from '@/providers/ProjectProvider';
 
-export default function InviteDialog({
-  project: { id: projectId, openInvites },
-}: {
-  project: Project;
-}) {
+export default function InviteDialog() {
+  const { addInvites } = useProjectContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const [emails, setEmails] = useState<Set<string>>(new Set<string>());
@@ -22,10 +18,8 @@ export default function InviteDialog({
     if (!inputValid) return;
     setLoading(true);
 
-    const invitees = JSON.stringify(Array.from(emails));
-
     try {
-      await sendInvites(projectId, invitees);
+      await addInvites(Array.from(emails));
       ToastController.showSuccessToast(
         'Invites were sent out.',
         'They will expire in 30 days.'
@@ -34,7 +28,7 @@ export default function InviteDialog({
       console.log(error);
       ToastController.showErrorToast();
     } finally {
-      DialogController.closeDialog();
+      ModalController.close();
       setLoading(false);
     }
   };
@@ -65,7 +59,7 @@ export default function InviteDialog({
   };
 
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center">
+    <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Invite Collaborators</h3>
       </article>
@@ -129,23 +123,6 @@ export default function InviteDialog({
           </article>
         )}
       </button>
-      <div className="border border-white/10 rounded-lg p-2 mt-4 flex justify-center flex-col items-center">
-        <div className="flex items-center space-x-2">
-          <TimeScheduleIcon size={12} />
-          <p className="prose text-white/70 text-xs font-medium text-center">
-            Outstanding invites
-          </p>
-        </div>
-        <div className="divider my-0" />
-        <div className="flex flex-wrap justify-center gap-2">
-          {openInvites.map(({ email, id }) => (
-            <CollaboratorChip
-              key={id}
-              email={email}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

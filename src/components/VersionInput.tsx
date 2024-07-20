@@ -4,8 +4,8 @@ import { PencilEdit02Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 import { PlayButton } from './PlayButton';
 import { uploadVersion } from '@/lib/api';
-import DialogController from '@/controllers/DialogController';
 import { route, ROUTES } from '@/constants/routes';
+import ModalController from '@/controllers/ModalController';
 
 export default function VersionInput({
   project,
@@ -43,7 +43,7 @@ export default function VersionInput({
       await uploadVersion(form);
       router.push(route(ROUTES.project, project.id));
     } finally {
-      DialogController.closeDialog();
+      ModalController.close();
       setLoading(false);
     }
   };

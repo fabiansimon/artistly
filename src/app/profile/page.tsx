@@ -6,7 +6,7 @@ import LoadingView from '@/components/LoadingView';
 import MembershipCarousel from '@/components/MembershipCarousel';
 import PremiumDialog from '@/components/PremiumDialog';
 import SimpleButton from '@/components/SimpleButton';
-import DialogController from '@/controllers/DialogController';
+import ModalController from '@/controllers/ModalController';
 import { concatName } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useUserContext } from '@/providers/UserProvider';
@@ -71,9 +71,7 @@ export default function ProfilePage() {
 
         <MembershipCarousel
           onClick={(membership) =>
-            DialogController.showCustomDialog(
-              <PremiumDialog preselected={membership} />
-            )
+            ModalController.show(<PremiumDialog preselected={membership} />)
           }
           selected={membership}
         />

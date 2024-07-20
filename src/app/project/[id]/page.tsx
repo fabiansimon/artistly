@@ -20,7 +20,6 @@ import FeedbackContainer from '@/components/FeedbackContainer';
 import { MenuOption, Project, UsageLimit } from '@/types';
 import SimpleButton from '@/components/SimpleButton';
 import { checkUserCapacity, cn } from '@/lib/utils';
-import DialogController from '@/controllers/DialogController';
 import UploadContainer from '@/components/UploadContainer';
 import DownloadDialog from '@/components/DownloadDialog';
 import { useUserContext } from '@/providers/UserProvider';
@@ -30,6 +29,7 @@ import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import PremiumDialog from '@/components/PremiumDialog';
 import EditProjectDialog from '@/components/EditProjectDialog';
+import ModalController from '@/controllers/ModalController';
 
 function ProjectPage() {
   const {
@@ -41,9 +41,10 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
-  useEffect(() => {
-    DialogController.showCustomDialog(<EditProjectDialog project={project!} />);
-  }, [project]);
+  // useEffect(() => {
+  //   if (!project) return;
+  //   ModalController.show(<InviteDialog />);
+  // }, [project]);
 
   const { id } = useParams();
 
@@ -66,6 +67,7 @@ function ProjectPage() {
     if (!project?.versions?.length) return;
     handleVersionChange(project.versions[0].id);
   }, [project]);
+
   if (isLoading || !project)
     return (
       <LoadingView
@@ -79,8 +81,6 @@ function ProjectPage() {
 
   const empty = !file || !version;
 
-  console.log(project);
-
   const author = project.creator_id === userId;
   return (
     <Container
@@ -91,17 +91,9 @@ function ProjectPage() {
         <div className="flex w-full justify-between px-4">
           <div className="grow">
             <div className="grow flex justify-between w-full relative">
-              <div
-                className={cn(
-                  'flex items-center space-x-2',
-                  author && 'cursor-pointer'
-                )}
-              >
-                <h3 className="text-md text-white font-medium">
-                  {project.title}
-                </h3>
-                {author && <PencilEdit02Icon size={14} />}
-              </div>
+              <h3 className="text-md text-white font-medium">
+                {project.title}
+              </h3>
               <CollaboratorContainer className="absolute right-0 bottom-2" />
             </div>
 
@@ -163,7 +155,7 @@ function ProjectPage() {
             </article>
             <button
               onClick={() =>
-                DialogController.showCustomDialog(
+                ModalController.show(
                   <UploadContainer projectId={id as string} />
                 )
               }
@@ -205,11 +197,11 @@ function ProjectOptions({
   const handleAddVersion = () => {
     const { id } = project;
     if (!checkUserCapacity({ user, check: UsageLimit.versions, project }))
-      return DialogController.showCustomDialog(
+      return ModalController.show(
         <PremiumDialog usageLimit={UsageLimit.versions} />
       );
 
-    DialogController.showCustomDialog(<UploadContainer projectId={id} />);
+    ModalController.show(<UploadContainer projectId={id} />);
   };
 
   const options: MenuOption[] = useMemo(
@@ -217,7 +209,7 @@ function ProjectOptions({
       {
         text: 'Edit',
         icon: <PencilEdit02Icon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<EditProjectDialog />),
+        onClick: () => ModalController.show(<EditProjectDialog />),
         ignore: !author,
       },
       {
@@ -228,14 +220,13 @@ function ProjectOptions({
       {
         text: 'Invite',
         icon: <AddTeamIcon size={16} />,
-        onClick: () =>
-          DialogController.showCustomDialog(<InviteDialog project={project} />),
+        onClick: () => ModalController.show(<InviteDialog />),
         ignore: !author,
       },
       {
         text: 'Download',
         icon: <Download04Icon size={16} />,
-        onClick: () => DialogController.showCustomDialog(<DownloadDialog />),
+        onClick: () => ModalController.show(<DownloadDialog />),
       },
     ],
     [author, project]

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getUserData } from '../../controllers/userController';
 import {
   deleteFeedback,
   fetchFeedbackById,
-} from '../../../controllers/feedbackController';
-import { getUserData } from '@/app/api/controllers/userController';
+} from '../../controllers/feedbackController';
 
 export async function DELETE(
   req: NextRequest,

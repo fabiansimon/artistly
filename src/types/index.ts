@@ -41,11 +41,14 @@ export enum InputType {
   VERSION_DESCRIPTION,
 }
 
-export type EditProjectInput = {
-  versions: Omit<VersionInputData, 'file'>[];
-} & Omit<Project, 'id' | 'created_at' | 'creator_id' | 'versions'>;
+export type EditProjectInput = Omit<
+  Project,
+  'id' | 'created_at' | 'creator_id' | 'versions'
+> & {
+  versions: Array<Omit<VersionInputData, 'file'> & { remove: boolean }>;
+};
 
-interface Invite {
+export interface Invite {
   id: string;
   email: string;
   created_at: Date;
@@ -123,7 +126,12 @@ export interface Project {
 
 export type LeanProject = Omit<
   Project,
-  'created_at' | 'creator_id' | 'collaborators' | 'description' | 'authors'
+  | 'created_at'
+  | 'creator_id'
+  | 'collaborators'
+  | 'description'
+  | 'authors'
+  | 'openInvites'
 >;
 
 export interface FeedbackUpload {

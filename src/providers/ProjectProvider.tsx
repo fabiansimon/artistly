@@ -1,13 +1,19 @@
 'use client';
 
 import FeedbackInputModal from '@/components/FeedbackInputModal';
-import { deleteFeedback, uploadFeeback } from '@/lib/api';
+import {
+  deleteFeedback,
+  deleteInvite,
+  sendInvites,
+  uploadFeeback,
+} from '@/lib/api';
 import { generateId, withinRange } from '@/lib/utils';
-import { Comment, Input, Project, User, Version } from '@/types';
+import { Comment, Input, Invite, Project, User, Version } from '@/types';
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -25,6 +31,8 @@ interface ProjectContextType {
   handleVersionChange: (id: string) => void;
   removeFeedback: (id: string) => void;
   addFeedback: (input: Input) => void;
+  removeInvite: (id: string) => void;
+  addInvites: (emails: string[]) => Promise<void>;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -37,9 +45,10 @@ export default function ProjectProvider({
   const { file, time, onVersionChange } = useAudioContext();
   const { user } = useUserContext();
   const {
-    project: { data: project },
+    project: { data },
   } = useDataLayerContext();
 
+  const [project, setProject] = useState<Project | null>();
   const [commentInput, setCommentInput] = useState<{
     isVisible: boolean;
     timestamp?: number;
@@ -47,6 +56,11 @@ export default function ProjectProvider({
   const [version, setVersion] = useState<(Version & { index: number }) | null>(
     null
   );
+
+  useEffect(() => {
+    if (!data) return;
+    setProject(data);
+  }, [data]);
 
   const handleVersionChange = useCallback(
     async (id: string) => {
@@ -60,7 +74,7 @@ export default function ProjectProvider({
     [project, onVersionChange]
   );
 
-  const addComment = useCallback((comment: Comment) => {
+  const _addFeeback = useCallback((comment: Comment) => {
     setVersion((prev) => {
       if (!prev) return null;
       return {
@@ -70,7 +84,7 @@ export default function ProjectProvider({
     });
   }, []);
 
-  const updateComment = useCallback((id: string, comment: Comment) => {
+  const _updateFeedback = useCallback((id: string, comment: Comment) => {
     setVersion((prev) => {
       if (!prev) return null;
       return {
@@ -80,7 +94,7 @@ export default function ProjectProvider({
     });
   }, []);
 
-  const removeComment = useCallback((id: string) => {
+  const _removeFeedback = useCallback((id: string) => {
     setVersion((prev) => {
       if (!prev) return null;
       return {
@@ -105,19 +119,19 @@ export default function ProjectProvider({
       };
 
       try {
-        addComment(newComment);
+        _addFeeback(newComment);
         const { id } = await uploadFeeback({
           text,
           timestamp,
           versionId: version.id,
         });
-        updateComment(tempId, { ...newComment, id });
+        _updateFeedback(tempId, { ...newComment, id });
       } catch (error) {
         console.error(error);
-        removeComment(tempId);
+        _removeFeedback(tempId);
       }
     },
-    [version, addComment, removeComment, updateComment]
+    [version, _addFeeback, _removeFeedback, _updateFeedback, user]
   );
 
   const removeFeedback = useCallback(
@@ -125,17 +139,83 @@ export default function ProjectProvider({
       const comment = version?.feedback.find((f) => f.id === id);
       if (!comment) return;
 
-      removeComment(id);
+      _removeFeedback(id);
       try {
         await deleteFeedback({
           id,
         });
       } catch (error) {
         console.error(error);
-        addComment(comment);
+        _addFeeback(comment);
       }
     },
-    [version, addComment, removeComment]
+    [version, _addFeeback, _removeFeedback]
+  );
+
+  const _removeInvite = useCallback((inviteId: string) => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        openInvites: prev.openInvites.filter(({ id }) => id !== inviteId),
+      };
+    });
+  }, []);
+
+  const _addInvite = useCallback(
+    ({ invite, index }: { invite: Invite; index?: number }) => {
+      setProject((prev) => {
+        if (!prev) return;
+        let newInvites = prev.openInvites;
+        newInvites.splice(index ?? newInvites.length, 0, invite);
+        return {
+          ...prev,
+          openInvites: newInvites,
+        };
+      });
+    },
+    []
+  );
+
+  const _addInvites = useCallback((invites: Invite[]) => {
+    if (!invites) return;
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        openInvites: [...prev.openInvites, ...invites],
+      };
+    });
+  }, []);
+
+  const removeInvite = useCallback(
+    async (id: string) => {
+      if (!project) return;
+      const { openInvites } = project;
+      const index = openInvites.findIndex(({ id: _id }) => _id === id);
+      const invite = openInvites[index];
+      try {
+        _removeInvite(id);
+        await deleteInvite(project.id, id);
+      } catch (error) {
+        _addInvite({ invite, index });
+      }
+    },
+    [_addInvite, _removeInvite, project]
+  );
+
+  const addInvites = useCallback(
+    async (emails: string[]) => {
+      if (!project) return;
+      const invitees = JSON.stringify(Array.from(emails));
+      try {
+        const { invites } = await sendInvites(project.id, invitees);
+        _addInvites(invites);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [project, _addInvites]
   );
 
   const toggleCommentInput = useCallback((timestamp?: number) => {
@@ -172,6 +252,8 @@ export default function ProjectProvider({
     addFeedback,
     toggleCommentInput,
     removeFeedback,
+    removeInvite,
+    addInvites,
   };
   return (
     <ProjectContext.Provider value={value}>
