@@ -7,6 +7,7 @@ import CommentTile from './CommentTile';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FeedbackSummaryPDF from './FeedbackSummaryPDF';
 import { useProjectContext } from '@/providers/ProjectProvider';
+import SimpleButton from './SimpleButton';
 
 interface FeedbackContainerProps {
   timestampComments: Comment[];
@@ -91,13 +92,13 @@ export default function FeedbackContainer({
             })}
         </div>
       </div>
-      <button
+      <SimpleButton
+        icon={<Add01Icon size={15} />}
+        text="Add Comment"
+        textClassName="text-white font-medium"
+        className="mx-auto mb-2 bg-primary hover:bg-primary/80"
         onClick={() => toggleCommentInput()}
-        className="btn btn-primary mx-auto text-white"
-      >
-        <Add01Icon size={15} />
-        Add Comment
-      </button>
+      />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import {
   deleteFeedback,
   deleteInvite,
   sendInvites,
-  uploadFeeback,
+  uploadFeedback,
 } from '@/lib/api';
 import { generateId, withinRange } from '@/lib/utils';
 import { Comment, Input, Invite, Project, User, Version } from '@/types';
@@ -75,7 +75,7 @@ export default function ProjectProvider({
     [project, onVersionChange]
   );
 
-  const _addFeeback = useCallback((comment: Comment) => {
+  const _addFeedback = useCallback((comment: Comment) => {
     setVersion((prev) => {
       if (!prev) return null;
       return {
@@ -116,12 +116,13 @@ export default function ProjectProvider({
         text,
         timestamp,
         creator: user,
+        created_at: new Date(),
         creator_id: user.id,
       };
 
       try {
-        _addFeeback(newComment);
-        const { id } = await uploadFeeback({
+        _addFeedback(newComment);
+        const { id } = await uploadFeedback({
           text,
           timestamp,
           versionId: version.id,
@@ -133,7 +134,7 @@ export default function ProjectProvider({
         _removeFeedback(tempId);
       }
     },
-    [version, _addFeeback, _removeFeedback, _updateFeedback, user, project]
+    [version, _addFeedback, _removeFeedback, _updateFeedback, user, project]
   );
 
   const removeFeedback = useCallback(
@@ -148,10 +149,10 @@ export default function ProjectProvider({
         });
       } catch (error) {
         console.error(error);
-        _addFeeback(comment);
+        _addFeedback(comment);
       }
     },
-    [version, _addFeeback, _removeFeedback]
+    [version, _addFeedback, _removeFeedback]
   );
 
   const _removeInvite = useCallback((inviteId: string) => {
