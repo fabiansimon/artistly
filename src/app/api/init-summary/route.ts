@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserData } from '../controllers/userController';
+import { fetchUsersByIds, getUserData } from '../controllers/userController';
 import { fetchAuthorProjects } from '../controllers/projectController';
 import { fetchLatestFeedbackByProjectIds } from '../controllers/feedbackController';
 import { InitSummary } from '@/types';
@@ -13,10 +13,34 @@ export async function GET(req: NextRequest) {
 
     const projects = await fetchAuthorProjects(userId);
     const projectIds = projects.map((p) => p.id);
-    const lastestFeedback = await fetchLatestFeedbackByProjectIds(projectIds);
+    const latestFeedback = await fetchLatestFeedbackByProjectIds(projectIds);
+
+    const feedbackUsers = Array.from(latestFeedback.values()).map(
+      (feedback) => feedback.creator_id
+    );
+    const users = await fetchUsersByIds(feedbackUsers);
+
+    const unsortedFeedback = projects.map((project) => {
+      const feedback = latestFeedback.get(project.id);
+      const creator = users.find(({ id }) => id === feedback?.creator_id);
+      return {
+        ...project,
+        feedback: {
+          ...feedback,
+          creator,
+        },
+      };
+    });
+
+    const sortedFeedback = unsortedFeedback.sort((a, b) => {
+      return (
+        new Date(b.feedback.created_at).getTime() -
+        new Date(a.feedback.created_at).getTime()
+      );
+    });
 
     const data: InitSummary = {
-      latestFeedback: projects,
+      latestFeedback: sortedFeedback,
     };
 
     return NextResponse.json(data);

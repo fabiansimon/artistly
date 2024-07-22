@@ -109,6 +109,7 @@ export interface Comment {
   timestamp?: number;
   text: string;
   creator_id: string;
+  created_at: Date;
   creator: User;
 }
 

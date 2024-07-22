@@ -28,7 +28,7 @@ type NullableContextData<T> = Omit<ContextData<T>, 'data'> & { data: T | null };
 interface DataLayerContextType {
   projects: ContextData<Paginated<Projects>>;
   project: NullableContextData<Project>;
-  summmary: NullableContextData<InitSummary>;
+  summary: NullableContextData<InitSummary>;
 }
 
 const DataLayerContext = createContext<DataLayerContextType | undefined>(
