@@ -4,7 +4,7 @@ import { FeedbackUpload } from '@/types';
 const TABLE = 'comments';
 
 export async function createFeedback(feedback: FeedbackUpload) {
-  const { creatorId, text, timestamp, versionId } = feedback;
+  const { creatorId, text, timestamp, versionId, projectId } = feedback;
 
   const { data, error } = await supabase
     .from(TABLE)
@@ -14,6 +14,7 @@ export async function createFeedback(feedback: FeedbackUpload) {
         timestamp,
         version_id: versionId,
         creator_id: creatorId,
+        project_id: projectId,
       },
     ])
     .select()
@@ -37,6 +38,21 @@ export async function fetchFeedbackById(id: string) {
     throw new Error(`Error fetching feedback: ${error.message}`);
   }
 
+  return data;
+}
+
+export async function fetchLatestFeedbackByProjectIds(projectIds: string[]) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .in('project_id', projectIds)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new Error(`Error fetching latest feedback: ${error.message}`);
+  }
+
+  console.log(data);
   return data;
 }
 

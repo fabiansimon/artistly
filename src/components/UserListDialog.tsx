@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import AlertController from '@/controllers/AlertController';
 
 export default function UserListDialog() {
-  const { project } = useProjectContext();
+  const { project, isAuthor } = useProjectContext();
 
   if (!project || !project.authors || !project.collaborators) return;
   const { authors, collaborators } = project;
@@ -35,7 +35,7 @@ export default function UserListDialog() {
         </div>
         {collaborators.map((collaborator) => (
           <UserTile
-            removable
+            removable={isAuthor}
             key={collaborator.id}
             user={collaborator}
           />

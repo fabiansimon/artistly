@@ -33,11 +33,9 @@ import ModalController from '@/controllers/ModalController';
 
 function ProjectPage() {
   const {
-    user: { id: userId },
-  } = useUserContext();
-  const {
     project: { fetch, data: project, isLoading },
   } = useDataLayerContext();
+  const { isAuthor } = useProjectContext();
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
@@ -81,7 +79,6 @@ function ProjectPage() {
 
   const empty = !file || !version;
 
-  const author = project.creator_id === userId;
   return (
     <Container
       omitPadding
@@ -98,7 +95,7 @@ function ProjectPage() {
             </div>
 
             <ProjectOptions
-              author={author}
+              author={isAuthor}
               project={project}
               className="mt-2"
             />
@@ -229,7 +226,7 @@ function ProjectOptions({
         onClick: () => ModalController.show(<DownloadDialog />),
       },
     ],
-    [author, project]
+    [author]
   );
 
   return (

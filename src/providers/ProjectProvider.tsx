@@ -25,6 +25,7 @@ interface ProjectContextType {
   project: Project | null;
   users: { [id: string]: User };
   version: (Version & { index: number }) | null;
+  isAuthor: boolean;
   highlightedComment: string;
   setVersion: (version: (Version & { index: number }) | null) => void;
   toggleCommentInput: (timestamp?: number) => void;
@@ -106,7 +107,7 @@ export default function ProjectProvider({
 
   const addFeedback = useCallback(
     async (input: Input) => {
-      if (!version) return;
+      if (!version || !project) return;
       const { text, timestamp } = input;
       const tempId = generateId();
 
@@ -124,6 +125,7 @@ export default function ProjectProvider({
           text,
           timestamp,
           versionId: version.id,
+          projectId: project.id,
         });
         _updateFeedback(tempId, { ...newComment, id });
       } catch (error) {
@@ -131,7 +133,7 @@ export default function ProjectProvider({
         _removeFeedback(tempId);
       }
     },
-    [version, _addFeeback, _removeFeedback, _updateFeedback, user]
+    [version, _addFeeback, _removeFeedback, _updateFeedback, user, project]
   );
 
   const removeFeedback = useCallback(
@@ -242,11 +244,17 @@ export default function ProjectProvider({
     return map;
   }, [project]);
 
+  const isAuthor = useMemo(
+    () => project?.creator_id === user.id,
+    [project, user]
+  );
+
   const value = {
     project,
     users,
     version,
     highlightedComment,
+    isAuthor,
     setVersion,
     handleVersionChange,
     addFeedback,

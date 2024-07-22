@@ -1,10 +1,10 @@
 export const ROUTES = {
   projects: 'projects',
   project: 'project',
-  home: '',
+  home: 'home',
   join: 'join',
   share: 'share',
-  profile: 'profile',
+  pofile: 'profile',
 };
 
 export function route(name: string, ...params: string[]) {
