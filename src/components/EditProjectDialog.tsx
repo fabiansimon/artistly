@@ -5,6 +5,7 @@ import {
   ArrowRight02Icon,
   Delete01Icon,
   FileEditIcon,
+  Mail01Icon,
   PencilEdit02Icon,
   RestoreBinIcon,
   TimeScheduleIcon,
@@ -15,6 +16,7 @@ import { motion } from 'framer-motion';
 import CollaboratorChip from './CollaboratorChip';
 import AlertController from '@/controllers/AlertController';
 import { useProjectContext } from '@/providers/ProjectProvider';
+import SimpleButton from './SimpleButton';
 
 export default function EditProjectDialog() {
   const { project, removeInvite } = useProjectContext();
@@ -303,6 +305,16 @@ export default function EditProjectDialog() {
           <p className="prose text-white/70 text-xs font-medium text-center">
             Outstanding invites
           </p>
+          <SimpleButton
+            text="Invite"
+            iconPosition="left"
+            icon={
+              <Mail01Icon
+                size={13}
+                className="text-white/60"
+              />
+            }
+          />
         </div>
         <div className="divider my-0" />
         <div className="flex flex-wrap items-center justify-center gap-2">

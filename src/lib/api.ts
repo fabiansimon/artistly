@@ -116,7 +116,7 @@ export async function uploadVersion(data: FormData) {
   }
 }
 
-export async function uploadFeeback({
+export async function uploadFeedback({
   versionId,
   text,
   timestamp,
