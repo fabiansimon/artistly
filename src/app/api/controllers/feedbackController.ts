@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
-import { FeedbackUpload } from '@/types';
+import { Comment, FeedbackUpload } from '@/types';
 
 const TABLE = 'comments';
 
@@ -52,8 +52,16 @@ export async function fetchLatestFeedbackByProjectIds(projectIds: string[]) {
     throw new Error(`Error fetching latest feedback: ${error.message}`);
   }
 
-  console.log(data);
-  return data;
+  const latestMap = new Map<string, Comment>();
+
+  for (const feedback of data) {
+    const { project_id } = feedback;
+    if (!latestMap.has(project_id)) {
+      latestMap.set(project_id, feedback);
+    }
+  }
+
+  return latestMap;
 }
 
 export async function deleteFeedback(id: string) {

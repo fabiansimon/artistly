@@ -228,7 +228,7 @@ export default function ProjectProvider({
   }, []);
 
   const highlightedComment = useMemo(() => {
-    if (!file || !version) return '';
+    if (!file || !version?.feedback) return '';
     const buffer = 4;
     for (const { id, timestamp } of version.feedback)
       if (timestamp && withinRange(file.duration, timestamp, buffer, time))

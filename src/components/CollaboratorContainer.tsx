@@ -1,11 +1,7 @@
 import { cn, concatName } from '@/lib/utils';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import Avatar from './Avatar';
-import {
-  PaintBrush01Icon,
-  PencilEdit02Icon,
-  UserGroupIcon,
-} from 'hugeicons-react';
+import { PaintBrush01Icon, UserGroupIcon } from 'hugeicons-react';
 import { useState } from 'react';
 import { User } from '@/types';
 import { motion } from 'framer-motion';
@@ -34,7 +30,7 @@ export default function CollaboratorContainer({
         onClick={() => ModalController.show(<UserListDialog />)}
         className="hover:bg-neutral-900 cursor-pointer border border-white/10 rounded-full size-[26px] justify-center items-center flex mr-1"
       >
-        <PencilEdit02Icon
+        <UserGroupIcon
           size={12}
           className="text-white/50"
         />
