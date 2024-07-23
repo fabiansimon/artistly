@@ -53,6 +53,7 @@ export default function AudioProvider({
 
   const onVersionChange = async (version: Version) => {
     togglePlaying();
+    if (!version) return;
     const { id, file_url } = version;
     const cached = await fetchAudioFile(id);
     if (cached) return setFile(cached);

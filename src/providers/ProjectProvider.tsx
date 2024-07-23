@@ -5,7 +5,7 @@ import {
   deleteFeedback,
   deleteInvite,
   sendInvites,
-  uploadFeeback,
+  uploadFeedback,
 } from '@/lib/api';
 import { generateId, withinRange } from '@/lib/utils';
 import { Comment, Input, Invite, Project, User, Version } from '@/types';
@@ -25,6 +25,7 @@ interface ProjectContextType {
   project: Project | null;
   users: { [id: string]: User };
   version: (Version & { index: number }) | null;
+  isAuthor: boolean;
   highlightedComment: string;
   setVersion: (version: (Version & { index: number }) | null) => void;
   toggleCommentInput: (timestamp?: number) => void;
@@ -74,7 +75,7 @@ export default function ProjectProvider({
     [project, onVersionChange]
   );
 
-  const _addFeeback = useCallback((comment: Comment) => {
+  const _addFeedback = useCallback((comment: Comment) => {
     setVersion((prev) => {
       if (!prev) return null;
       return {
@@ -106,7 +107,7 @@ export default function ProjectProvider({
 
   const addFeedback = useCallback(
     async (input: Input) => {
-      if (!version) return;
+      if (!version || !project) return;
       const { text, timestamp } = input;
       const tempId = generateId();
 
@@ -115,15 +116,17 @@ export default function ProjectProvider({
         text,
         timestamp,
         creator: user,
+        created_at: new Date(),
         creator_id: user.id,
       };
 
       try {
-        _addFeeback(newComment);
-        const { id } = await uploadFeeback({
+        _addFeedback(newComment);
+        const { id } = await uploadFeedback({
           text,
           timestamp,
           versionId: version.id,
+          projectId: project.id,
         });
         _updateFeedback(tempId, { ...newComment, id });
       } catch (error) {
@@ -131,7 +134,7 @@ export default function ProjectProvider({
         _removeFeedback(tempId);
       }
     },
-    [version, _addFeeback, _removeFeedback, _updateFeedback, user]
+    [version, _addFeedback, _removeFeedback, _updateFeedback, user, project]
   );
 
   const removeFeedback = useCallback(
@@ -146,10 +149,10 @@ export default function ProjectProvider({
         });
       } catch (error) {
         console.error(error);
-        _addFeeback(comment);
+        _addFeedback(comment);
       }
     },
-    [version, _addFeeback, _removeFeedback]
+    [version, _addFeedback, _removeFeedback]
   );
 
   const _removeInvite = useCallback((inviteId: string) => {
@@ -226,7 +229,7 @@ export default function ProjectProvider({
   }, []);
 
   const highlightedComment = useMemo(() => {
-    if (!file || !version) return '';
+    if (!file || !version?.feedback) return '';
     const buffer = 4;
     for (const { id, timestamp } of version.feedback)
       if (timestamp && withinRange(file.duration, timestamp, buffer, time))
@@ -242,11 +245,17 @@ export default function ProjectProvider({
     return map;
   }, [project]);
 
+  const isAuthor = useMemo(
+    () => project?.creator_id === user.id,
+    [project, user]
+  );
+
   const value = {
     project,
     users,
     version,
     highlightedComment,
+    isAuthor,
     setVersion,
     handleVersionChange,
     addFeedback,

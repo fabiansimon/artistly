@@ -8,6 +8,10 @@ import LoadingView from '@/components/LoadingView';
 import {
   Add01Icon,
   AddTeamIcon,
+  ArrowLeft01Icon,
+  ArrowLeft02Icon,
+  ArrowRight01Icon,
+  ArrowRight02Icon,
   Download04Icon,
   InformationCircleIcon,
   Notebook02Icon,
@@ -30,14 +34,14 @@ import { useProjectContext } from '@/providers/ProjectProvider';
 import PremiumDialog from '@/components/PremiumDialog';
 import EditProjectDialog from '@/components/EditProjectDialog';
 import ModalController from '@/controllers/ModalController';
+import VersionControl from '@/components/VersionControl';
+import ShareDialog from '@/components/ShareDialog';
 
 function ProjectPage() {
   const {
-    user: { id: userId },
-  } = useUserContext();
-  const {
     project: { fetch, data: project, isLoading },
   } = useDataLayerContext();
+  const { isAuthor } = useProjectContext();
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
@@ -81,7 +85,6 @@ function ProjectPage() {
 
   const empty = !file || !version;
 
-  const author = project.creator_id === userId;
   return (
     <Container
       omitPadding
@@ -98,14 +101,14 @@ function ProjectPage() {
             </div>
 
             <ProjectOptions
-              author={author}
+              author={isAuthor}
               project={project}
               className="mt-2"
             />
 
             <div className="flex mt-2 space-x-2">
-              <div className="flex w-full space-x-2">
-                <div className="border border-white/10 rounded-md p-2 space-y-2">
+              <div className="flex w-full space-x-2 min-h-20">
+                <div className="border w-[40%] border-white/10 rounded-md p-2 space-y-2">
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Notebook02Icon
@@ -142,6 +145,7 @@ function ProjectPage() {
           </div>
         </div>
         <div className="divider my-0" />
+
         {empty && (
           <div className="flex flex-col items-center h-full justify-center -translate-y-12">
             <article className="prose text-center">
@@ -215,7 +219,7 @@ function ProjectOptions({
       {
         text: 'Share',
         icon: <Share01Icon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => ModalController.show(<ShareDialog />),
       },
       {
         text: 'Invite',
@@ -229,12 +233,12 @@ function ProjectOptions({
         onClick: () => ModalController.show(<DownloadDialog />),
       },
     ],
-    [author, project]
+    [author]
   );
 
   return (
     <div className={cn('flex justify-between', className)}>
-      <div className="flex space-x-2">
+      <div className="flex space-x-1">
         {options.map(({ text, icon, onClick, ignore }, index) => {
           if (ignore) return;
           return (
@@ -249,22 +253,23 @@ function ProjectOptions({
           );
         })}
       </div>
-      {author && (
-        <SimpleButton
-          icon={
-            <Add01Icon
-              size={16}
-              className="text-white"
-            />
-          }
-          onClick={handleAddVersion}
-          className="bg-primary hover:bg-primary-400"
-          textClassName="text-white font-medium"
-          iconPosition="left"
-          condensed
-          text={'new version'}
-        />
-      )}
+      <div className="flex space-x-2">
+        {author && (
+          <SimpleButton
+            iconPosition="left"
+            condensed
+            icon={
+              <Add01Icon
+                size={16}
+                className="text-white"
+              />
+            }
+            text={'add version'}
+            onClick={handleAddVersion}
+          />
+        )}
+        <VersionControl />
+      </div>
     </div>
   );
 }

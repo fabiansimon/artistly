@@ -9,13 +9,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { versionId, text, timestamp } = await req.json();
+    const { versionId, text, timestamp, projectId } = await req.json();
 
     const feedback = await createFeedback({
       creatorId: userId,
       text,
       versionId,
       timestamp,
+      projectId,
     });
 
     return NextResponse.json(feedback);

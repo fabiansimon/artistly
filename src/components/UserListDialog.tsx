@@ -2,16 +2,31 @@ import { useProjectContext } from '@/providers/ProjectProvider';
 import { MenuOption, User } from '@/types';
 import Avatar from './Avatar';
 import { cn, concatName } from '@/lib/utils';
-import { Delete01Icon, PaintBrush01Icon, UserGroupIcon } from 'hugeicons-react';
+import {
+  Delete01Icon,
+  Mail01Icon,
+  PaintBrush01Icon,
+  UserGroupIcon,
+} from 'hugeicons-react';
 import DropDown from './Dropdown';
 import { useMemo } from 'react';
 import AlertController from '@/controllers/AlertController';
+import SimpleButton from './SimpleButton';
+import ModalController from '@/controllers/ModalController';
+import InviteDialog from './InviteDialog';
 
 export default function UserListDialog() {
-  const { project } = useProjectContext();
+  const { project, isAuthor } = useProjectContext();
 
   if (!project || !project.authors || !project.collaborators) return;
   const { authors, collaborators } = project;
+
+  const handleInvite = () => {
+    ModalController.close();
+    setTimeout(() => {
+      ModalController.show(<InviteDialog />);
+    }, 300);
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -33,9 +48,27 @@ export default function UserListDialog() {
           <UserGroupIcon size={14} />
           <p className="prose text-white text-xs font-medium">Collaborators</p>
         </div>
+        {collaborators.length === 0 && (
+          <div className="flex justify-between items-center">
+            <p className="prose text-white/60 font-medium text-xs text-center">
+              No collaborators added yet.
+            </p>
+            <SimpleButton
+              onClick={handleInvite}
+              text="Invite"
+              iconPosition="left"
+              icon={
+                <Mail01Icon
+                  size={13}
+                  className="text-white/60"
+                />
+              }
+            />
+          </div>
+        )}
         {collaborators.map((collaborator) => (
           <UserTile
-            removable
+            removable={isAuthor}
             key={collaborator.id}
             user={collaborator}
           />

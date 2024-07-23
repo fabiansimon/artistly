@@ -116,12 +116,14 @@ export async function uploadVersion(data: FormData) {
   }
 }
 
-export async function uploadFeeback({
+export async function uploadFeedback({
   versionId,
   text,
   timestamp,
+  projectId,
 }: {
   versionId: string;
+  projectId: string;
   text: string;
   timestamp?: number;
 }) {
@@ -130,6 +132,7 @@ export async function uploadFeeback({
       versionId,
       text,
       timestamp,
+      projectId,
     });
     return res.data;
   } catch (error) {
@@ -180,6 +183,16 @@ export async function openStripSession({ priceId }: { priceId: string }) {
     return res.data;
   } catch (error) {
     handleError({ error, callName: 'getUserProjects' });
+    throw error;
+  }
+}
+
+export async function fetchInitSummary() {
+  try {
+    const res = await _axios.get('/api/init-summary');
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'fetchInitSummary' });
     throw error;
   }
 }

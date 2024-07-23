@@ -95,6 +95,36 @@ export function getReadableDate(date?: Date, short: boolean = false) {
   return now.toLocaleDateString('en-US', short ? shortOptions : options);
 }
 
+export function getDateDifference(date: Date) {
+  const now = new Date();
+  const difference = now.getTime() - new Date(date).getTime();
+
+  const units = [
+    { name: 'year', value: 365 * 24 * 60 * 60 * 1000 },
+    { name: 'month', value: 30 * 24 * 60 * 60 * 1000 },
+    { name: 'week', value: 7 * 24 * 60 * 60 * 1000 },
+    { name: 'day', value: 24 * 60 * 60 * 1000 },
+    { name: 'hour', value: 60 * 60 * 1000 },
+    { name: 'minute', value: 60 * 1000 },
+    { name: 'second', value: 1000 },
+  ];
+
+  for (const unit of units) {
+    const amount = Math.floor(difference / unit.value);
+    if (amount >= 1) {
+      return {
+        text: `${amount} ${unit.name}${amount > 1 ? 's' : ''} ago`,
+        unit: unit.name,
+      };
+    }
+  }
+
+  return {
+    text: 'just now',
+    unit: 'seconds',
+  };
+}
+
 export function getPaginationRange(pagination?: Pagination): [number, number] {
   let start = 0;
   let end = SERVER_PARAMS.default_limit;
@@ -138,6 +168,13 @@ export function getUsageLimit({
   premiumKey: string;
   freeKey: string;
 }) {
+  console.log(
+    premiumKey,
+    freeKey,
+    process.env[premiumKey]!,
+    process.env[freeKey]!
+  );
+
   return parseInt(
     premiumTier ? process.env[premiumKey]! : process.env[freeKey]!
   );
@@ -192,8 +229,12 @@ export function checkUserCapacity({
   }
 }
 
-export default function convertPrice(price: number) {
+export function convertPrice(price: number) {
   return `€ ${price}`;
+}
+
+export function copyToClipboard(value: string) {
+  navigator.clipboard.writeText(value);
 }
 
 export const _ = undefined;

@@ -109,6 +109,7 @@ export interface Comment {
   timestamp?: number;
   text: string;
   creator_id: string;
+  created_at: Date;
   creator: User;
 }
 
@@ -137,8 +138,13 @@ export type LeanProject = Omit<
 export interface FeedbackUpload {
   text: string;
   versionId: string;
-  timestamp?: number;
+  projectId: string;
   creatorId: string;
+  timestamp?: number;
+}
+
+export interface InitSummary {
+  latestFeedback: (Project & { feedback: Comment })[];
 }
 
 export interface Input {
