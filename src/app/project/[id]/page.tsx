@@ -35,6 +35,7 @@ import PremiumDialog from '@/components/PremiumDialog';
 import EditProjectDialog from '@/components/EditProjectDialog';
 import ModalController from '@/controllers/ModalController';
 import VersionControl from '@/components/VersionControl';
+import ShareDialog from '@/components/ShareDialog';
 
 function ProjectPage() {
   const {
@@ -218,7 +219,7 @@ function ProjectOptions({
       {
         text: 'Share',
         icon: <Share01Icon size={16} />,
-        onClick: () => console.log('hello'),
+        onClick: () => ModalController.show(<ShareDialog />),
       },
       {
         text: 'Invite',

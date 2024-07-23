@@ -229,8 +229,12 @@ export function checkUserCapacity({
   }
 }
 
-export default function convertPrice(price: number) {
+export function convertPrice(price: number) {
   return `€ ${price}`;
+}
+
+export function copyToClipboard(value: string) {
+  navigator.clipboard.writeText(value);
 }
 
 export const _ = undefined;
