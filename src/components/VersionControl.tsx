@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { useProjectContext } from '@/providers/ProjectProvider';
-import { Add01Icon, ArrowLeft02Icon, ArrowRight02Icon } from 'hugeicons-react';
+import { ArrowLeft02Icon, ArrowRight02Icon } from 'hugeicons-react';
 
 export default function VersionControl({ className }: { className?: string }) {
   const {
@@ -20,7 +20,12 @@ export default function VersionControl({ className }: { className?: string }) {
   };
 
   return (
-    <div className="inline-flex justify-between space-x-2 min-w-24 items-center rounded-full px-3 py-2 border border-neutral-700/50 bg-neutral-950/50">
+    <div
+      className={cn(
+        'inline-flex justify-between space-x-2 min-w-24 items-center rounded-full px-3 py-2 border border-neutral-700/50 bg-neutral-950/50',
+        className
+      )}
+    >
       <ArrowLeft02Icon
         onClick={() => handleClick(-1)}
         className={cn(

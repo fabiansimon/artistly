@@ -1,5 +1,5 @@
 import { MEMBERSHIP_OPTIONS } from '@/constants/memberships';
-import convertPrice, { cn } from '@/lib/utils';
+import { convertPrice, cn } from '@/lib/utils';
 import { MembershipType } from '@/types';
 
 export default function MembershipCarousel({
