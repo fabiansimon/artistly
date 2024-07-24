@@ -5,6 +5,7 @@ import ToastController from '@/controllers/ToastController';
 import CollaboratorChip from './CollaboratorChip';
 import ModalController from '@/controllers/ModalController';
 import { useProjectContext } from '@/providers/ProjectProvider';
+import ShareDialog from './ShareDialog';
 
 export default function InviteDialog() {
   const { addInvites } = useProjectContext();
@@ -13,6 +14,13 @@ export default function InviteDialog() {
   const [emails, setEmails] = useState<Set<string>>(new Set<string>());
 
   const inputValid = useMemo(() => emails.size > 0, [emails]);
+
+  const handleShare = () => {
+    ModalController.close();
+    setTimeout(() => {
+      ModalController.show(<ShareDialog />);
+    }, 300);
+  };
 
   const handleSubmit = async () => {
     if (!inputValid) return;
@@ -60,9 +68,21 @@ export default function InviteDialog() {
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
-      <article className="prose mb-4">
+      <article className="prose">
         <h3 className="text-white text-sm text-center">Invite Collaborators</h3>
+        <p className="text-white-70 text-sm text-center">
+          Collaborators have access to all versions and are able to post
+          feedback. If you're looking only to share your project{' '}
+          <a
+            onClick={handleShare}
+            className="cursor-pointer"
+          >
+            click here
+          </a>
+        </p>
       </article>
+
+      <div className="divider my-0" />
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
@@ -84,9 +104,7 @@ export default function InviteDialog() {
                 size={14}
                 className="text-white/40"
               />
-              <article>
-                <p className="prose-sm text-white/40 ">no one added yet</p>
-              </article>
+              <p className="prose text-xs text-white/40 ">no one added yet</p>
             </div>
           )}
         </div>

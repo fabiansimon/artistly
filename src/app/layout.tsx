@@ -3,11 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { getServerSession } from 'next-auth';
 import NextAuthProvider from '@/providers/NextAuthProvider';
-import AudioProvider from '@/providers/AudioProvider';
-import DataLayerProvider from '@/providers/DataLayerProvider';
 import InitRoot from '@/components/InitRoot';
-import UserProvider from '@/providers/UserProvider';
-import ProjectProvider from '@/providers/ProjectProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 

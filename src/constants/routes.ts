@@ -4,8 +4,11 @@ export const ROUTES = {
   home: 'home',
   join: 'join',
   share: 'share',
-  pofile: 'profile',
+  profile: 'profile',
+  landing: '',
 };
+
+export const openRoutes = new Set([ROUTES.share, ROUTES.landing]);
 
 export function route(name: string, ...params: string[]) {
   let post = '';

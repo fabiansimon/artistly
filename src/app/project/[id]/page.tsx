@@ -45,11 +45,6 @@ function ProjectPage() {
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
 
-  // useEffect(() => {
-  //   if (!project) return;
-  //   ModalController.show(<InviteDialog />);
-  // }, [project]);
-
   const { id } = useParams();
 
   const { timestampComments, generalComments } = useMemo(() => {
@@ -119,7 +114,7 @@ function ProjectPage() {
                         {'Version notes'}
                       </p>
                     </div>
-                    <p className="text-xs text-white/50 text-white mr-10">
+                    <p className="text-xs text-white mr-10">
                       {version?.notes || 'Nothing added'}
                     </p>
                   </div>
@@ -131,11 +126,11 @@ function ProjectPage() {
                         size={13}
                         className="text-white/60"
                       />
-                      <p className="text-[11px] text-white/60 text-white">
+                      <p className="text-[11px] text-white/60">
                         {'Project Information'}
                       </p>
                     </div>
-                    <p className="text-xs text-white/50 text-white mr-10">
+                    <p className="text-xs text-white mr-10">
                       {project.description || 'Nothing added'}
                     </p>
                   </div>

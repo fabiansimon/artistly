@@ -37,8 +37,11 @@ export default function DownloadDialog() {
     <div className="flex flex-col w-full items-center">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Download Audio</h3>
-        <p className="text-white/70 text-sm text-center -mt-2">{`From project "${title}"`}</p>
+        <p className="text-white-70 text-sm text-center">
+          {`Chose what version you would like to download from the project "${title}"`}
+        </p>
       </article>
+
       {!versions.length && (
         <div className="border rounded-lg p-2 border-white/10">
           <p className="prose text-sm text-white/60">

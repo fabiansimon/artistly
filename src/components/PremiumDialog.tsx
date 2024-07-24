@@ -44,7 +44,7 @@ export default function PremiumDialog({
     <div className="flex flex-col w-full max-w-screen-md items-center">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">{title}</h3>
-        <p className="text-white/80 text-xs text-center">{description}</p>
+        <p className="text-white-70 text-sm text-center">{description}</p>
       </article>
       <MembershipCarousel
         className="max-w-md"

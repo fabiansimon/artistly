@@ -17,6 +17,8 @@ import CollaboratorChip from './CollaboratorChip';
 import AlertController from '@/controllers/AlertController';
 import { useProjectContext } from '@/providers/ProjectProvider';
 import SimpleButton from './SimpleButton';
+import ModalController from '@/controllers/ModalController';
+import InviteDialog from './InviteDialog';
 
 export default function EditProjectDialog() {
   const { project, removeInvite } = useProjectContext();
@@ -26,6 +28,13 @@ export default function EditProjectDialog() {
 
   const handleError = (title: string, description?: string) => {
     ToastController.showErrorToast(title, description);
+  };
+
+  const handleInvites = () => {
+    ModalController.close();
+    setTimeout(() => {
+      ModalController.show(<InviteDialog />);
+    }, 300);
   };
 
   useEffect(() => {
@@ -126,8 +135,12 @@ export default function EditProjectDialog() {
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
-      <article className="prose">
+      <article className="prose mb-2">
         <h3 className="text-white text-sm text-center">Edit Project</h3>
+        <p className="text-white-70 text-sm text-center">
+          Make sure your changes are correct. Once it's updated we cannot revert
+          it.
+        </p>
       </article>
 
       {/* Title & Description */}
@@ -300,14 +313,18 @@ export default function EditProjectDialog() {
           baseClass
         )}
       >
-        <div className="flex items-center space-x-2">
-          <TimeScheduleIcon size={12} />
-          <p className="prose text-white/70 text-xs font-medium text-center">
-            Outstanding invites
-          </p>
+        <div className="flex justify-between w-full px-2">
+          <div className="flex items-center space-x-2">
+            <TimeScheduleIcon size={12} />
+            <p className="prose text-white/70 text-xs font-medium text-center">
+              Outstanding invites
+            </p>
+          </div>
           <SimpleButton
             text="Invite"
             iconPosition="left"
+            condensed
+            onClick={handleInvites}
             icon={
               <Mail01Icon
                 size={13}

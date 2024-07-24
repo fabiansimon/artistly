@@ -23,13 +23,15 @@ export default function DropDown({
         tabIndex={0}
         className="dropdown-content menu bg-base-100 rounded-xl z-[10] p-1 shadow"
       >
-        {options.map(({ icon, onClick, text, confirm }, i) => (
+        {options.map(({ icon, onClick, text, confirm, optimistic }, i) => (
           <li
             key={i}
             className="rounded-lg"
             onClick={(e) => {
               e.stopPropagation();
-              confirm ? AlertController.show({ callback: onClick }) : onClick();
+              confirm
+                ? AlertController.show({ callback: onClick, optimistic })
+                : onClick();
             }}
           >
             <div>
