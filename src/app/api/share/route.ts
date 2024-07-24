@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       unlimitedVisits,
     });
 
-    const url = generateShareableURL({ id });
+    const url = generateShareableURL(id);
 
     return NextResponse.json({ url });
   } catch (error) {

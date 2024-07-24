@@ -8,6 +8,10 @@ import {
 } from '../../controllers/collabController';
 import { fetchUsersByIds, getUserData } from '../../controllers/userController';
 import { fetchInvitesByProject } from '../../controllers/inviteController';
+import {
+  fetchShareableByProjectId,
+  generateShareableURL,
+} from '../../controllers/shareController';
 
 export async function GET(
   req: NextRequest,
@@ -51,6 +55,7 @@ export async function GET(
     const collaborators = users.slice(1);
 
     const openInvites = await fetchInvitesByProject(projectId);
+    const shareable = await fetchShareableByProjectId(projectId);
 
     const data: Project = {
       ...project,
@@ -58,6 +63,7 @@ export async function GET(
       versions,
       collaborators,
       openInvites,
+      shareableUrl: shareable && generateShareableURL(shareable.id),
     };
 
     return NextResponse.json(data);

@@ -4,9 +4,8 @@ import {
   Copy01Icon,
   InformationCircleIcon,
   MagicWand01Icon,
-  Sad01Icon,
 } from 'hugeicons-react';
-import { useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 import InviteDialog from './InviteDialog';
 import { copyToClipboard } from '@/lib/utils';
 import ToastController from '@/controllers/ToastController';
@@ -17,14 +16,21 @@ export default function ShareDialog() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   if (!project) return;
+
   const { shareableUrl } = project;
 
   const handleGenerate = async () => {
-    setIsLoading(true);
     try {
+      const onlyRecentVersion = (
+        document.getElementById('only-latest') as HTMLInputElement
+      ).checked;
+      const unlimitedVisits = (
+        document.getElementById('unlimited-visits') as HTMLInputElement
+      ).checked;
+
       await generateShareable({
-        onlyRecentVersion: true,
-        unlimitedVisits: true,
+        onlyRecentVersion,
+        unlimitedVisits,
       });
     } catch (error) {
       ToastController.showErrorToast();
@@ -34,7 +40,6 @@ export default function ShareDialog() {
   };
 
   const handleRemove = async () => {
-    setIsLoading(true);
     try {
       await removeShareable();
     } catch (error) {
@@ -56,7 +61,7 @@ export default function ShareDialog() {
     copyToClipboard(shareableUrl);
     ToastController.showSuccessToast(
       'Successfully copied.',
-      'Share the link with you friends so they can listen to your project.'
+      'Share the link with your friends so they can listen to your project.'
     );
   };
 
@@ -95,7 +100,8 @@ export default function ShareDialog() {
                   <span className="label-text text-xs">All versions</span>
                   <input
                     type="radio"
-                    name="radio-10"
+                    id="all-versions"
+                    name="radio-versions"
                     className="radio size-5 checked:bg-primary ml-2"
                     defaultChecked
                   />
@@ -106,9 +112,9 @@ export default function ShareDialog() {
                   <span className="label-text text-xs">Only latest</span>
                   <input
                     type="radio"
-                    name="radio-10"
+                    id="only-latest"
+                    name="radio-versions"
                     className="radio size-5 checked:bg-primary ml-2"
-                    defaultChecked
                   />
                 </label>
               </div>
@@ -119,7 +125,7 @@ export default function ShareDialog() {
               <div className="flex space-x-1 justify-center items-center">
                 <div
                   className="tooltip tooltip-left"
-                  data-tip="Make the link valid for only a one time visit or unlimited visits."
+                  data-tip="Make the link valid for only a one-time visit or unlimited visits."
                 >
                   <InformationCircleIcon size={14} />
                 </div>
@@ -131,9 +137,9 @@ export default function ShareDialog() {
                     <span className="label-text text-xs">One listen</span>
                     <input
                       type="radio"
-                      name="radio-20"
+                      id="one-listen"
+                      name="radio-validity"
                       className="radio size-5 checked:bg-primary ml-2"
-                      defaultChecked
                     />
                   </label>
                 </div>
@@ -142,7 +148,8 @@ export default function ShareDialog() {
                     <span className="label-text text-xs">Unlimited</span>
                     <input
                       type="radio"
-                      name="radio-20"
+                      id="unlimited-visits"
+                      name="radio-validity"
                       className="radio size-5 checked:bg-primary ml-2"
                       defaultChecked
                     />
