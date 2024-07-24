@@ -20,10 +20,18 @@ export default function CommentsSection({ comments }: { comments: Comment[] }) {
     setRange(newRange);
   };
 
-  if (!comments.length) return;
-
   return (
-    <div className="flex w-full relative h-8">
+    <div
+      className={cn(
+        'flex w-full relative h-8 border rounded-md border-neutral-700/50',
+        comments.length === 0 && 'items-center'
+      )}
+    >
+      {comments.length === 0 && (
+        <p className="prose text-white/60 text-[12px] text-center mx-auto">
+          No feedback yet
+        </p>
+      )}
       {comments.map((comment) => {
         const { timestamp } = comment;
         const offset = (timestamp! / duration) * 100;
@@ -72,7 +80,7 @@ function CommentTile({
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral flex pointer-events-auto rounded-md overflow-hidden cursor-pointer mr-auto shadow-md shadow-black/50 border border-neutral-900/80"
+          className="bg-neutral-700 flex overflow-hidden  pointer-events-auto"
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}
@@ -88,7 +96,7 @@ function CommentTile({
               e.stopPropagation();
               onLoop(timestamp!);
             }}
-            className="flex items-center justify-center ml-[1px]"
+            className="flex cursor-pointer items-center justify-center ml-[1px]"
           >
             <ArrowReloadHorizontalIcon
               className="text-white/50 hover:text-white"

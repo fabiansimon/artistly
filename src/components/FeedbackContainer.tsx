@@ -94,7 +94,7 @@ export default function FeedbackContainer({
       </div>
       <SimpleButton
         icon={<Add01Icon size={15} />}
-        text="Add Comment"
+        text="Add comment"
         textClassName="text-white font-medium"
         className="mx-auto mb-2 bg-primary hover:bg-primary/80"
         onClick={() => toggleCommentInput()}

@@ -19,6 +19,9 @@ export default function VersionControl({ className }: { className?: string }) {
     handleVersionChange(versions[index].id);
   };
 
+  const first = version.index === 0;
+  const last = version.index === versions.length - 1;
+
   return (
     <div
       className={cn(
@@ -27,19 +30,19 @@ export default function VersionControl({ className }: { className?: string }) {
       )}
     >
       <ArrowLeft02Icon
-        onClick={() => handleClick(-1)}
+        onClick={() => !first && handleClick(-1)}
         className={cn(
           'text-white cursor-pointer',
-          version.index === 0 && 'cursor-default opacity-50'
+          first && 'cursor-not-allowed opacity-50'
         )}
         size={16}
       />
       <p className="text-white font-medium text-xs">{version?.title}</p>
       <ArrowRight02Icon
-        onClick={() => handleClick(1)}
+        onClick={() => !last && handleClick(1)}
         className={cn(
           'text-white cursor-pointer',
-          version.index === versions.length - 1 && 'cursor-default opacity-50'
+          last && 'cursor-not-allowed opacity-50'
         )}
         size={16}
       />
