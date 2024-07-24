@@ -7,10 +7,19 @@ export default class AlertController {
     description,
     callback,
     buttonText,
+    optimistic,
   }: {
     title?: string;
     description?: string;
     callback?: (args?: any) => any | void;
     buttonText?: string;
-  }) => this.ref.current?.show({ title, description, callback, buttonText });
+    optimistic?: boolean;
+  }) =>
+    this.ref.current?.show({
+      title,
+      description,
+      callback,
+      buttonText,
+      optimistic,
+    });
 }

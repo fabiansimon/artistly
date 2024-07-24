@@ -20,6 +20,7 @@ interface AlertInfo {
   description?: string;
   callback?: (args?: any) => any | void;
   buttonText?: string;
+  optimistic?: boolean;
 }
 
 export interface AlertMethods {
@@ -46,14 +47,12 @@ function Alert(): JSX.Element {
   const onClick = async () => {
     try {
       if (info?.callback) {
-        setIsLoading(true);
+        !info.optimistic && setIsLoading(true);
         await info.callback();
       }
     } finally {
       setIsLoading(false);
-      setTimeout(() => {
-        closeAlert();
-      }, 200);
+      closeAlert();
     }
   };
 
@@ -76,13 +75,15 @@ function Alert(): JSX.Element {
         description,
         callback,
         buttonText = 'Remove',
+        optimistic = false,
       }: {
         title?: string;
         description?: string;
         callback?: (args?: any) => any | void;
         buttonText?: string;
+        optimistic?: boolean;
       }) => {
-        setInfo({ title, description, callback, buttonText });
+        setInfo({ title, description, callback, buttonText, optimistic });
         setIsVisible(true);
       },
     }),

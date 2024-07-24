@@ -34,6 +34,7 @@ export default function CommentTile({ comment }: { comment: Comment }) {
         ),
         text: 'Remove',
         confirm: true,
+        optimistic: true,
         onClick: () => removeFeedback(id),
       },
     ],
