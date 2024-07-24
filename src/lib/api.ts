@@ -196,3 +196,45 @@ export async function fetchInitSummary() {
     throw error;
   }
 }
+
+export async function createShareable({
+  projectId,
+  onlyRecentVersion,
+  unlimitedVisits,
+}: {
+  projectId: string;
+  onlyRecentVersion: boolean;
+  unlimitedVisits: boolean;
+}) {
+  try {
+    const res = await _axios.post('/api/share', {
+      projectId,
+      onlyRecentVersion,
+      unlimitedVisits,
+    });
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'createShareable' });
+    throw error;
+  }
+}
+
+export async function fetchShareable(id: string) {
+  try {
+    const res = await _axios.get(`/api/share/${id}`);
+    return res.data;
+  } catch (error) {
+    handleError({ error, callName: 'fetchInitSummary' });
+    throw error;
+  }
+}
+
+export async function deleteShareable(id: string) {
+  try {
+    await _axios.delete(`/api/share/${id}`);
+    return true;
+  } catch (error) {
+    handleError({ error, callName: 'fetchInitSummary' });
+    throw error;
+  }
+}

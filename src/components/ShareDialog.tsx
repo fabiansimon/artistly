@@ -13,8 +13,36 @@ import ToastController from '@/controllers/ToastController';
 import SimpleButton from './SimpleButton';
 
 export default function ShareDialog() {
-  const { project } = useProjectContext();
-  const [url, setUrl] = useState<string>('');
+  const { project, generateShareable, removeShareable } = useProjectContext();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  if (!project) return;
+  const { shareableUrl } = project;
+
+  const handleGenerate = async () => {
+    setIsLoading(true);
+    try {
+      await generateShareable({
+        onlyRecentVersion: true,
+        unlimitedVisits: true,
+      });
+    } catch (error) {
+      ToastController.showErrorToast();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemove = async () => {
+    setIsLoading(true);
+    try {
+      await removeShareable();
+    } catch (error) {
+      ToastController.showErrorToast();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInvites = () => {
     ModalController.close();
@@ -23,30 +51,18 @@ export default function ShareDialog() {
     }, 300);
   };
 
-  const handleRemoveUrl = () => {
-    setUrl('');
-  };
-
   const handleCopy = () => {
-    copyToClipboard(url);
+    if (!shareableUrl) return;
+    copyToClipboard(shareableUrl);
     ToastController.showSuccessToast(
       'Successfully copied.',
       'Share the link with you friends so they can listen to your project.'
     );
   };
 
-  const generateUrl = () => {
-    setUrl('www.artistly.io/share/8c3a58b9-82f6-415a-bd1f-9a5a6dd3cb7b');
-  };
-
-  const handeClick = () => {
-    if (url) return handleCopy();
-    generateUrl();
-  };
-
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-4 -pb-4">
-      <article className="prose mt">
+      <article className="prose">
         <h3 className="text-white text-sm text-center">Share Project</h3>
         <p className="text-white-70 text-sm text-center">
           Keep in mind people with access to this link can only listen and
@@ -59,7 +75,9 @@ export default function ShareDialog() {
           </a>
         </p>
       </article>
-      {!url && (
+
+      {/* Options Container */}
+      {!shareableUrl && (
         <div className="flex grow w-full space-x-2 py-2">
           <div className="w-full border border-white/10 rounded-lg p-2 space-y-2 -mb-1">
             <div className="flex space-x-1 justify-center items-center">
@@ -135,13 +153,36 @@ export default function ShareDialog() {
           </div>
         </div>
       )}
-      <button
-        onClick={handeClick}
-        className="btn text-white btn-primary h-16 w-full"
-      >
-        {url ? (
+      {/*  */}
+
+      {!shareableUrl && (
+        <button
+          onClick={handleGenerate}
+          className="btn text-white btn-primary h-16 w-full"
+        >
+          {isLoading ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <>
+              <MagicWand01Icon
+                className="text-white"
+                size={18}
+              />
+              Generate Link
+            </>
+          )}
+        </button>
+      )}
+
+      {shareableUrl && (
+        <button
+          onClick={handleCopy}
+          className="btn text-white btn-primary h-16 w-full"
+        >
           <div className="flex flex-col items-center space-y-2">
-            <p className="text-white/70 text-[12px] font-normal">{url}</p>
+            <p className="text-white/70 text-[12px] font-normal">
+              {shareableUrl}
+            </p>
             <div className="flex space-x-[5px] items-center">
               <p className="text-white text-xs">Click to copy</p>
               <Copy01Icon
@@ -150,20 +191,12 @@ export default function ShareDialog() {
               />
             </div>
           </div>
-        ) : (
-          <>
-            <MagicWand01Icon
-              className="text-white"
-              size={18}
-            />
-            Generate Link
-          </>
-        )}
-      </button>
+        </button>
+      )}
 
-      {url && (
+      {shareableUrl && (
         <SimpleButton
-          onClick={handleRemoveUrl}
+          onClick={handleRemove}
           className="mx-auto opacity-80 border-error/30 text-error/50"
           text="remove link"
           textClassName="text-error/60"

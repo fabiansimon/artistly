@@ -2,8 +2,10 @@
 
 import FeedbackInputModal from '@/components/FeedbackInputModal';
 import {
+  createShareable,
   deleteFeedback,
   deleteInvite,
+  deleteShareable,
   sendInvites,
   uploadFeedback,
 } from '@/lib/api';
@@ -34,6 +36,14 @@ interface ProjectContextType {
   addFeedback: (input: Input) => void;
   removeInvite: (id: string) => void;
   addInvites: (emails: string[]) => Promise<void>;
+  removeShareable: () => Promise<void>;
+  generateShareable: ({
+    onlyRecentVersion,
+    unlimitedVisits,
+  }: {
+    onlyRecentVersion: boolean;
+    unlimitedVisits: boolean;
+  }) => Promise<void>;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -191,6 +201,26 @@ export default function ProjectProvider({
     });
   }, []);
 
+  const _removeShareable = useCallback(() => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        shareableUrl: undefined,
+      };
+    });
+  }, []);
+
+  const _addShareable = useCallback((url: string) => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        shareableUrl: url,
+      };
+    });
+  }, []);
+
   const removeInvite = useCallback(
     async (id: string) => {
       if (!project) return;
@@ -219,6 +249,39 @@ export default function ProjectProvider({
       }
     },
     [project, _addInvites]
+  );
+
+  const removeShareable = useCallback(async () => {
+    if (!project?.shareableUrl) return;
+    try {
+      await deleteShareable(project.shareableUrl);
+      _removeShareable();
+    } catch (error) {
+      console.error(error);
+    }
+  }, [project, _removeShareable]);
+
+  const generateShareable = useCallback(
+    async ({
+      onlyRecentVersion,
+      unlimitedVisits,
+    }: {
+      onlyRecentVersion: boolean;
+      unlimitedVisits: boolean;
+    }) => {
+      if (!project) return;
+      try {
+        const url = await createShareable({
+          projectId: project.id,
+          onlyRecentVersion,
+          unlimitedVisits,
+        });
+        _addShareable(url);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [project, _addShareable]
   );
 
   const toggleCommentInput = useCallback((timestamp?: number) => {
@@ -263,6 +326,8 @@ export default function ProjectProvider({
     removeFeedback,
     removeInvite,
     addInvites,
+    removeShareable,
+    generateShareable,
   };
   return (
     <ProjectContext.Provider value={value}>

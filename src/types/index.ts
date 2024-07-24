@@ -123,6 +123,7 @@ export interface Project {
   versions: Version[];
   collaborators: User[];
   openInvites: Invite[];
+  shareableUrl?: string;
 }
 
 export type LeanProject = Omit<
@@ -134,6 +135,13 @@ export type LeanProject = Omit<
   | 'authors'
   | 'openInvites'
 >;
+
+export interface ShareableProject {
+  title: string;
+  versions: { title: string; file_url: string; created_at: Date }[];
+  only_recent_version: boolean;
+  unlimited_visits: boolean;
+}
 
 export interface FeedbackUpload {
   text: string;
