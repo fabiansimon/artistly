@@ -104,9 +104,7 @@ export default function InviteDialog() {
                 size={14}
                 className="text-white/40"
               />
-              <article>
-                <p className="prose-sm text-white/40 ">no one added yet</p>
-              </article>
+              <p className="prose text-xs text-white/40 ">no one added yet</p>
             </div>
           )}
         </div>

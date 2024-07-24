@@ -71,8 +71,8 @@ function CommentTile({
     <div
       style={style}
       className={cn(
-        'absolute pointer-events-none flex flex-col',
-        hovered && 'z-7'
+        'absolute pointer-events-none flex flex-col z-0',
+        hovered && 'z-10'
       )}
     >
       <div className="flex">
@@ -80,7 +80,10 @@ function CommentTile({
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="bg-neutral-700 flex overflow-hidden  pointer-events-auto"
+          className={cn(
+            'bg-neutral-700 flex overflow-hidden pointer-events-auto',
+            hovered && 'shadow-sm shadow-black'
+          )}
         >
           <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}

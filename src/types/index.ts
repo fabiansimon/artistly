@@ -176,6 +176,7 @@ export interface MenuOption {
   confirm?: boolean;
   ignore?: boolean;
   onClick: (args?: any) => any | void;
+  optimistic?: boolean;
 }
 
 export interface Pagination {
