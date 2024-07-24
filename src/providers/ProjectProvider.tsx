@@ -254,7 +254,9 @@ export default function ProjectProvider({
   const removeShareable = useCallback(async () => {
     if (!project?.shareableUrl) return;
     try {
-      await deleteShareable(project.shareableUrl);
+      const id = project.shareableUrl.split('/').pop();
+      if (!id) return;
+      await deleteShareable(id);
       _removeShareable();
     } catch (error) {
       console.error(error);
@@ -271,7 +273,7 @@ export default function ProjectProvider({
     }) => {
       if (!project) return;
       try {
-        const url = await createShareable({
+        const { url } = await createShareable({
           projectId: project.id,
           onlyRecentVersion,
           unlimitedVisits,
@@ -301,7 +303,7 @@ export default function ProjectProvider({
   }, [time, version, file]);
 
   const users = useMemo(() => {
-    if (!project) return {};
+    if (!project || !project.authors || !project.collaborators) return {};
     const map: { [id: string]: User } = {};
     project.authors.forEach((u) => (map[u.id] = u));
     project.collaborators.forEach((u) => (map[u.id] = u));

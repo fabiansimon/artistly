@@ -45,12 +45,26 @@ export async function fetchShareableByID(id: string) {
     .eq('id', id)
     .single();
 
-  if (error) throw new Error(`Error fetching shareable: ${error.message}`);
+  if (error)
+    throw new Error(`Error fetching shareable by ID: ${error.message}`);
 
   return data;
 }
 
-export function generateShareableURL({ id }: { id: string }) {
+export async function fetchShareableByProjectId(id: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('project_id', id)
+    .single();
+
+  if (error && error.code !== 'PGRST116')
+    throw new Error(`Error fetching shareable by project ID: ${error.message}`);
+
+  return data;
+}
+
+export function generateShareableURL(id: string) {
   const baseUrl = 'www.localhost:3000';
   return `${baseUrl}/share/${id}`;
 }
