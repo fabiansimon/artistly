@@ -3,12 +3,12 @@ export const ROUTES = {
   project: 'project',
   home: 'home',
   join: 'join',
-  share: 'share',
+  listen: 'listen',
   profile: 'profile',
   landing: '',
 };
 
-export const openRoutes = new Set([ROUTES.share, ROUTES.landing]);
+export const openRoutes = new Set([ROUTES.listen, ROUTES.landing]);
 
 export function route(name: string, ...params: string[]) {
   let post = '';

@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/routes';
 import { supabase } from '@/lib/supabaseClient';
 
 const TABLE = 'shareables';
@@ -66,5 +67,5 @@ export async function fetchShareableByProjectId(id: string) {
 
 export function generateShareableURL(id: string) {
   const baseUrl = 'www.localhost:3000';
-  return `${baseUrl}/share/${id}`;
+  return `${baseUrl}/${ROUTES.listen}/${id}`;
 }

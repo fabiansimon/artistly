@@ -84,6 +84,8 @@ export interface Version {
   feedback: Comment[];
 }
 
+export type LeanVersion = Omit<Version, 'notes' | 'feedback'>;
+
 export interface User {
   id: string;
   email: string;
@@ -138,7 +140,7 @@ export type LeanProject = Omit<
 
 export interface ShareableProject {
   title: string;
-  versions: { title: string; file_url: string; created_at: Date }[];
+  versions: LeanVersion[];
   only_recent_version: boolean;
   unlimited_visits: boolean;
 }

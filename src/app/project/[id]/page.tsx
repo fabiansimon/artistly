@@ -8,10 +8,6 @@ import LoadingView from '@/components/LoadingView';
 import {
   Add01Icon,
   AddTeamIcon,
-  ArrowLeft01Icon,
-  ArrowLeft02Icon,
-  ArrowRight01Icon,
-  ArrowRight02Icon,
   Download04Icon,
   InformationCircleIcon,
   Notebook02Icon,
