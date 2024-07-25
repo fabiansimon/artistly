@@ -15,8 +15,6 @@ export default function HomePage() {
     summary: { data: summary, fetch, isLoading },
   } = useDataLayerContext();
 
-  console.log(summary);
-
   const router = useRouter();
 
   return (
@@ -50,12 +48,17 @@ export default function HomePage() {
           <h3 className="text-[18px] text-white">{'Shared projects'}</h3>
         </article>
       </div>
-      <div className="space-y-2">
-        {summary?.sharedProjects.map((project) => (
-          <ShareProjectTile
-            key={project.id}
-            project={project}
-          />
+      <div className="flex flex-col pt-6">
+        {summary?.sharedProjects.map((project, index) => (
+          <>
+            <ShareProjectTile
+              key={project.id}
+              project={project}
+            />
+            {index !== summary.sharedProjects.length - 1 && (
+              <div className="divider my-1" />
+            )}
+          </>
         ))}
       </div>
     </Container>
@@ -148,19 +151,22 @@ function ShareProjectTile({
         className
       )}
     >
-      <article className="prose">
-        <div className="flex space-x-2">
-          <p className="text-sm font-medium text-white">{title}</p>
-          <p className="text-xs text-white/60">
-            {getReadableDate(created_at, true)}
-          </p>
-        </div>
+      <div className="">
+        <article className="prose -mt-5 items-center">
+          <div className="flex space-x-2">
+            <p className="text-sm font-medium text-white">{title}</p>
+            <p className="text-xs text-white/60">
+              {getReadableDate(created_at, true)}
+            </p>
+          </div>
+        </article>
         <ShareableOptions
           project={project}
-          className="-mt-4"
+          className="-mt-2"
         />
-      </article>
-      <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
+      </div>
+
+      <div className="flex border-2 my-auto py-2 border-neutral-700/50 items-center justify-center rounded-md">
         <p className="text-xs text-white/60 mx-2">
           {pluralize(opened, 'stream')}
         </p>
