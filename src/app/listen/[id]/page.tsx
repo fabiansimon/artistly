@@ -1,6 +1,7 @@
 'use client';
 
 import { PlayButton } from '@/components/PlayButton';
+import ShareableOptions from '@/components/ShareableOptions';
 import ToastController from '@/controllers/ToastController';
 import { fetchShareable } from '@/lib/api';
 import { cn, pluralize } from '@/lib/utils';
@@ -24,6 +25,7 @@ export default function SharePage() {
     (async () => {
       try {
         const res = await fetchShareable(id as string);
+        console.log(res);
         setTrack(res);
       } catch (error) {
         console.log(error);
@@ -31,65 +33,6 @@ export default function SharePage() {
       }
     })();
   }, [id]);
-
-  const options = useMemo(() => {
-    if (!track) return [];
-    const { only_recent_version, unlimited_visits, versions } = track;
-    return [
-      {
-        icon: (
-          <Alert02Icon
-            size={12}
-            className="text-error"
-          />
-        ),
-        text: 'One time listen',
-        bg: 'bg-error/30',
-        textColor: 'text-error',
-        visible: !unlimited_visits,
-        helpText: 'lorem epsum',
-      },
-      {
-        icon: (
-          <Alert02Icon
-            size={12}
-            className="text-success"
-          />
-        ),
-        bg: 'bg-success/30',
-        text: 'Unlimited listens',
-        textColor: 'text-success',
-        visible: unlimited_visits,
-        helpText: 'lorem epsum',
-      },
-      {
-        icon: (
-          <MusicNoteSquare01Icon
-            size={14}
-            className="text-primary"
-          />
-        ),
-        bg: 'bg-primary/30',
-        text: 'Most recent version',
-        textColor: 'text-primary',
-        visible: only_recent_version,
-        helpText: 'lorem epsum',
-      },
-      {
-        icon: (
-          <Playlist02Icon
-            size={14}
-            className="text-primary"
-          />
-        ),
-        bg: 'bg-primary/30',
-        textColor: 'text-primary',
-        text: pluralize(versions.length, 'version'),
-        visible: !only_recent_version,
-        helpText: 'lorem epsum',
-      },
-    ];
-  }, [track]);
 
   if (!track) return;
   const { title, versions, only_recent_version } = track;
@@ -99,30 +42,11 @@ export default function SharePage() {
       <div className="rounded-lg max-w-screen-md w-full bg-neutral-950 border border-white/10 p-4 flex flex-col space-y-4">
         <article className="prose -mb-2">
           <h3 className="text-white text-sm">{title}</h3>
-          <p className="text-white-70 text-xs -mt-2">
+          <p className="text-white/60 text-xs -mt-2">
             Respect the artist wishes and don't download/share this with anyone.
           </p>
         </article>
-        <div className="flex space-x-1">
-          {options.map(
-            ({ text, icon, visible, bg, textColor, helpText }, index) => {
-              if (!visible) return;
-              return (
-                <div
-                  data-tip={helpText}
-                  className={cn(
-                    'tooltip tooltip-top cursor-pointer flex px-2 h-7 rounded-lg space-x-1 items-center',
-                    bg
-                  )}
-                  key={index}
-                >
-                  {icon}
-                  <p className={cn('prose text-[11px]', textColor)}>{text}</p>
-                </div>
-              );
-            }
-          )}
-        </div>
+        <ShareableOptions project={track} />
         <PlayButton
           className="mx-auto"
           src={versions[versionIndex].file_url}

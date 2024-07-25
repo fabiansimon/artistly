@@ -32,7 +32,7 @@ export default function CollaboratorContainer({
       >
         <UserGroupIcon
           size={12}
-          className="text-white/50"
+          className="text-white/60"
         />
       </div>
       <div
@@ -69,9 +69,9 @@ export default function CollaboratorContainer({
           <div className="flex items-center mb-2 space-x-1">
             <PaintBrush01Icon
               size={15}
-              className="text-white/70"
+              className="text-white/60"
             />
-            <p className="prose text-xs text-white/70 font-medium">Authors</p>
+            <p className="prose text-xs text-white/60 font-medium">Authors</p>
           </div>
           <div className="space-y-2">
             {authors.map((user) => (
@@ -86,9 +86,9 @@ export default function CollaboratorContainer({
           <div className="flex items-center mb-2 space-x-1">
             <UserGroupIcon
               size={15}
-              className="text-white/70"
+              className="text-white/60"
             />
-            <p className="prose text-xs text-white/70 font-medium">
+            <p className="prose text-xs text-white/60 font-medium">
               Collaborators
             </p>
           </div>
@@ -122,7 +122,7 @@ function UserTile({ user, isAuthor }: { user: User; isAuthor?: boolean }) {
         <p className="prose text-xs text-white">
           {concatName(first_name, last_name)}
         </p>
-        <p className="prose text-xs -mt-1 text-white/50">{email}</p>
+        <p className="prose text-xs -mt-1 text-white/60">{email}</p>
       </div>
     </div>
   );

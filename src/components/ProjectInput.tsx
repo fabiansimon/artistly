@@ -136,7 +136,7 @@ export default function ProjectInput({
 
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
-            <p className="text-white/80 text-sm">{'Invite collaborators'}</p>
+            <p className="text-white/60 text-sm">{'Invite collaborators'}</p>
           </article>
           {inputData.emailList.size > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -152,10 +152,10 @@ export default function ProjectInput({
             <div className="flex items-center space-x-[5.5px]">
               <MehIcon
                 size={14}
-                className="text-white/40"
+                className="text-white/60"
               />
               <article>
-                <p className="prose-sm text-white/40 ">no one added yet</p>
+                <p className="prose-sm text-white/60 ">no one added yet</p>
               </article>
             </div>
           )}

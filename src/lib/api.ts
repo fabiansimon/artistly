@@ -224,7 +224,7 @@ export async function fetchShareable(id: string) {
     const res = await _axios.get(`/api/share/${id}`);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'fetchInitSummary' });
+    handleError({ error, callName: 'fetchShareable' });
     throw error;
   }
 }
@@ -234,7 +234,7 @@ export async function deleteShareable(id: string) {
     await _axios.delete(`/api/share/${id}`);
     return true;
   } catch (error) {
-    handleError({ error, callName: 'fetchInitSummary' });
+    handleError({ error, callName: 'deleteShareable' });
     throw error;
   }
 }

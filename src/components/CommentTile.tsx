@@ -29,7 +29,7 @@ export default function CommentTile({ comment }: { comment: Comment }) {
         icon: (
           <Delete01Icon
             size={14}
-            className="text-white/70"
+            className="text-white/60"
           />
         ),
         text: 'Remove',

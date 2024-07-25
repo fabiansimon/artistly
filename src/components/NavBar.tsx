@@ -96,7 +96,7 @@ function NavBar({ className }: { className?: string }): JSX.Element {
             <p className="text-sm font-medium text-white">
               {concatName(first_name, last_name)}
             </p>
-            <p className="text-xs -mt-4 text-white/50">{email}</p>
+            <p className="text-xs -mt-4 text-white/60">{email}</p>
           </article>
         )}
       </div>

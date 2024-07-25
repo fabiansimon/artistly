@@ -16,7 +16,11 @@ export default function Container({
 }) {
   return (
     <div
-      className={cn('flex flex-col w-full', !omitPadding && 'px-4', className)}
+      className={cn(
+        'flex grow w-full flex-col pr-4',
+        !omitPadding && 'px-4',
+        className
+      )}
     >
       <div
         className={cn('flex justify-between mb-2 mt-4', omitPadding && 'px-4')}
@@ -60,7 +64,7 @@ function RefreshButton({
       className={className}
       icon={
         <ReloadIcon
-          className="text-white/80"
+          className="text-white/60"
           size={16}
         />
       }

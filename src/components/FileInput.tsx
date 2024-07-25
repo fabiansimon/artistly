@@ -9,7 +9,7 @@ export default function FileInput({
     <div className="flex mx-auto items-center flex-col">
       <article className="prose text-center">
         <h3 className="text-white text-sm">{'Import your Masterpiece'}</h3>
-        <p className="-mt-2 text-white/70 text-sm">
+        <p className="-mt-2 text-white/60 text-sm">
           {"We will handle it with care, don't worry"}
         </p>
       </article>

@@ -15,7 +15,7 @@ export default function ProjectSelection({
       >
         <article className="prose text-center">
           <h3 className="text-white text-sm">{'Create a new project'}</h3>
-          <p className="text-white/70 text-sm">
+          <p className="text-white/60 text-sm">
             {
               'Choose this option if this is your first draft/version that you want to share.'
             }
@@ -26,7 +26,7 @@ export default function ProjectSelection({
       <div className="flex flex-col mt-4 flex-grow items-center justify-center w-full">
         <article className="prose text-center">
           <h3 className="text-white text-sm">{'Add to exisiting project'}</h3>
-          <p className="text-white/70 text-sm">
+          <p className="text-white/60 text-sm">
             {'Upload this version to an exisiting project.'}
           </p>
         </article>

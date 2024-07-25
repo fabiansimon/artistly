@@ -32,8 +32,8 @@ export default function MembershipCarousel({
           >
             <article className="prose justify-between flex flex-col">
               <h3 className="text-sm text-white">{title}</h3>
-              <p className="text-sm text-white/70">{description}</p>
-              <p className="text-xs font-medium text-white/70">
+              <p className="text-sm text-white/60">{description}</p>
+              <p className="text-xs font-medium text-white/60">
                 {convertPrice(price)}
               </p>
             </article>

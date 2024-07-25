@@ -69,11 +69,11 @@ export default function ShareDialog() {
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-4 -pb-4">
       <article className="prose">
         <h3 className="text-white text-sm text-center">Share Project</h3>
-        <p className="text-white-70 text-sm text-center">
+        <p className="text-white/60 text-sm text-center">
           Keep in mind people with access to this link can only listen and
           download this song. To invite collaborators{' '}
           <a
-            className="cursor-pointer"
+            className="cursor-pointer text-white/60"
             onClick={handleInvites}
           >
             click here
@@ -187,13 +187,13 @@ export default function ShareDialog() {
           className="btn text-white btn-primary h-16 w-full"
         >
           <div className="flex flex-col items-center space-y-2">
-            <p className="text-white/70 text-[12px] font-normal">
+            <p className="text-white/60 text-[12px] font-normal">
               {shareableUrl}
             </p>
             <div className="flex space-x-[5px] items-center">
               <p className="text-white text-xs">Click to copy</p>
               <Copy01Icon
-                className="mr-2 text-white/70"
+                className="mr-2 text-white/60"
                 size={15}
               />
             </div>

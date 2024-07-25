@@ -37,7 +37,7 @@ export default function DownloadDialog() {
     <div className="flex flex-col w-full items-center">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Download Audio</h3>
-        <p className="text-white-70 text-sm text-center">
+        <p className="text-white/60 text-sm text-center">
           {`Chose what version you would like to download from the project "${title}"`}
         </p>
       </article>
@@ -65,7 +65,7 @@ export default function DownloadDialog() {
                   <p className="text-white text-sm -mt-2 text-center">
                     {title}
                   </p>
-                  <p className="text-white/70 text-xs -mt-2 text-center">
+                  <p className="text-white/60 text-xs -mt-2 text-center">
                     {getReadableDate(created_at)}
                   </p>
                 </div>

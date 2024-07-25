@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchUsersByIds, getUserData } from '../controllers/userController';
 import { fetchAuthorProjects } from '../controllers/projectController';
 import { fetchLatestFeedbackByProjectIds } from '../controllers/feedbackController';
-import { InitSummary } from '@/types';
+import { InitSummary, Project } from '@/types';
+import { fetchShareablesByProjectIds } from '../controllers/shareController';
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,7 +13,14 @@ export async function GET(req: NextRequest) {
     }
 
     const projects = await fetchAuthorProjects(userId);
-    const projectIds = projects.map((p) => p.id);
+    const projectMap = new Map<string, Project>();
+    let projectIds: string[] = [];
+    for (const project of projects) {
+      const { id } = project;
+      projectMap.set(id, project);
+      projectIds.push(project.id);
+    }
+
     const latestFeedback = await fetchLatestFeedbackByProjectIds(projectIds);
 
     const feedbackUsers = Array.from(latestFeedback.values()).map(
@@ -39,8 +47,15 @@ export async function GET(req: NextRequest) {
       );
     });
 
+    const sharedProjects =
+      (await fetchShareablesByProjectIds(projectIds)) || [];
+
     const data: InitSummary = {
       latestFeedback: sortedFeedback,
+      sharedProjects: sharedProjects.map((project) => ({
+        ...project,
+        title: projectMap.get(project.project_id)?.title,
+      })),
     };
 
     return NextResponse.json(data);

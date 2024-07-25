@@ -95,7 +95,7 @@ function UserTile({
         icon: (
           <Delete01Icon
             size={14}
-            className="text-white/70"
+            className="text-white/60"
           />
         ),
         text: 'Remove',
@@ -124,7 +124,7 @@ function UserTile({
             <p className="text-sm text-white">
               {concatName(first_name, last_name)}
             </p>
-            <p className="text-xs -mt-4 text-white/50">{email}</p>
+            <p className="text-xs -mt-4 text-white/60">{email}</p>
           </article>
         </div>
       </div>

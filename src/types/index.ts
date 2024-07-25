@@ -139,10 +139,14 @@ export type LeanProject = Omit<
 >;
 
 export interface ShareableProject {
+  id: string;
+  created_at: Date;
   title: string;
   versions: LeanVersion[];
+  url: string;
   only_recent_version: boolean;
   unlimited_visits: boolean;
+  opened: number;
 }
 
 export interface FeedbackUpload {
@@ -155,6 +159,7 @@ export interface FeedbackUpload {
 
 export interface InitSummary {
   latestFeedback: (Project & { feedback: Comment })[];
+  sharedProjects: ShareableProject[];
 }
 
 export interface Input {

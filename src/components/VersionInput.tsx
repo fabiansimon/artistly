@@ -65,7 +65,7 @@ export default function VersionInput({
     <div className="flex flex-col w-full items-center">
       <article className="prose mb-4">
         <h3 className="text-white text-sm text-center">Upload Version</h3>
-        <p className="text-white/70 text-sm text-center -mt-2">{`to project "${project.title}"`}</p>
+        <p className="text-white/60 text-sm text-center -mt-2">{`to project "${project.title}"`}</p>
       </article>
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full mb-4">
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">

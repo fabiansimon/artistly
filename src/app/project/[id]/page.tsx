@@ -143,7 +143,7 @@ function ProjectPage() {
               <h3 className="text-white text-[16px]">
                 No version updated yet.
               </h3>
-              <p className="text-white/70 -mt-2 text-xs">
+              <p className="text-white/60 -mt-2 text-xs">
                 Make sure to upload your first version before inviting
                 collaborators.
               </p>

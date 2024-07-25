@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
+        console.log('user, account, profile', user, account, profile);
         if (!profile) return false;
         const { email, given_name, family_name, picture } = profile;
 

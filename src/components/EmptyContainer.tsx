@@ -19,7 +19,7 @@ export default function EmptyContainer({
           className="mb-3 text-white"
         />
         <h4 className="text-white text-sm">{title}</h4>
-        <p className="text-xs text-white/80">{description}</p>
+        <p className="text-xs text-white/60">{description}</p>
       </article>
     </div>
   );

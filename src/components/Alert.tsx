@@ -101,7 +101,7 @@ function Alert(): JSX.Element {
           <h3 className="font-medium text-white text-md">
             {info?.title || DEFAULT_TITLE}
           </h3>
-          <p className="text-white/80 text-sm">
+          <p className="text-white/60 text-sm">
             {info?.description || DEFAULT_DESCRIPTION}
           </p>
         </article>

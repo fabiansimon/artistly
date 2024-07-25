@@ -17,7 +17,7 @@ export default function CollaboratorChip({
       )}
     >
       <article className="prose">
-        <p className="prose text-xs font-medium text-white/80">{email}</p>
+        <p className="prose text-xs font-medium text-white/60">{email}</p>
       </article>
       {onDelete && <Cancel01Icon size={14} />}
     </div>

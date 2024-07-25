@@ -31,6 +31,20 @@ export async function createShareable({
   return data;
 }
 
+export async function archiveShareable(id: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update({ archive: true })
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    throw new Error(`Error archiving shareable: ${error.message}`);
+  }
+
+  return data;
+}
+
 export async function deleteShareable(id: string) {
   const { error } = await supabase.from(TABLE).delete().eq('id', id);
 
@@ -39,7 +53,7 @@ export async function deleteShareable(id: string) {
   }
 }
 
-export async function fetchShareableByID(id: string) {
+export async function fetchShareableById(id: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('*')
@@ -48,6 +62,18 @@ export async function fetchShareableByID(id: string) {
 
   if (error)
     throw new Error(`Error fetching shareable by ID: ${error.message}`);
+
+  return data;
+}
+
+export async function incrementOpenedCount(id: string) {
+  const { data, error } = await supabase.rpc('increment_opened', {
+    item_id: id,
+  });
+
+  if (error) {
+    throw new Error(`Error incrementing opened count: ${error.message}`);
+  }
 
   return data;
 }
@@ -65,7 +91,22 @@ export async function fetchShareableByProjectId(id: string) {
   return data;
 }
 
+export async function fetchShareablesByProjectIds(id: string[]) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .in('project_id', id)
+    .select();
+
+  if (error && error.code !== 'PGRST116')
+    throw new Error(
+      `Error fetching shareables by project IDs: ${error.message}`
+    );
+
+  return data;
+}
+
 export function generateShareableURL(id: string) {
-  const baseUrl = 'www.localhost:3000';
+  const baseUrl = 'http://www.localhost:3000';
   return `${baseUrl}/${ROUTES.listen}/${id}`;
 }

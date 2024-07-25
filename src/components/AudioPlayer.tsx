@@ -14,7 +14,7 @@ export default function AudioPlayer({ className }: { className?: string }) {
       <PlayButton onClick={() => togglePlaying()} />
       <WaveContainer simple />
       <article className="prose">
-        <p className="prose-sm text-white/70">{formatSeconds(file.duration)}</p>
+        <p className="prose-sm text-white/60">{formatSeconds(file.duration)}</p>
       </article>
     </div>
   );

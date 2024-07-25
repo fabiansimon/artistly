@@ -36,7 +36,7 @@ export default function DropDown({
           >
             <div>
               {icon}
-              <p className="prose text-xs text-white/70">{text}</p>
+              <p className="prose text-xs text-white/60">{text}</p>
             </div>
           </li>
         ))}

@@ -137,7 +137,7 @@ export default function EditProjectDialog() {
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
       <article className="prose mb-2">
         <h3 className="text-white text-sm text-center">Edit Project</h3>
-        <p className="text-white-70 text-sm text-center">
+        <p className="text-white/60 text-sm text-center">
           Make sure your changes are correct. Once it's updated we cannot revert
           it.
         </p>
@@ -176,7 +176,7 @@ export default function EditProjectDialog() {
             handleInput(InputType.DESCRIPTION, value)
           }
           className={cn(
-            'textarea text-xs textarea-bordered w-full max-h-44 text-white/70',
+            'textarea text-xs textarea-bordered w-full max-h-44 text-white/60',
             baseClass
           )}
           placeholder="Update project notes (optional)"
@@ -230,7 +230,7 @@ export default function EditProjectDialog() {
               </motion.div>
             )}
             <div className="flex justify-between w-full">
-              <p className="prose ml-2 text-white/70 text-xs font-medium text-center">
+              <p className="prose ml-2 text-white/60 text-xs font-medium text-center">
                 Edit Version
               </p>
               <button
@@ -263,7 +263,7 @@ export default function EditProjectDialog() {
                     handleInput(InputType.VERSION_DESCRIPTION, value)
                   }
                   type="text"
-                  className="input bg-transparent text-xs input-sm w-full max-w-xs placeholder-white/60 text-white/70"
+                  className="input bg-transparent text-xs input-sm w-full max-w-xs placeholder-white/60 text-white/60"
                   placeholder="update version notes"
                   value={inputData.versions[versionIndex].notes}
                 />
@@ -273,7 +273,7 @@ export default function EditProjectDialog() {
                   size={18}
                   className="text-white mt-1"
                 />
-                <p className="prose text-[11px] text-white/70 font-medium">
+                <p className="prose text-[11px] text-white/60 font-medium">
                   replace
                 </p>
               </button>
@@ -316,7 +316,7 @@ export default function EditProjectDialog() {
         <div className="flex justify-between w-full px-2">
           <div className="flex items-center space-x-2">
             <TimeScheduleIcon size={12} />
-            <p className="prose text-white/70 text-xs font-medium text-center">
+            <p className="prose text-white/60 text-xs font-medium text-center">
               Outstanding invites
             </p>
           </div>
@@ -336,7 +336,7 @@ export default function EditProjectDialog() {
         <div className="divider my-0" />
         <div className="flex flex-wrap items-center justify-center gap-2">
           {!inputData.openInvites.length && (
-            <p className="prose text-white/40 text-xs">No invites</p>
+            <p className="prose text-white/60 text-xs">No invites</p>
           )}
           {inputData.openInvites.map(({ email, id }) => (
             <CollaboratorChip

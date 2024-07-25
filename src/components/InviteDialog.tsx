@@ -70,12 +70,12 @@ export default function InviteDialog() {
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
       <article className="prose">
         <h3 className="text-white text-sm text-center">Invite Collaborators</h3>
-        <p className="text-white-70 text-sm text-center">
+        <p className="text-white/60 text-sm text-center">
           Collaborators have access to all versions and are able to post
           feedback. If you're looking only to share your project{' '}
           <a
             onClick={handleShare}
-            className="cursor-pointer"
+            className="cursor-pointer text-white/60"
           >
             click here
           </a>
@@ -86,7 +86,7 @@ export default function InviteDialog() {
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
-            <p className="text-white/80 text-sm">{'Collaborators'}</p>
+            <p className="text-white/60 text-sm">{'Collaborators'}</p>
           </article>
           {emails.size > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -102,9 +102,9 @@ export default function InviteDialog() {
             <div className="flex items-center space-x-[5.5px]">
               <MehIcon
                 size={14}
-                className="text-white/40"
+                className="text-white/60"
               />
-              <p className="prose text-xs text-white/40 ">no one added yet</p>
+              <p className="prose text-xs text-white/60 ">no one added yet</p>
             </div>
           )}
         </div>

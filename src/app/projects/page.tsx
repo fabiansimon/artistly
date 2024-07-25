@@ -37,7 +37,7 @@ export default function ProjectsListPage() {
       </div>
       <div className="">
         {collabs.length == 0 && (
-          <p className="text-sm text-white/50">No projects found.</p>
+          <p className="text-sm text-white/60">No projects found.</p>
         )}
         {collabs.map((collab) => (
           <ProjectTile
@@ -55,7 +55,7 @@ export default function ProjectsListPage() {
       </div>
       <div className="">
         {authored.length == 0 && (
-          <p className="text-sm text-white/50">No projects found.</p>
+          <p className="text-sm text-white/60">No projects found.</p>
         )}
         {authored.map((collab) => (
           <ProjectTile
@@ -89,12 +89,12 @@ function ProjectTile({
     >
       <article className="prose">
         <p className="text-sm font-medium text-white">{title}</p>
-        <p className="text-xs text-white/50 -mt-4">
+        <p className="text-xs text-white/60 -mt-4">
           {getReadableDate(created_at, true)}
         </p>
       </article>
       <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
-        <p className="text-xs text-white/50 mx-2">
+        <p className="text-xs text-white/60 mx-2">
           {pluralize(versions.length, 'version')}
         </p>
       </div>

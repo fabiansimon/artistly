@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
+  archiveShareable,
   deleteShareable,
-  fetchShareableByID,
+  fetchShareableById,
+  generateShareableURL,
+  incrementOpenedCount,
 } from '../../controllers/shareController';
 import { fetchProjectById } from '../../controllers/projectController';
 import { fetchVersionsByProjectId } from '../../controllers/versionController';
@@ -20,18 +23,37 @@ export async function GET(
       );
     }
 
-    const { project_id, only_recent_version, unlimited_visits } =
-      await fetchShareableByID(id);
+    const {
+      id: shareableId,
+      created_at,
+      project_id,
+      only_recent_version,
+      unlimited_visits,
+      archived,
+    } = await fetchShareableById(id);
+
+    if (archived) {
+      return NextResponse.json(
+        { error: 'This link is expired and not valid.' },
+        { status: 410 }
+      );
+    }
+
     const project = await fetchProjectById(project_id);
     const versions = await fetchVersionsByProjectId(project_id);
+    const opened = await incrementOpenedCount(id);
 
-    if (!unlimited_visits) await deleteShareable(id);
+    if (!unlimited_visits) await archiveShareable(id);
 
     const res: ShareableProject = {
+      id: shareableId,
+      url: generateShareableURL(shareableId),
       title: project.title,
+      created_at,
       versions: only_recent_version ? versions.slice(0, 1) : versions,
       only_recent_version,
       unlimited_visits,
+      opened,
     };
 
     return NextResponse.json(res);

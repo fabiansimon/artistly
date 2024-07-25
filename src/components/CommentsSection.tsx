@@ -85,7 +85,7 @@ function CommentTile({
             hovered && 'shadow-sm shadow-black'
           )}
         >
-          <p className="prose cursor-pointer text-white/80 font-medium text-xs px-2 py-1">
+          <p className="prose cursor-pointer text-white/60 font-medium text-xs px-2 py-1">
             {formatSeconds(timestamp!)}
           </p>
           <motion.div
@@ -102,7 +102,7 @@ function CommentTile({
             className="flex cursor-pointer items-center justify-center ml-[1px]"
           >
             <ArrowReloadHorizontalIcon
-              className="text-white/50 hover:text-white"
+              className="text-white/60 hover:text-white"
               size={14}
             />
           </motion.div>

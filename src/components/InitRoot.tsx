@@ -33,9 +33,10 @@ export default function InitRoot({ children }: { children: React.ReactNode }) {
   if (status === 'loading')
     return (
       <div className="flex w-full h-full items-center justify-center">
-        <p className="text-white/70 text-sm text-center">loading...</p>
+        <p className="text-white/60 text-sm text-center">loading...</p>
       </div>
     );
+
   if (status === 'unauthenticated') return <AuthPage />;
 
   return (
@@ -43,9 +44,9 @@ export default function InitRoot({ children }: { children: React.ReactNode }) {
       <UserProvider>
         <AudioProvider>
           <ProjectProvider>
-            <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
+            <div className="flex flex-grow min-w-full max-w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
               <NavBar />
-              <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
+              <main className="flex flex-grow max-w-[74%] bg-neutral-900 border border-neutral-800/70 rounded-md">
                 {children}
                 <Toast />
                 <Modal />

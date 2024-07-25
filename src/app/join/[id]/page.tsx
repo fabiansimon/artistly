@@ -76,7 +76,7 @@ function InvitationCard({
               {project.authors[0].first_name}
             </p>
           </span>
-          <p className="text-white/80 text-sm">
+          <p className="text-white/60 text-sm">
             {getReadableDate(created_at, true)}
           </p>
         </div>

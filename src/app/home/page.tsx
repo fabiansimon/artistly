@@ -2,17 +2,20 @@
 
 import Avatar from '@/components/Avatar';
 import Container from '@/components/Container';
+import ShareableOptions from '@/components/ShareableOptions';
 import { route, ROUTES } from '@/constants/routes';
 import { cn, getDateDifference, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
-import { Comment, InitSummary, Project } from '@/types';
-import { HourglassIcon } from 'hugeicons-react';
+import { Comment, InitSummary, Project, ShareableProject } from '@/types';
+import { HourglassIcon, Share01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const {
     summary: { data: summary, fetch, isLoading },
   } = useDataLayerContext();
+
+  console.log(summary);
 
   const router = useRouter();
 
@@ -22,10 +25,10 @@ export default function HomePage() {
       <div className="flex space-x-2 items-center -mb-2">
         <HourglassIcon size={16} />
         <article className="prose">
-          <h3 className="text-[18px] text-white">{'Latest Feedback'}</h3>
+          <h3 className="text-[18px] text-white">{'Latest feedback'}</h3>
         </article>
       </div>
-      <div className="flex space-x-4 w-full mt-4 overflow-x-auto py-4 px-2 no-scrollbar">
+      <div className="flex space-x-4 mt-4 overflow-x-scroll py-4 -mx-4 px-4 no-scrollbar">
         {summary?.latestFeedback.map((data) => {
           return (
             <LastFeedbackCard
@@ -39,6 +42,22 @@ export default function HomePage() {
       {/*  */}
 
       <PromotionContainer />
+
+      {/* Shared Projects */}
+      <div className="flex space-x-2 items-center -mb-2 mt-4">
+        <Share01Icon size={16} />
+        <article className="prose">
+          <h3 className="text-[18px] text-white">{'Shared projects'}</h3>
+        </article>
+      </div>
+      <div className="space-y-2">
+        {summary?.sharedProjects.map((project) => (
+          <ShareProjectTile
+            key={project.id}
+            project={project}
+          />
+        ))}
+      </div>
     </Container>
   );
 }
@@ -70,7 +89,7 @@ function LastFeedbackCard({
       <div className="flex justify-between w-full">
         <article className="prose">
           <p className="text-sm font-medium text-white">{title}</p>
-          <p className="text-xs text-white/50 -mt-4">
+          <p className="text-xs text-white/60 -mt-4">
             {getReadableDate(created_at, true)}
           </p>
         </article>
@@ -99,6 +118,52 @@ function LastFeedbackCard({
           />
           <p className="text-xs text-white">{`"${text}"`}</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ShareProjectTile({
+  project,
+  className,
+  onClick,
+}: {
+  project: ShareableProject;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const {
+    title,
+    versions,
+    opened,
+    only_recent_version,
+    unlimited_visits,
+    created_at,
+  } = project;
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        'flex w-full cursor-pointer p-2 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
+        className
+      )}
+    >
+      <article className="prose">
+        <div className="flex space-x-2">
+          <p className="text-sm font-medium text-white">{title}</p>
+          <p className="text-xs text-white/60">
+            {getReadableDate(created_at, true)}
+          </p>
+        </div>
+        <ShareableOptions
+          project={project}
+          className="-mt-4"
+        />
+      </article>
+      <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
+        <p className="text-xs text-white/60 mx-2">
+          {pluralize(opened, 'stream')}
+        </p>
       </div>
     </div>
   );
