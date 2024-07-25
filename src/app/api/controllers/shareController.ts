@@ -107,6 +107,6 @@ export async function fetchShareablesByProjectIds(id: string[]) {
 }
 
 export function generateShareableURL(id: string) {
-  const baseUrl = 'http://www.localhost:3000';
+  const baseUrl = 'www.localhost:3000';
   return `${baseUrl}/${ROUTES.listen}/${id}`;
 }

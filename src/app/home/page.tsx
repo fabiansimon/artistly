@@ -7,7 +7,7 @@ import { route, ROUTES } from '@/constants/routes';
 import { cn, getDateDifference, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Comment, InitSummary, Project, ShareableProject } from '@/types';
-import { HourglassIcon, Share01Icon } from 'hugeicons-react';
+import { Copy01Icon, HourglassIcon, Share01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
@@ -98,13 +98,13 @@ function LastFeedbackCard({
         </article>
         <div
           className={cn(
-            'rounded-full px-2 py-1 absolute -top-2 -right-2',
-            unit === 'day' ? 'bg-error/40' : 'bg-success/40'
+            'rounded-md px-2 py-1 absolute -top-2 -right-2',
+            unit === 'day' ? 'bg-error/30' : 'bg-success/40'
           )}
         >
           <p
             className={cn(
-              'text-xs text-primary font-medium',
+              'text-[11px] text-primary',
               unit === 'day' ? 'text-error' : 'text-success'
             )}
           >
@@ -137,6 +137,7 @@ function ShareProjectTile({
 }) {
   const {
     title,
+    url,
     versions,
     opened,
     only_recent_version,
@@ -147,7 +148,7 @@ function ShareProjectTile({
     <div
       onClick={onClick}
       className={cn(
-        'flex w-full cursor-pointer p-2 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
+        'flex w-full cursor-pointer p-3 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
         className
       )}
     >
@@ -160,16 +161,22 @@ function ShareProjectTile({
             </p>
           </div>
         </article>
-        <ShareableOptions
-          project={project}
-          className="-mt-2"
-        />
+        <div className="flex space-x-[5px] items-center">
+          <p className="text-white text-xs">{url}</p>
+          <Copy01Icon
+            className="mr-2 text-white/60"
+            size={15}
+          />
+        </div>
       </div>
 
-      <div className="flex border-2 my-auto py-2 border-neutral-700/50 items-center justify-center rounded-md">
-        <p className="text-xs text-white/60 mx-2">
-          {pluralize(opened, 'stream')}
-        </p>
+      <div className="flex flex-col">
+        <ShareableOptions project={project} />
+        <div className="flex border-2 ml-auto my-auto py-2 border-neutral-700/50 items-center justify-center rounded-md">
+          <p className="text-xs text-white/60 mx-2">
+            {pluralize(opened, 'stream')}
+          </p>
+        </div>
       </div>
     </div>
   );

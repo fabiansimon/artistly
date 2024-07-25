@@ -3,7 +3,11 @@ import { fetchUsersByIds, getUserData } from '../controllers/userController';
 import { fetchAuthorProjects } from '../controllers/projectController';
 import { fetchLatestFeedbackByProjectIds } from '../controllers/feedbackController';
 import { InitSummary, Project } from '@/types';
-import { fetchShareablesByProjectIds } from '../controllers/shareController';
+import {
+  fetchShareablesByProjectIds,
+  generateShareableURL,
+} from '../controllers/shareController';
+import { url } from 'inspector';
 
 export async function GET(req: NextRequest) {
   try {
@@ -54,6 +58,7 @@ export async function GET(req: NextRequest) {
       latestFeedback: sortedFeedback,
       sharedProjects: sharedProjects.map((project) => ({
         ...project,
+        url: generateShareableURL(project.id),
         title: projectMap.get(project.project_id)?.title,
       })),
     };
