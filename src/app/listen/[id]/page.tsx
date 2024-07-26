@@ -4,21 +4,25 @@ import { PlayButton } from '@/components/PlayButton';
 import ShareableOptions from '@/components/ShareableOptions';
 import ToastController from '@/controllers/ToastController';
 import { fetchShareable } from '@/lib/api';
-import { cn, pluralize } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { LeanVersion, ShareableProject } from '@/types';
 import {
-  Alert02Icon,
   ArrowLeft02Icon,
   ArrowRight02Icon,
-  MusicNoteSquare01Icon,
-  Playlist02Icon,
+  AttachmentSquareIcon,
 } from 'hugeicons-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+enum Error {
+  GONE,
+}
 
 export default function SharePage() {
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [track, setTrack] = useState<ShareableProject | null>();
+  const [error, setError] = useState<Error | null>();
   const [versionIndex, setVersionIndex] = useState<number>(0);
 
   useEffect(() => {
@@ -28,38 +32,60 @@ export default function SharePage() {
         console.log(res);
         setTrack(res);
       } catch (error) {
-        console.log(error);
+        if (error.response.status === 410) {
+          setError(Error.GONE);
+          return;
+        }
         ToastController.showErrorToast();
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, [id]);
 
-  if (!track) return;
-  const { title, versions, only_recent_version } = track;
-
   return (
     <div className="flex w-full bg-neutral-900 min-h-screen space-x-2 fixed items-center justify-center">
-      <div className="rounded-lg max-w-screen-md w-full bg-neutral-950 border border-white/10 p-4 flex flex-col space-y-4">
-        <article className="prose -mb-2">
-          <h3 className="text-white text-sm">{title}</h3>
-          <p className="text-white/60 text-xs -mt-2">
-            Respect the artist wishes and don't download/share this with anyone.
-          </p>
-        </article>
-        <ShareableOptions project={track} />
-        <PlayButton
-          className="mx-auto"
-          src={versions[versionIndex].file_url}
-        />
-        {!only_recent_version && (
-          <VersionControl
+      {!isLoading && error === Error.GONE && (
+        <div className="max-w-screen-sm w-full py-5 border border-white/10 rounded-md p-4">
+          <article className="prose -mb-2 -mt-6">
+            <div className="flex space-x-2 items-center">
+              <AttachmentSquareIcon
+                size={20}
+                className="text-white"
+              />
+              <h3 className="text-white text-sm mb-5">Link expired</h3>
+            </div>
+            <p className="text-white/60 text-xs -mt-1">
+              The link you have received was already used and/or is now expired.
+              Ask the creator you send you an new one.
+            </p>
+          </article>
+        </div>
+      )}
+      {!isLoading && !error && track && (
+        <div className="rounded-lg max-w-screen-md w-full bg-neutral-950 border border-white/10 p-4 flex flex-col space-y-4">
+          <article className="prose -mb-2">
+            <h3 className="text-white text-sm">{track.title}</h3>
+            <p className="text-white/60 text-xs -mt-2">
+              Respect the artist wishes and don't download/share this with
+              anyone.
+            </p>
+          </article>
+          <ShareableOptions project={track} />
+          <PlayButton
             className="mx-auto"
-            onClick={(index) => setVersionIndex(index)}
-            versions={versions}
-            index={versionIndex}
+            src={track.versions[versionIndex].file_url}
           />
-        )}
-      </div>
+          {!track.only_recent_version && (
+            <VersionControl
+              className="mx-auto"
+              onClick={(index) => setVersionIndex(index)}
+              versions={track.versions}
+              index={versionIndex}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

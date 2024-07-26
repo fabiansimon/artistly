@@ -7,10 +7,14 @@ export default function Container({
   className,
   children,
   onRefresh,
+  isLoading,
+  skeleton,
   omitPadding = false,
 }: {
-  className?: string;
   children: React.ReactNode;
+  className?: string;
+  skeleton?: React.ReactNode;
+  isLoading?: boolean;
   onRefresh?: () => void;
   omitPadding?: boolean;
 }) {
@@ -22,13 +26,22 @@ export default function Container({
         className
       )}
     >
-      <div
-        className={cn('flex justify-between mb-2 mt-4', omitPadding && 'px-4')}
-      >
-        <BackButton />
-        {onRefresh && <RefreshButton onClick={onRefresh} />}
-      </div>
-      {children}
+      {isLoading && skeleton ? (
+        skeleton
+      ) : (
+        <>
+          <div
+            className={cn(
+              'flex justify-between mb-2 mt-4',
+              omitPadding && 'px-4'
+            )}
+          >
+            <BackButton />
+            {onRefresh && <RefreshButton onClick={onRefresh} />}
+          </div>
+          {children}
+        </>
+      )}
     </div>
   );
 }

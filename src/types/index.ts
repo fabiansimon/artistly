@@ -140,6 +140,7 @@ export type LeanProject = Omit<
 
 export interface ShareableProject {
   id: string;
+  project_id: string;
   created_at: Date;
   title: string;
   versions: LeanVersion[];

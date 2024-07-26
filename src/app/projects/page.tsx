@@ -1,12 +1,18 @@
 'use client';
 
 import Container from '@/components/Container';
+import EmptyContainer from '@/components/EmptyContainer';
 import LoadingView from '@/components/LoadingView';
+import ProjectsSkeleton from '@/components/Skeletons/ProjectsSkeleton';
 import { route, ROUTES } from '@/constants/routes';
 import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Project } from '@/types';
-import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
+import {
+  MusicNote01Icon,
+  Rocket01Icon,
+  SearchRemoveIcon,
+} from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
 export default function ProjectsListPage() {
@@ -16,19 +22,13 @@ export default function ProjectsListPage() {
 
   const router = useRouter();
 
-  if (isLoading)
-    return (
-      <LoadingView
-        strings={[
-          'Fetching authored projects',
-          'Searching for authored projects',
-        ]}
-      />
-    );
-
   const { collabs, authored } = data.content;
   return (
-    <Container onRefresh={fetch}>
+    <Container
+      isLoading={isLoading}
+      skeleton={<ProjectsSkeleton />}
+      onRefresh={fetch}
+    >
       <div className="flex space-x-2 items-center mb-2">
         <Rocket01Icon size={18} />
         <article className="prose">
@@ -37,7 +37,10 @@ export default function ProjectsListPage() {
       </div>
       <div className="">
         {collabs.length == 0 && (
-          <p className="text-sm text-white/60">No projects found.</p>
+          <EmptyContainer
+            text="No collaborations"
+            className="items-start"
+          />
         )}
         {collabs.map((collab) => (
           <ProjectTile
@@ -47,15 +50,19 @@ export default function ProjectsListPage() {
           />
         ))}
       </div>
-      <div className="flex space-x-2 items-center mb-2 mt-4">
+      <div className="divider my-2" />
+      <div className="flex space-x-2 items-center mb-2">
         <MusicNote01Icon size={18} />
         <article className="prose">
           <h3 className="text-[18px] text-white">{'Authored'}</h3>
         </article>
       </div>
-      <div className="">
+      <div>
         {authored.length == 0 && (
-          <p className="text-sm text-white/60">No projects found.</p>
+          <EmptyContainer
+            text="No authored projects"
+            className="items-start"
+          />
         )}
         {authored.map((collab) => (
           <ProjectTile

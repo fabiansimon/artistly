@@ -110,7 +110,12 @@ function ProjectPage() {
                         {'Version notes'}
                       </p>
                     </div>
-                    <p className="text-xs text-white mr-10">
+                    <p
+                      className={cn(
+                        'text-xs text-white mr-10',
+                        !version?.notes && 'text-white/60'
+                      )}
+                    >
                       {version?.notes || 'Nothing added'}
                     </p>
                   </div>
@@ -126,7 +131,12 @@ function ProjectPage() {
                         {'Project Information'}
                       </p>
                     </div>
-                    <p className="text-xs text-white mr-10">
+                    <p
+                      className={cn(
+                        'text-xs text-white mr-10',
+                        !project.description && 'text-white/60'
+                      )}
+                    >
                       {project.description || 'Nothing added'}
                     </p>
                   </div>

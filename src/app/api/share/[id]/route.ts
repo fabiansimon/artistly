@@ -53,6 +53,7 @@ export async function GET(
       versions: only_recent_version ? versions.slice(0, 1) : versions,
       only_recent_version,
       unlimited_visits,
+      project_id,
       opened,
     };
 

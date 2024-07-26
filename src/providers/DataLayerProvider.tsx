@@ -11,10 +11,10 @@ import {
   useState,
 } from 'react';
 
-enum MODE {
-  projects,
-  project,
-  summary,
+enum mode {
+  PROJECTS,
+  PROJECT,
+  SUMMARY,
 }
 
 interface ContextData<T> {
@@ -40,7 +40,7 @@ export default function DataLayerProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState<MODE | null>(null);
+  const [isLoading, setIsLoading] = useState<Set<mode>>(new Set<mode>());
   const [project, setProject] = useState<Project | null>(null);
   const [summary, setSummary] = useState<InitSummary | null>(null);
   const [projects, setProjects] = useState<Paginated<Projects>>({
@@ -53,11 +53,15 @@ export default function DataLayerProvider({
 
   const load = useCallback(
     async (
-      mode: MODE,
+      mode: mode,
       apiCall: () => Promise<any>,
       setData: (data: any) => void
     ) => {
-      setIsLoading(mode);
+      setIsLoading((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(mode);
+        return newSet;
+      });
       try {
         const data = await apiCall();
         setData(data);
@@ -68,7 +72,11 @@ export default function DataLayerProvider({
           'Please try again.'
         );
       } finally {
-        setIsLoading(null);
+        setIsLoading((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(mode);
+          return newSet;
+        });
       }
     },
     []
@@ -77,7 +85,7 @@ export default function DataLayerProvider({
   const loadProjects = useCallback(
     ({ page = 1, limit = 10 } = {}) =>
       load(
-        MODE.projects,
+        mode.PROJECTS,
         () => getUserProjects({ pagination: { limit, page } }),
         ({ content, totalElements }) => setProjects({ content, totalElements })
       ),
@@ -87,7 +95,7 @@ export default function DataLayerProvider({
   const loadProject = useCallback(
     ({ id }: { id: string }) =>
       load(
-        MODE.project,
+        mode.PROJECT,
         () => fetchProject(id),
         (res) => setProject(res)
       ),
@@ -97,7 +105,7 @@ export default function DataLayerProvider({
   const loadSummary = useCallback(
     () =>
       load(
-        MODE.summary,
+        mode.SUMMARY,
         () => fetchInitSummary(),
         (res) => setSummary(res)
       ),
@@ -113,17 +121,17 @@ export default function DataLayerProvider({
     projects: {
       data: projects,
       fetch: loadProjects,
-      isLoading: isLoading === MODE.projects,
+      isLoading: isLoading.has(mode.PROJECTS),
     },
     project: {
       data: project,
       fetch: loadProject,
-      isLoading: isLoading === MODE.project,
+      isLoading: isLoading.has(mode.PROJECT),
     },
     summary: {
       data: summary,
       fetch: loadSummary,
-      isLoading: isLoading === MODE.summary,
+      isLoading: isLoading.has(mode.SUMMARY),
     },
   };
   return (

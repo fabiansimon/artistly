@@ -7,7 +7,6 @@ import {
   fetchShareablesByProjectIds,
   generateShareableURL,
 } from '../controllers/shareController';
-import { url } from 'inspector';
 
 export async function GET(req: NextRequest) {
   try {

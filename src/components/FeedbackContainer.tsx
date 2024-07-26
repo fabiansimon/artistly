@@ -55,42 +55,53 @@ export default function FeedbackContainer({
             </button>
           </PDFDownloadLink>
         </div>
-        <div className="flex space-x-4 mt-4 mx-6">
-          <p className="text-xs font-medium w-10 text-neutral-400/80">User</p>
-          <p className="text-xs font-medium flex-grow text-neutral-400/80">
-            Comment
-          </p>
-          <p className="text-xs text-end font-medium text-neutral-400/80 pr-4">
-            Timestamp
-          </p>
-        </div>
-        <div className="divider my-0" />
-        <div className="flex flex-col overflow-y-hidden">
-          {empty && (
-            <EmptyContainer
-              title="No comments yet"
-              description="Be the first one to add one"
-              className="mt-[10%] "
-            />
-          )}
+        {empty && (
+          <EmptyContainer
+            text="No comments yet"
+            className="border mt-4 py-4 border-white/10 rounded-md flex justify-center"
+            button={
+              <SimpleButton
+                text="Add"
+                icon={<Add01Icon size={15} />}
+                onClick={() => toggleCommentInput()}
+              />
+            }
+          />
+        )}
+        {!empty && (
+          <>
+            <div className="flex space-x-4 mt-4 mx-6">
+              <p className="text-xs font-medium w-10 text-neutral-400/80">
+                User
+              </p>
+              <p className="text-xs font-medium flex-grow text-neutral-400/80">
+                Comment
+              </p>
+              <p className="text-xs text-end font-medium text-neutral-400/80 pr-4">
+                Timestamp
+              </p>
+            </div>
+            <div className="divider my-0" />
 
-          {!empty &&
-            feedback.map((comment, index) => {
-              return (
-                <div key={comment.id}>
-                  <CommentTile
-                    comment={{
-                      ...comment,
-                      creator: users[comment.creator_id],
-                    }}
-                  />
-                  {index !== feedback.length - 1 && (
-                    <div className="divider my-0" />
-                  )}
-                </div>
-              );
-            })}
-        </div>
+            <div className="flex flex-col overflow-y-hidden">
+              {feedback.map((comment, index) => {
+                return (
+                  <div key={comment.id}>
+                    <CommentTile
+                      comment={{
+                        ...comment,
+                        creator: users[comment.creator_id],
+                      }}
+                    />
+                    {index !== feedback.length - 1 && (
+                      <div className="divider my-0" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
       <SimpleButton
         icon={<Add01Icon size={15} />}

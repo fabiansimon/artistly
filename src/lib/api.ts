@@ -22,7 +22,6 @@ function handleError({
   showError?: boolean;
 }) {
   console.error(`Failed request at function [${callName}]`, error);
-
   if (!showError) return;
 
   let errorTitle = FALLBACK_ERROR_MESSAGE.title;
@@ -224,7 +223,11 @@ export async function fetchShareable(id: string) {
     const res = await _axios.get(`/api/share/${id}`);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'fetchShareable' });
+    handleError({
+      error,
+      callName: 'fetchShareable',
+      showError: false,
+    });
     throw error;
   }
 }

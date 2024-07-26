@@ -34,7 +34,7 @@ export async function createShareable({
 export async function archiveShareable(id: string) {
   const { data, error } = await supabase
     .from(TABLE)
-    .update({ archive: true })
+    .update({ archived: true })
     .eq('id', id)
     .select();
 
@@ -107,6 +107,6 @@ export async function fetchShareablesByProjectIds(id: string[]) {
 }
 
 export function generateShareableURL(id: string) {
-  const baseUrl = 'www.localhost:3000';
+  const baseUrl = 'http://localhost:3000';
   return `${baseUrl}/${ROUTES.listen}/${id}`;
 }
