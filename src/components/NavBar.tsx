@@ -6,6 +6,7 @@ import { cn, concatName } from '@/lib/utils';
 import { Navigation, NavOption } from '@/types';
 import {
   AddCircleIcon,
+  Hamburger01Icon,
   Home06Icon,
   MusicNote03Icon,
   Settings02Icon,
@@ -18,12 +19,15 @@ import Avatar from './Avatar';
 import { useUserContext } from '@/providers/UserProvider';
 import MembershipBadge from './MembershipBadge';
 import ModalController from '@/controllers/ModalController';
+import { motion } from 'framer-motion';
+import useIsMobile from '@/hooks/useIsMobile';
 
-function NavBar({ className }: { className?: string }): JSX.Element {
+function NavBar({ className }: { className?: string }) {
   const { user } = useUserContext();
   const { isSmall } = useWindowSize();
   const path = usePathname();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const options: Navigation[] = useMemo(
     () => [
@@ -71,6 +75,23 @@ function NavBar({ className }: { className?: string }): JSX.Element {
     []
   );
   const { first_name, last_name, image_url, email } = user;
+
+  if (isMobile)
+    return (
+      <nav className="bg-white/30 dark:bg-neutral-800/30 left-0 h-14 right-0 backdrop-blur-sm shadow-sm fixed top-0 z-20 overflow-visible">
+        <div className="py-2 px-8 flex justify-between items-center max-w-screen-xl mx-auto">
+          <div className="flex items-center space-x-4">
+            {isSmall && <Hamburger01Icon className="size-6 -ml-3" />}
+          </div>
+        </div>
+
+        <Drawer
+          options={options}
+          isExpanded={false}
+        />
+      </nav>
+    );
+
   return (
     <nav
       className={cn(
@@ -153,12 +174,41 @@ function MenuItem({
       )}
     >
       <div className="md:min-w-6">{icon}</div>
-      {!isSmall && (
-        <article className="prose">
-          <p className="text text-white text-sm">{title}</p>
-        </article>
-      )}
+      {!isSmall && <p className="prose text-white text-sm">{title}</p>}
     </div>
+  );
+}
+
+function Drawer({
+  isExpanded,
+  onClick,
+  options,
+}: {
+  isExpanded: boolean;
+  options: NavOption[];
+  onClick: (route?: string) => void;
+}): JSX.Element {
+  return (
+    <motion.div
+      onClick={() => onClick()}
+      className={cn(
+        'flex bg-red-500 fixed top-0 bottom-0 z-10 left-0 h-[20000%] w-[100%] bg-black/80',
+        !isExpanded && 'pointer-events-none'
+      )}
+    >
+      <motion.div className="bg-neutral-50 dark:bg-neutral-900 opacity-100 p-4">
+        <div className="mt-8">
+          {options.map(({ title }) => (
+            <div
+              key={title}
+              className="min-h-12"
+            >
+              <p className="text-sm text-white/60 ml-2 mt-6">{title}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
