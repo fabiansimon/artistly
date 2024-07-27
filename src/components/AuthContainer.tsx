@@ -49,7 +49,7 @@ export default function AuthContainer() {
   ];
 
   return (
-    <div className="border border-white/10 max-w-screen-sm w-1/2 bg-neutral-950/80 rounded-lg p-8">
+    <div className="border border-white/10 mx-2 w-full md:max-w-screen-sm bg-neutral-950/80 rounded-lg p-8">
       <article className="prose mb-4">
         <h2 className="text-white font-medium">Login to get started</h2>
         <p className="text-white/60 text-sm -mt-4">

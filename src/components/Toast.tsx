@@ -34,7 +34,7 @@ const AUTOCLOSE_DURATION = 3000; // in milliseconds
 const ANIMATION_DURATION = 0.2; // in seconds
 
 function Toast(): JSX.Element {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
   const [info, setInfo] = useState<ToastInfo | null>(null);
 
   const ref = useRef<ToastMethods>();
@@ -54,9 +54,18 @@ function Toast(): JSX.Element {
     const { type } = info;
     return {
       icon: [
-        <CancelCircleIcon key={1} />,
-        <HelpCircleIcon key={2} />,
-        <CheckmarkCircle02Icon key={3} />,
+        <CancelCircleIcon
+          className="text-white"
+          key={1}
+        />,
+        <HelpCircleIcon
+          className="text-white"
+          key={2}
+        />,
+        <CheckmarkCircle02Icon
+          className="text-white"
+          key={3}
+        />,
       ][type],
       backgroundColor: ['bg-red-600', 'bg-orange-500', 'bg-green-600'][type],
       defaultMessage: ['Something went wrong', 'Warning', 'Success'][type],
