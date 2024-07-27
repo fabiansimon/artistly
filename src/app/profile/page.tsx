@@ -6,6 +6,8 @@ import LoadingView from '@/components/LoadingView';
 import MembershipCarousel from '@/components/MembershipCarousel';
 import PremiumDialog from '@/components/PremiumDialog';
 import SimpleButton from '@/components/SimpleButton';
+import { MEMBERSHIP } from '@/constants/memberships';
+import AlertController from '@/controllers/AlertController';
 import ModalController from '@/controllers/ModalController';
 import { concatName } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
@@ -18,7 +20,7 @@ import {
 } from 'hugeicons-react';
 
 export default function ProfilePage() {
-  const { user, logout } = useUserContext();
+  const { user, logout, cancelMembership } = useUserContext();
   const {
     projects: { data, fetch, isLoading },
   } = useDataLayerContext();
@@ -76,13 +78,23 @@ export default function ProfilePage() {
           selected={membership}
         />
 
-        <SimpleButton
-          className="mx-auto mt-2 opacity-80 border-error/30 text-error/50"
-          text="cancel subscription"
-          textClassName="text-error/60"
-          iconPosition="left"
-          icon={<Sad01Icon size={16} />}
-        />
+        {membership !== MEMBERSHIP.free && (
+          <SimpleButton
+            className="mx-auto mt-2 opacity-80 border-error/30 text-error/50"
+            text="cancel subscription"
+            onClick={() =>
+              AlertController.show({
+                description:
+                  'You will loose all benefits of your premium mebership.',
+                buttonText: 'Continue',
+                callback: cancelMembership,
+              })
+            }
+            textClassName="text-error/60"
+            iconPosition="left"
+            icon={<Sad01Icon size={16} />}
+          />
+        )}
       </div>
     </Container>
   );

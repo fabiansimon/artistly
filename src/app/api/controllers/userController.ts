@@ -87,12 +87,17 @@ export async function updateUser({
 export async function updateUserMembership({
   id,
   membership,
+  subscriptionId = null,
 }: {
   id: string;
   membership: MembershipType;
+  subscriptionId?: string | null;
 }) {
   try {
-    const data = await updateUser({ id, updates: { membership } });
+    const data = await updateUser({
+      id,
+      updates: { membership, subscription_id: subscriptionId },
+    });
 
     return data;
   } catch (error: any) {

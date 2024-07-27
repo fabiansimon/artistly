@@ -24,7 +24,8 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
 
     if (event.type === 'checkout.session.completed') {
-      const { metadata } = event.data.object;
+      console.log(event.data.object);
+      const { metadata, subscription } = event.data.object;
       if (!metadata || !metadata['user_id'] || !metadata['membership_tier']) {
         return new NextResponse('User ID is missing in the session metadata.', {
           status: 400,
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
       await updateUserMembership({
         id: userId,
         membership: membership as MembershipType,
+        subscriptionId: subscription as string,
       });
     }
 

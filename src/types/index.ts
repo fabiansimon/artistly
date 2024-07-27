@@ -102,6 +102,7 @@ export interface UpdateUser {
   last_name?: string;
   image_url?: string;
   membership?: MembershipType;
+  subscription_id?: string;
 }
 
 export type SignUpUser = Omit<User, 'created_at' | 'id' | 'membership'>;

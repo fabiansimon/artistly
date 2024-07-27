@@ -4,11 +4,13 @@ import { MEMBERSHIP, MEMBERSHIP_PRICE_ID } from '@/constants/memberships';
 import { MembershipType, User } from '../types/index';
 import { useSession, signOut } from 'next-auth/react';
 import { createContext, useCallback, useContext, useMemo } from 'react';
-import { openStripSession } from '@/lib/api';
+import { cancelSubscription, openStripSession } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 
 interface UserContextType {
   user: User;
   updateMembership: (membership: MembershipType) => Promise<void>;
+  cancelMembership: () => Promise<void>;
   logout: () => void;
 }
 
@@ -19,6 +21,8 @@ export default function UserProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
   const { data } = useSession();
 
   const user = useMemo(() => {
@@ -63,15 +67,23 @@ export default function UserProvider({
       window.location.replace(url);
     } catch (error) {
       console.log(error);
-      throw new Error(error.message);
     }
   }, []);
+
+  const cancelMembership = useCallback(async () => {
+    try {
+      await cancelSubscription();
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [router]);
 
   const logout = useCallback(() => {
     signOut();
   }, []);
 
-  const value = { user, updateMembership, logout };
+  const value = { user, updateMembership, cancelMembership, logout };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

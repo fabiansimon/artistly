@@ -186,6 +186,16 @@ export async function openStripSession({ priceId }: { priceId: string }) {
   }
 }
 
+export async function cancelSubscription() {
+  try {
+    await _axios.post('/api/cancel-plan');
+    return true;
+  } catch (error) {
+    handleError({ error, callName: 'getUserProjects' });
+    throw error;
+  }
+}
+
 export async function fetchInitSummary() {
   try {
     const res = await _axios.get('/api/init-summary');
