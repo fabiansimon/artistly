@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { ArrowLeft02Icon, ReloadIcon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 import SimpleButton from './SimpleButton';
+import useWindowSize from '@/hooks/useWindowSize';
 
 export default function Container({
   className,
@@ -18,6 +19,8 @@ export default function Container({
   onRefresh?: () => void;
   omitPadding?: boolean;
 }) {
+  const { isSmall } = useWindowSize();
+
   return (
     <div
       className={cn(
@@ -36,7 +39,7 @@ export default function Container({
               omitPadding && 'px-4'
             )}
           >
-            <BackButton />
+            {!isSmall && <BackButton />}
             {onRefresh && <RefreshButton onClick={onRefresh} />}
           </div>
           {children}

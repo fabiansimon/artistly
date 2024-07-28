@@ -48,7 +48,7 @@ export default function AnimatedText({
             initial={false}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-sm text-center w-36">{string}</p>
+            <p className="text-sm text-center text-white w-36">{string}</p>
           </motion.div>
         );
       })}

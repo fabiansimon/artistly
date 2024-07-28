@@ -32,6 +32,8 @@ import EditProjectDialog from '@/components/EditProjectDialog';
 import ModalController from '@/controllers/ModalController';
 import VersionControl from '@/components/VersionControl';
 import ShareDialog from '@/components/ShareDialog';
+import useWindowSize from '@/hooks/useWindowSize';
+import UserListDialog from '@/components/UserListDialog';
 
 function ProjectPage() {
   const {
@@ -40,6 +42,12 @@ function ProjectPage() {
   const { isAuthor } = useProjectContext();
   const { file } = useAudioContext();
   const { version, handleVersionChange } = useProjectContext();
+
+  useEffect(() => {
+    ModalController.show(<UserListDialog />);
+  }, []);
+
+  const { isSmall } = useWindowSize();
 
   const { id } = useParams();
 
@@ -75,6 +83,7 @@ function ProjectPage() {
     );
 
   const empty = !file || !version;
+  console.log(isSmall);
 
   return (
     <Container
@@ -84,11 +93,13 @@ function ProjectPage() {
       <div className="flex flex-col space-y-3 flex-grow max-h-screen">
         <div className="flex w-full justify-between px-4">
           <div className="grow">
-            <div className="grow flex justify-between w-full relative">
+            <div className="grow flex justify-between w-full md:relative">
               <h3 className="text-md text-white font-medium">
                 {project.title}
               </h3>
-              <CollaboratorContainer className="absolute right-0 bottom-2" />
+              {!isSmall && (
+                <CollaboratorContainer className="absolute right-0 bottom-2" />
+              )}
             </div>
 
             <ProjectOptions
@@ -185,6 +196,12 @@ function ProjectPage() {
           </div>
         )}
       </div>
+      {isSmall && (
+        <div className="fixed px-2 bottom-5 w-full justify-between flex">
+          <CollaboratorContainer />
+          <VersionControl />
+        </div>
+      )}
     </Container>
   );
 }
@@ -199,6 +216,7 @@ function ProjectOptions({
   className?: string;
 }) {
   const { user } = useUserContext();
+  const isSmall = useWindowSize();
   const handleAddVersion = () => {
     const { id } = project;
     if (!checkUserCapacity({ user, check: UsageLimit.versions, project }))
@@ -213,24 +231,44 @@ function ProjectOptions({
     () => [
       {
         text: 'Edit',
-        icon: <PencilEdit02Icon size={16} />,
+        icon: (
+          <PencilEdit02Icon
+            className="text-white"
+            size={16}
+          />
+        ),
         onClick: () => ModalController.show(<EditProjectDialog />),
         ignore: !author,
       },
       {
         text: 'Share',
-        icon: <Share01Icon size={16} />,
+        icon: (
+          <Share01Icon
+            className="text-white"
+            size={16}
+          />
+        ),
         onClick: () => ModalController.show(<ShareDialog />),
       },
       {
         text: 'Invite',
-        icon: <AddTeamIcon size={16} />,
+        icon: (
+          <AddTeamIcon
+            className="text-white"
+            size={16}
+          />
+        ),
         onClick: () => ModalController.show(<InviteDialog />),
         ignore: !author,
       },
       {
         text: 'Download',
-        icon: <Download04Icon size={16} />,
+        icon: (
+          <Download04Icon
+            className="text-white"
+            size={16}
+          />
+        ),
         onClick: () => ModalController.show(<DownloadDialog />),
       },
     ],
@@ -239,7 +277,7 @@ function ProjectOptions({
 
   return (
     <div className={cn('flex justify-between', className)}>
-      <div className="flex space-x-1">
+      <div className="flex space-x-1 overflow-x-auto -mx-4 px-4 hide">
         {options.map(({ text, icon, onClick, ignore }, index) => {
           if (ignore) return;
           return (
@@ -254,23 +292,25 @@ function ProjectOptions({
           );
         })}
       </div>
-      <div className="flex space-x-2">
-        {author && (
-          <SimpleButton
-            iconPosition="left"
-            condensed
-            icon={
-              <Add01Icon
-                size={16}
-                className="text-white"
-              />
-            }
-            text={'add version'}
-            onClick={handleAddVersion}
-          />
-        )}
-        <VersionControl />
-      </div>
+      {!isSmall && (
+        <div className="flex space-x-2">
+          {author && (
+            <SimpleButton
+              iconPosition="left"
+              condensed
+              icon={
+                <Add01Icon
+                  size={16}
+                  className="text-white"
+                />
+              }
+              text={'add version'}
+              onClick={handleAddVersion}
+            />
+          )}
+          <VersionControl />
+        </div>
+      )}
     </div>
   );
 }

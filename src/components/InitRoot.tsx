@@ -12,14 +12,22 @@ import AudioProvider from '@/providers/AudioProvider';
 import ProjectProvider from '@/providers/ProjectProvider';
 import { usePathname } from 'next/navigation';
 import { openRoutes } from '@/constants/routes';
+import useWindowSize from '@/hooks/useWindowSize';
+import { cn } from '@/lib/utils';
 
 export default function InitRoot({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
+  const { isSmall } = useWindowSize();
   const pathname = usePathname();
 
   if (openRoutes.has(pathname.split('/')[1])) {
     return (
-      <div className="flex w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
+      <div
+        className={cn(
+          'flex w-full bg-neutral-950 min-h-screen space-x-2 fixed',
+          isSmall && 'p-0'
+        )}
+      >
         <main className="flex bg-neutral-900 w-full border border-neutral-800/70 rounded-md">
           {children}
           <Toast />
@@ -44,9 +52,9 @@ export default function InitRoot({ children }: { children: React.ReactNode }) {
       <UserProvider>
         <AudioProvider>
           <ProjectProvider>
-            <div className="flex flex-grow min-w-full max-w-full bg-neutral-950 min-h-screen space-x-2 p-2 fixed">
+            <div className="flex flex-grow min-w-full max-w-full bg-neutral-950 min-h-screen md:space-x-2 md:p-2 fixed">
               <NavBar />
-              <main className="flex flex-grow max-w-[74%] bg-neutral-900 border border-neutral-800/70 rounded-md">
+              <main className="flex flex-grow md:max-w-[74%] pt-12 bg-neutral-900 border border-neutral-800/70 rounded-md">
                 {children}
                 <Toast />
                 <Modal />

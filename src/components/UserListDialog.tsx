@@ -35,7 +35,10 @@ export default function UserListDialog() {
       </article>
       <div className="space-y-2 max-h-80 overflow-y-auto">
         <div className="flex space-x-2 items-center">
-          <PaintBrush01Icon size={14} />
+          <PaintBrush01Icon
+            className="text-white"
+            size={14}
+          />
           <p className="prose text-white text-xs font-medium">Authors</p>
         </div>
         {authors.map((author) => (
@@ -45,7 +48,10 @@ export default function UserListDialog() {
           />
         ))}
         <div className="flex space-x-2 items-center pt-5">
-          <UserGroupIcon size={14} />
+          <UserGroupIcon
+            className="text-white"
+            size={14}
+          />
           <p className="prose text-white text-xs font-medium">Collaborators</p>
         </div>
         {collaborators.length === 0 && (

@@ -15,7 +15,7 @@ export default function LoadingView({
         className
       )}
     >
-      <span className="loading translate-x-2 loading-ring loading-sm"></span>
+      <span className="loading translate-x-2 loading-ring text-white bg-white loading-sm"></span>
       <AnimatedText
         className="mt-8"
         strings={strings}

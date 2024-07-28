@@ -72,6 +72,7 @@ export default function ProfilePage() {
         </p>
 
         <MembershipCarousel
+          className="max-w-full grow"
           onClick={(membership) =>
             ModalController.show(<PremiumDialog preselected={membership} />)
           }

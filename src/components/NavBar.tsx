@@ -24,12 +24,11 @@ import { motion } from 'framer-motion';
 import useIsMobile from '@/hooks/useIsMobile';
 
 function NavBar({ className }: { className?: string }) {
-  const [isExpanded, setExpanded] = useState<boolean>(true);
+  const [isExpanded, setExpanded] = useState<boolean>(false);
   const { user } = useUserContext();
   const { isSmall } = useWindowSize();
   const path = usePathname();
   const router = useRouter();
-  const isMobile = useIsMobile();
 
   const options: Navigation[] = useMemo(
     () => [
@@ -98,17 +97,15 @@ function NavBar({ className }: { className?: string }) {
   );
   const { first_name, last_name, image_url, email } = user;
 
-  if (isMobile)
+  if (isSmall)
     return (
-      <nav className="bg-black/30 left-0 h-14 right-0 backdrop-blur-sm shadow-sm fixed top-0 z-20 overflow-visible">
-        <div className="py-2 px-8 flex justify-between items-center max-w-screen-xl mx-auto">
-          <button
-            onClick={() => setExpanded(true)}
-            className="flex items-center space-x-4"
-          >
-            {isSmall && <Menu01Icon className="text-white size-6 -ml-3" />}
-          </button>
-        </div>
+      <nav className="bg-black/30 left-0 h-14 right-0 items-center flex backdrop-blur-sm shadow-sm fixed top-0 z-20 overflow-visible">
+        <button
+          onClick={() => setExpanded(true)}
+          className="flex items-center justify-center"
+        >
+          {isSmall && <Menu01Icon className="text-white size-6 ml-4" />}
+        </button>
 
         {isExpanded && (
           <motion.div

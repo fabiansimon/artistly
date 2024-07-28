@@ -53,7 +53,7 @@ export default function CommentTile({ comment }: { comment: Comment }) {
       <div className="flex min-w-14 justify-center">
         <Avatar
           hoverText={concatName(first_name, last_name)}
-          className="size-8"
+          className="size-6"
           src={image_url}
         />
       </div>

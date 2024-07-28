@@ -30,7 +30,10 @@ export default function ProjectsListPage() {
       onRefresh={fetch}
     >
       <div className="flex space-x-2 items-center mb-2">
-        <Rocket01Icon size={18} />
+        <Rocket01Icon
+          className="text-white"
+          size={18}
+        />
         <article className="prose">
           <h3 className="text-[18px] text-white">{'Collabs'}</h3>
         </article>
@@ -52,7 +55,10 @@ export default function ProjectsListPage() {
       </div>
       <div className="divider my-2" />
       <div className="flex space-x-2 items-center mb-2">
-        <MusicNote01Icon size={18} />
+        <MusicNote01Icon
+          className="text-white"
+          size={18}
+        />
         <article className="prose">
           <h3 className="text-[18px] text-white">{'Authored'}</h3>
         </article>

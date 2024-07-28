@@ -63,12 +63,12 @@ export default function ShareableOptions({
         icon: (
           <MusicNoteSquare01Icon
             size={14}
-            className="text-primary"
+            className="text-blue-600"
           />
         ),
-        bg: 'bg-primary/30',
+        bg: 'bg-blue-600/20',
         text: 'Most recent version',
-        textColor: 'text-primary',
+        textColor: 'text-blue-600',
         visible: only_recent_version,
         helpText: 'Only recent version will be shown',
       },

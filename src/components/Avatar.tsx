@@ -14,20 +14,22 @@ export default function Avatar({
 }) {
   return (
     <div
-      className={cn('avatar', hoverText && 'tooltip tooltip-right')}
       data-tip={hoverText}
+      className={cn(
+        'mask mask-squircle avatar',
+        className,
+        hoverText && 'tooltip tooltip-right'
+      )}
     >
-      <div className={cn('mask mask-squircle', className)}>
-        <Image
-          width={size}
-          height={size}
-          src={
-            src ||
-            'https://img.daisyui.com/tailwind-css-component-profile-2@56w.png'
-          }
-          alt="Avatar Tailwind CSS Component"
-        />
-      </div>
+      <Image
+        width={size}
+        height={size}
+        src={
+          src ||
+          'https://img.daisyui.com/tailwind-css-component-profile-2@56w.png'
+        }
+        alt="Avatar Tailwind CSS Component"
+      />
     </div>
   );
 }

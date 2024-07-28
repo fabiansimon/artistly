@@ -7,15 +7,15 @@ import ShareableOptions from '@/components/ShareableOptions';
 import HomeSkeleton from '@/components/Skeletons/HomeSkeleton';
 import { route, ROUTES } from '@/constants/routes';
 import ToastController from '@/controllers/ToastController';
+import useWindowSize from '@/hooks/useWindowSize';
 import {
   cn,
   copyToClipboard,
   getDateDifference,
   getReadableDate,
-  pluralize,
 } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
-import { Comment, InitSummary, Project, ShareableProject } from '@/types';
+import { Comment, Project, ShareableProject } from '@/types';
 import { Copy01Icon, HourglassIcon, Share01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
@@ -23,6 +23,8 @@ export default function HomePage() {
   const {
     summary: { data: summary, fetch, isLoading },
   } = useDataLayerContext();
+
+  const { isSmall } = useWindowSize();
 
   const router = useRouter();
 
@@ -34,13 +36,15 @@ export default function HomePage() {
     >
       {/* Latest Feedback Continer */}
       <div className="flex space-x-2 -mb-2">
-        <HourglassIcon
-          size={16}
-          className="mt-2"
-        />
+        {!isSmall && (
+          <HourglassIcon
+            size={16}
+            className="mt-2 text-white"
+          />
+        )}
         <article className="prose">
-          <h3 className="text-[18px] text-white">{'Latest feedback'}</h3>
-          <p className="text-xs text-white/60 -mt-3">
+          <h3 className="text-sm md:text-[18px] text-white">Latest feedback</h3>
+          <p className="text-xs text-white/60 md:-mt-3 -mt-2">
             See the latest comments on your active projects.
           </p>
         </article>
@@ -66,13 +70,15 @@ export default function HomePage() {
 
       {/* Shared Projects */}
       <div className="flex space-x-2 -mb-2 mt-4">
-        <Share01Icon
-          size={16}
-          className="mt-2"
-        />
+        {!isSmall && (
+          <Share01Icon
+            size={16}
+            className="mt-2 text-white"
+          />
+        )}
         <article className="prose">
-          <h3 className="text-[18px] text-white">{'Shared projects'}</h3>
-          <p className="text-xs text-white/60 -mt-3">
+          <h3 className="text-sm md:text-[18px] text-white">Shared Projects</h3>
+          <p className="text-xs text-white/60 md:-mt-3 -mt-2">
             If you wish to share another project just generate a link on the
             projects page.
           </p>
