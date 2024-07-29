@@ -32,6 +32,7 @@ export default function HomePage() {
     <Container
       onRefresh={fetch}
       isLoading={isLoading}
+      className="overflow-y-auto"
       skeleton={<HomeSkeleton />}
     >
       {/* Latest Feedback Continer */}
@@ -180,6 +181,7 @@ function ShareProjectTile({
   className?: string;
   onClick?: () => void;
 }) {
+  const { isSmall } = useWindowSize();
   const { title, url, created_at, opened } = project;
 
   const handleCopy = () => {
@@ -209,27 +211,29 @@ function ShareProjectTile({
           </div>
         </article>
         <ShareableOptions
-          className="-mt-2"
+          className="-mt-2 flex-wrap"
           streams={opened}
           project={project}
         />
       </div>
 
-      <div className="flex flex-col">
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCopy();
-          }}
-          className="flex border-2 cursor-pointer ml-auto my-auto py-2 border-neutral-700/50 items-center justify-center rounded-md hover:bg-neutral-950/50 hover:scale-[102%] transition duration-100 ease-in-out transform"
-        >
-          <p className="text-xs text-white/60 font-medium mx-2">copy url</p>
-          <Copy01Icon
-            className="mr-2 text-white/60"
-            size={15}
-          />
+      {!isSmall && (
+        <div className="flex flex-col">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopy();
+            }}
+            className="flex border-2 cursor-pointer ml-auto my-auto py-2 border-neutral-700/50 items-center justify-center rounded-md hover:bg-neutral-950/50 hover:scale-[102%] transition duration-100 ease-in-out transform"
+          >
+            <p className="text-xs text-white/60 font-medium mx-2">copy url</p>
+            <Copy01Icon
+              className="mr-2 text-white/60"
+              size={15}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

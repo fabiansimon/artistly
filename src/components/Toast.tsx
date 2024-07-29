@@ -19,6 +19,7 @@ import ToastController from '@/controllers/ToastController';
 import { motion } from 'framer-motion';
 import { ToastType } from '@/types';
 import { cn } from '@/lib/utils';
+import useWindowSize from '@/hooks/useWindowSize';
 
 interface ToastInfo {
   title?: string;
@@ -34,8 +35,10 @@ const AUTOCLOSE_DURATION = 3000; // in milliseconds
 const ANIMATION_DURATION = 0.2; // in seconds
 
 function Toast(): JSX.Element {
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   const [info, setInfo] = useState<ToastInfo | null>(null);
+
+  const { isSmall } = useWindowSize();
 
   const ref = useRef<ToastMethods>();
 
@@ -99,7 +102,7 @@ function Toast(): JSX.Element {
 
   return (
     <motion.div
-      initial="visible"
+      initial="hidden"
       animate={isVisible ? 'visible' : 'hidden'}
       variants={animationStates}
       style={{ backgroundColor }}
@@ -111,9 +114,8 @@ function Toast(): JSX.Element {
         mass: 1,
       }}
       className={cn(
-        'fixed p-4 right-10 rounded-md flex items-center space-x-3 z-30',
-        'bottom-10',
-        // !isSmall ? 'bottom-10' : 'top-10 left-10',
+        'fixed p-4 right-10 rounded-md flex items-center space-x-3 z-30 bottom-10',
+        isSmall && 'left-10',
         backgroundColor
       )}
     >

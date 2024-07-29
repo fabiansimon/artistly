@@ -21,6 +21,7 @@ interface AlertInfo {
   callback?: (args?: any) => any | void;
   buttonText?: string;
   optimistic?: boolean;
+  destructive?: boolean;
 }
 
 export interface AlertMethods {
@@ -29,11 +30,15 @@ export interface AlertMethods {
     description,
     callback,
     buttonText,
+    optimistic,
+    destructive,
   }: {
     title?: string;
     description?: string;
     callback?: (args?: any) => any | void;
     buttonText?: string;
+    optimistic?: boolean;
+    destructive?: boolean;
   }) => void;
 }
 
@@ -76,14 +81,23 @@ function Alert(): JSX.Element {
         callback,
         buttonText = 'Remove',
         optimistic = false,
+        destructive = true,
       }: {
         title?: string;
         description?: string;
         callback?: (args?: any) => any | void;
         buttonText?: string;
         optimistic?: boolean;
+        destructive?: boolean;
       }) => {
-        setInfo({ title, description, callback, buttonText, optimistic });
+        setInfo({
+          title,
+          description,
+          callback,
+          buttonText,
+          optimistic,
+          destructive,
+        });
         setIsVisible(true);
       },
     }),
@@ -119,11 +133,11 @@ function Alert(): JSX.Element {
                 onClick={onClick}
                 className={cn(
                   'btn ml-2',
-                  info.buttonText === 'Remove' ? 'btn-error' : 'btn-primary'
+                  info.destructive ? 'btn-error' : 'btn-primary'
                 )}
               >
                 {isLoading ? (
-                  <span className="loading loading-spinner"></span>
+                  <span className="loading text-white loading-spinner"></span>
                 ) : (
                   <p>{info.buttonText}</p>
                 )}

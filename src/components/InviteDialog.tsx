@@ -86,7 +86,7 @@ export default function InviteDialog() {
       <div className="flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full">
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
-            <p className="text-white/60 text-sm">{'Collaborators'}</p>
+            <p className="text-white text-sm">{'Collaborators'}</p>
           </article>
           {emails.size > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -110,12 +110,15 @@ export default function InviteDialog() {
         </div>
         <div className="flex gap-4 w-full flex-col md:flex-row">
           <label className="input input-bordered bg-transparent flex items-center gap-2 flex-grow">
-            <Mail01Icon size={16} />
+            <Mail01Icon
+              className="text-white"
+              size={16}
+            />
             <input
               onInput={({ currentTarget: { value } }) => setInput(value)}
               value={input}
               type="text"
-              className="grow text-sm bg-transparent"
+              className="grow text-sm text-white bg-transparent"
               placeholder="Email"
             />
           </label>

@@ -157,14 +157,14 @@ export default function EditProjectDialog() {
         >
           <PencilEdit02Icon
             size={18}
-            className="absolute left-4"
+            className="absolute text-white left-4"
           />
           <input
             onInput={({ currentTarget: { value } }) =>
               handleInput(InputType.TITLE, value)
             }
             type="text"
-            className="grow text-sm text-center placeholder-white/60"
+            className="grow text-sm text-center placeholder-white/60 text-white"
             placeholder="Name of song/project"
             value={inputData.title}
           />
@@ -199,7 +199,10 @@ export default function EditProjectDialog() {
               versionIndex === 0 && 'opacity-0'
             )}
           >
-            <ArrowLeft02Icon size={12} />
+            <ArrowLeft02Icon
+              className="text-white"
+              size={12}
+            />
           </button>
 
           {/* Edit Versions Container */}
@@ -254,7 +257,7 @@ export default function EditProjectDialog() {
                     handleInput(InputType.VERSION_TITLE, value)
                   }
                   type="text"
-                  className="input bg-transparent text-xs input-sm w-full max-w-xs"
+                  className="input bg-transparent text-xs text-white input-sm w-full max-w-xs"
                   placeholder="Name of Version"
                   value={inputData.versions[versionIndex].title}
                 />
@@ -315,7 +318,57 @@ export default function EditProjectDialog() {
       >
         <div className="flex justify-between w-full px-2">
           <div className="flex items-center space-x-2">
-            <TimeScheduleIcon size={12} />
+            <TimeScheduleIcon
+              className="text-white"
+              size={12}
+            />
+            <p className="prose text-white/60 text-xs font-medium text-center">
+              Outstanding invites
+            </p>
+          </div>
+          <SimpleButton
+            text="Invite"
+            iconPosition="left"
+            condensed
+            onClick={handleInvites}
+            icon={
+              <Mail01Icon
+                size={13}
+                className="text-white/60"
+              />
+            }
+          />
+        </div>
+        <div className="divider my-0" />
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {!inputData.openInvites.length && (
+            <p className="prose text-white/60 text-xs">No invites</p>
+          )}
+          {inputData.openInvites.map(({ email, id }) => (
+            <CollaboratorChip
+              key={id}
+              email={email}
+              onDelete={() =>
+                AlertController.show({
+                  callback: () => removeInvite(id),
+                })
+              }
+            />
+          ))}
+        </div>
+      </div>
+      <div
+        className={cn(
+          'flex flex-col w-full items-center border rounded-lg border-white/10 p-2',
+          baseClass
+        )}
+      >
+        <div className="flex justify-between w-full px-2">
+          <div className="flex items-center space-x-2">
+            <TimeScheduleIcon
+              className="text-white"
+              size={12}
+            />
             <p className="prose text-white/60 text-xs font-medium text-center">
               Outstanding invites
             </p>
@@ -357,7 +410,7 @@ export default function EditProjectDialog() {
         className="btn btn-active btn-primary text-white mt-4 w-full"
       >
         {loading ? (
-          <span className="loading loading-spinner"></span>
+          <span className="loading text-white loading-spinner"></span>
         ) : (
           <article className="prose text-white">
             <p>{'Update'}</p>

@@ -102,7 +102,7 @@ export default function VersionInput({
         className="btn btn-active btn-primary text-white mt-4 w-full"
       >
         {loading ? (
-          <span className="loading loading-spinner"></span>
+          <span className="loading text-white loading-spinner"></span>
         ) : (
           <article className="prose text-white">
             <p>{'Upload'}</p>

@@ -34,9 +34,15 @@ export default function ProfilePage() {
 
   const { first_name, last_name, email, image_url, membership } = user;
   return (
-    <Container onRefresh={fetch}>
+    <Container
+      onRefresh={fetch}
+      className="overflow-y-auto"
+    >
       <div className="flex space-x-2 items-center mb-2">
-        <UserAccountIcon size={18} />
+        <UserAccountIcon
+          className="text-white"
+          size={18}
+        />
         <article className="prose">
           <h3 className="text-[18px] text-white">Profile</h3>
         </article>
@@ -58,13 +64,21 @@ export default function ProfilePage() {
         text="Log out"
         iconPosition="left"
         onClick={logout}
-        icon={<ArrowLeft02Icon size={16} />}
+        icon={
+          <ArrowLeft02Icon
+            className="text-white"
+            size={16}
+          />
+        }
       />
 
       <div className="divider" />
       <div className="items-center flex flex-col">
         <div className="flex space-x-2 items-center">
-          <Rocket01Icon size={16} />
+          <Rocket01Icon
+            className="text-white"
+            size={16}
+          />
           <h3 className="text-[18px] text-white font-medium">Membership</h3>
         </div>
         <p className="text-sm text-white/60 mt-2">
@@ -86,14 +100,19 @@ export default function ProfilePage() {
             onClick={() =>
               AlertController.show({
                 description:
-                  'You will loose all benefits of your premium mebership.',
+                  'You will loose all benefits of your premium membership.',
                 buttonText: 'Continue',
                 callback: cancelMembership,
               })
             }
             textClassName="text-error/60"
             iconPosition="left"
-            icon={<Sad01Icon size={16} />}
+            icon={
+              <Sad01Icon
+                className="text-error/60"
+                size={16}
+              />
+            }
           />
         )}
       </div>

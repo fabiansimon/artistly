@@ -168,7 +168,7 @@ export default function ShareDialog() {
           className="btn text-white btn-primary h-16 w-full"
         >
           {isLoading ? (
-            <span className="loading loading-spinner"></span>
+            <span className="loading text-white loading-spinner"></span>
           ) : (
             <>
               <MagicWand01Icon

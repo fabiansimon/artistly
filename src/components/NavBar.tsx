@@ -21,7 +21,6 @@ import { useUserContext } from '@/providers/UserProvider';
 import MembershipBadge from './MembershipBadge';
 import ModalController from '@/controllers/ModalController';
 import { motion } from 'framer-motion';
-import useIsMobile from '@/hooks/useIsMobile';
 
 function NavBar({ className }: { className?: string }) {
   const [isExpanded, setExpanded] = useState<boolean>(false);

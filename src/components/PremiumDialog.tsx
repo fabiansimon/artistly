@@ -47,7 +47,7 @@ export default function PremiumDialog({
         <p className="text-white/60 text-sm text-center">{description}</p>
       </article>
       <MembershipCarousel
-        className="max-w-md"
+        className="max-w-full md:max-w-md"
         onClick={setSelected}
         selected={selected}
       />
@@ -57,7 +57,7 @@ export default function PremiumDialog({
         className="btn btn-primary text-white mx-auto mt-4"
       >
         {isLoading ? (
-          <span className="loading loading-spinner"></span>
+          <span className="loading text-white loading-spinner"></span>
         ) : (
           <>
             <Rocket01Icon size={18} />

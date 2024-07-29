@@ -54,7 +54,7 @@ export default function InitRoot({ children }: { children: React.ReactNode }) {
           <ProjectProvider>
             <div className="flex flex-grow min-w-full max-w-full bg-neutral-950 min-h-screen md:space-x-2 md:p-2 fixed">
               <NavBar />
-              <main className="flex flex-grow md:max-w-[74%] pt-12 bg-neutral-900 border border-neutral-800/70 rounded-md">
+              <main className="flex flex-grow max-w-[100%] md:max-w-[74%] pt-12 bg-neutral-900 border border-neutral-800/70 rounded-md">
                 {children}
                 <Toast />
                 <Modal />

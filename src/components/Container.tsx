@@ -40,7 +40,7 @@ export default function Container({
             )}
           >
             {!isSmall && <BackButton />}
-            {onRefresh && <RefreshButton onClick={onRefresh} />}
+            {!isSmall && onRefresh && <RefreshButton onClick={onRefresh} />}
           </div>
           {children}
         </>

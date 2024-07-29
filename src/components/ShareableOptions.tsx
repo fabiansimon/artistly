@@ -88,7 +88,7 @@ export default function ShareableOptions({
   }, [project, streams]);
 
   return (
-    <div className={cn('flex space-x-1', className)}>
+    <div className={cn('flex gap-2', className)}>
       {options.map(
         ({ text, icon, visible, bg, textColor, helpText }, index) => {
           if (!visible) return;

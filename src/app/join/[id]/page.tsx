@@ -96,7 +96,7 @@ function InvitationCard({
             className="btn btn-primary ml-2"
           >
             {isLoading ? (
-              <span className="loading loading-spinner"></span>
+              <span className="loading text-white loading-spinner"></span>
             ) : (
               'Accept'
             )}

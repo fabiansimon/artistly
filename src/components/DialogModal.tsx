@@ -50,7 +50,7 @@ function DialogModal({
             : { visible: { scale: 1 }, hidden: { scale: 0.7 } }
         }
         className={cn(
-          'rounded-tl-xl rounded-tr-xl min-w-full md:min-w-0 py-5 px-4 bg-neutral-900',
+          'rounded-tl-xl overflow-y-auto rounded-tr-xl min-w-full md:min-w-0 py-5 px-4 bg-neutral-900 max-h-[90%]',
           !isSmall && 'modal-box',
           contentClassName
         )}

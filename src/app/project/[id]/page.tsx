@@ -44,7 +44,7 @@ function ProjectPage() {
   const { version, handleVersionChange } = useProjectContext();
 
   useEffect(() => {
-    ModalController.show(<UserListDialog />);
+    // ModalController.show(<EditProjectDialog />);
   }, []);
 
   const { isSmall } = useWindowSize();

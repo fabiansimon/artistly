@@ -59,7 +59,7 @@ export default function DownloadDialog() {
               className="flex border cursor-pointer hover:bg-neutral-950 border-white/10 justify-center rounded-md px-2 h-16 items-center "
             >
               {isLoading.has(id) ? (
-                <span className="loading loading-spinner"></span>
+                <span className="loading text-white loading-spinner"></span>
               ) : (
                 <div className="space-y-1 -mb-1 mt-1">
                   <p className="text-white text-sm -mt-2 text-center">

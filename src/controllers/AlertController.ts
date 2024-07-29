@@ -8,11 +8,13 @@ export default class AlertController {
     callback,
     buttonText,
     optimistic,
+    destructive,
   }: {
     title?: string;
     description?: string;
     callback?: (args?: any) => any | void;
     buttonText?: string;
+    destructive?: boolean;
     optimistic?: boolean;
   }) =>
     this.ref.current?.show({
@@ -21,5 +23,6 @@ export default class AlertController {
       callback,
       buttonText,
       optimistic,
+      destructive,
     });
 }
