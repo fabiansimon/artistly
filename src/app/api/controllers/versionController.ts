@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabaseClient';
 import { VersionUpload } from '@/types';
 
+const TABLE = 'versions';
 export async function createVersion(version: VersionUpload) {
   const { title, fileUrl, notes, projectId, creatorId } = version;
 
   const { data, error } = await supabase
-    .from('versions')
+    .from(TABLE)
     .insert([
       {
         title,
@@ -26,10 +27,11 @@ export async function createVersion(version: VersionUpload) {
 
 export async function fetchVersionsByProjectId(projectId: string) {
   const { data, error } = await supabase
-    .from('versions')
+    .from(TABLE)
     .select('id, created_at, title, file_url, notes')
     .eq('project_id', projectId)
     .order('created_at', { ascending: true });
+
   if (error) {
     throw new Error(`Error fetching versions: ${error.message}`);
   }
@@ -37,7 +39,17 @@ export async function fetchVersionsByProjectId(projectId: string) {
   return data;
 }
 
-export async function fetchVersionWithFeedbackByProjectId(projectId: string) {
+export async function deleteVersionsByIds(ids: string[]) {
+  const { error } = await supabase.from(TABLE).delete().in('id', ids);
+
+  if (error) {
+    throw new Error(`Error deleting versions: ${error.message}`);
+  }
+
+  return true;
+}
+
+export async function fetchVersionsWithFeedbackByProjectId(projectId: string) {
   const versions = await fetchVersionsByProjectId(projectId);
 
   const res = await Promise.all(

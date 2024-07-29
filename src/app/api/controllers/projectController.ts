@@ -60,3 +60,13 @@ export async function fetchAuthorProjects(
 
   return data;
 }
+
+export async function deleteProjectById(id: string) {
+  const { error } = await supabase.from(TABLE).delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Error deleting project: ${error.message}`);
+  }
+
+  return true;
+}

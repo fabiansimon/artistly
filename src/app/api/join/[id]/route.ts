@@ -15,6 +15,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('call');
     const { userId, email } = await getUserData(req);
     if (!userId || !email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -50,7 +51,7 @@ export async function POST(
 
     return NextResponse.json({ status: 200 });
   } catch (error) {
-    console.log(error);
+    console.log('2222', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

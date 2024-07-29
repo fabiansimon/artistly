@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchUsersByIds, getUserData } from '../controllers/userController';
 import {
   createInvites,
-  fetchInvitesByProject,
+  fetchInvitesByProjectId,
   updateInvites,
 } from '../controllers/inviteController';
-import { fetchCollaboratorsIdsByProject } from '../controllers/collabController';
+import { fetchCollaboratorsIdsByProjectId } from '../controllers/collabController';
 import { fetchProjectById } from '../controllers/projectController';
 
 export async function POST(req: NextRequest) {
@@ -30,14 +30,14 @@ export async function POST(req: NextRequest) {
 
     // Filter emails that are already part of the project eg: Collaborators and/or Authors
     const { creator_id } = await fetchProjectById(projectId);
-    const collaboratorsIds = await fetchCollaboratorsIdsByProject(projectId);
+    const collaboratorsIds = await fetchCollaboratorsIdsByProjectId(projectId);
 
     const userIds = [creator_id, ...collaboratorsIds];
 
     const users = await fetchUsersByIds(userIds);
     const usersEmails = users.map((user) => user.email);
 
-    const oldInvites = (await fetchInvitesByProject(projectId)) || [];
+    const oldInvites = (await fetchInvitesByProjectId(projectId)) || [];
     const oldEmails = oldInvites.map((i) => i.email) || [];
 
     const userSet = new Set(usersEmails);

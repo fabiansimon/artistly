@@ -21,31 +21,36 @@ export default function VersionControl({ className }: { className?: string }) {
 
   const first = version.index === 0;
   const last = version.index === versions.length - 1;
-
+  const multiple = versions.length > 1;
   return (
     <div
       className={cn(
-        'inline-flex justify-between space-x-2 min-w-24 items-center rounded-full px-3 py-2 border border-neutral-700/50 bg-neutral-950/50',
+        'inline-flex justify-between space-x-2 items-center rounded-full px-3 py-2 border border-neutral-700/50 bg-neutral-950/50',
+        multiple ? 'min-w-24' : 'min-w-14 justify-center',
         className
       )}
     >
-      <ArrowLeft02Icon
-        onClick={() => !first && handleClick(-1)}
-        className={cn(
-          'text-white cursor-pointer',
-          first && 'cursor-not-allowed opacity-50'
-        )}
-        size={16}
-      />
+      {multiple && (
+        <ArrowLeft02Icon
+          onClick={() => !first && handleClick(-1)}
+          className={cn(
+            'text-white cursor-pointer',
+            first && 'cursor-not-allowed opacity-50'
+          )}
+          size={16}
+        />
+      )}
       <p className="text-white font-medium text-xs">{version?.title}</p>
-      <ArrowRight02Icon
-        onClick={() => !last && handleClick(1)}
-        className={cn(
-          'text-white cursor-pointer',
-          last && 'cursor-not-allowed opacity-50'
-        )}
-        size={16}
-      />
+      {multiple && (
+        <ArrowRight02Icon
+          onClick={() => !last && handleClick(1)}
+          className={cn(
+            'text-white cursor-pointer',
+            last && 'cursor-not-allowed opacity-50'
+          )}
+          size={16}
+        />
+      )}
     </div>
   );
 }

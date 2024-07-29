@@ -58,7 +58,7 @@ export async function joinCollabProject(projectId: string, userId: string) {
   return data;
 }
 
-export async function fetchCollaboratorsIdsByProject(projectId: string) {
+export async function fetchCollaboratorsIdsByProjectId(projectId: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('user_id')
@@ -69,4 +69,32 @@ export async function fetchCollaboratorsIdsByProject(projectId: string) {
   }
 
   return data.map((user) => user.user_id);
+}
+
+export async function fetchCollaboratorsByProjectId(projectId: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('project_id', projectId);
+
+  if (error) {
+    throw new Error(`Error fetching collaborators: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function deleteCollaboratorsByProjectId(projectId: string) {
+  const { error } = await supabase
+    .from(TABLE)
+    .delete()
+    .eq('project_id', projectId);
+
+  if (error) {
+    throw new Error(
+      `Error deleting collaborators Project ID: ${error.message}`
+    );
+  }
+
+  return true;
 }

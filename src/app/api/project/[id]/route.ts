@@ -1,13 +1,13 @@
 import { Project } from '@/types';
 import { fetchProjectById } from '../../controllers/projectController';
-import { fetchVersionWithFeedbackByProjectId } from '../../controllers/versionController';
+import { fetchVersionsWithFeedbackByProjectId } from '../../controllers/versionController';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  fetchCollaboratorsIdsByProject,
+  fetchCollaboratorsIdsByProjectId,
   projectIncludesUserId,
 } from '../../controllers/collabController';
 import { fetchUsersByIds, getUserData } from '../../controllers/userController';
-import { fetchInvitesByProject } from '../../controllers/inviteController';
+import { fetchInvitesByProjectId } from '../../controllers/inviteController';
 import {
   fetchShareableByProjectId,
   generateShareableURL,
@@ -44,17 +44,17 @@ export async function GET(
       );
     }
 
-    const versions = await fetchVersionWithFeedbackByProjectId(projectId);
-    const collaboratorsIds = await fetchCollaboratorsIdsByProject(projectId);
+    const versions = await fetchVersionsWithFeedbackByProjectId(projectId);
+    const collaboratorsIds = await fetchCollaboratorsIdsByProjectId(projectId);
     const users = await fetchUsersByIds([
       project.creator_id,
       ...collaboratorsIds,
     ]);
 
-    const authors = users.slice(0, 1);
-    const collaborators = users.slice(1);
+    const authors = users.filter((u) => u.id === project.creator_id);
+    const collaborators = users.filter((u) => u.id !== project.creator_id);
 
-    const openInvites = await fetchInvitesByProject(projectId);
+    const openInvites = await fetchInvitesByProjectId(projectId);
     const shareable = await fetchShareableByProjectId(projectId);
 
     const data: Project = {

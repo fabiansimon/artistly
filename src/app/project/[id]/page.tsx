@@ -33,7 +33,6 @@ import ModalController from '@/controllers/ModalController';
 import VersionControl from '@/components/VersionControl';
 import ShareDialog from '@/components/ShareDialog';
 import useWindowSize from '@/hooks/useWindowSize';
-import UserListDialog from '@/components/UserListDialog';
 
 function ProjectPage() {
   const {
@@ -216,10 +215,10 @@ function ProjectOptions({
   className?: string;
 }) {
   const { user } = useUserContext();
-  const isSmall = useWindowSize();
+  const { isSmall } = useWindowSize();
   const handleAddVersion = () => {
     const { id } = project;
-    if (!checkUserCapacity({ user, check: UsageLimit.versions, project }))
+    if (checkUserCapacity({ user, check: UsageLimit.versions, project }))
       return ModalController.show(
         <PremiumDialog usageLimit={UsageLimit.versions} />
       );

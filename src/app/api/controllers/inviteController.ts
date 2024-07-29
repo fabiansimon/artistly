@@ -33,7 +33,7 @@ export async function updateInvites(inviteIds: string[]) {
   return data;
 }
 
-export async function fetchInvitesByProject(projectId: string) {
+export async function fetchInvitesByProjectId(projectId: string) {
   const { data, error } = await supabase
     .from(TABLE)
     .select('id, email')
@@ -51,6 +51,14 @@ export async function deleteInvite(id: string) {
 
   if (error) {
     throw new Error(`Error deleting invite: ${error.message}`);
+  }
+}
+
+export async function deleteInvitesByProjectId(id: string) {
+  const { error } = await supabase.from(TABLE).delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Error deleting invites by Project ID: ${error.message}`);
   }
 }
 

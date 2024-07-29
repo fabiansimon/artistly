@@ -11,6 +11,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = params;
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Bad Request: Missing project ID' },
+        { status: 400 }
+      );
+    }
     const { userId } = await getUserData(req);
     const { creator_id } = await fetchFeedbackById(id);
 
@@ -20,7 +26,7 @@ export async function DELETE(
 
     await deleteFeedback(id);
 
-    return NextResponse.json({ status: 204 });
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

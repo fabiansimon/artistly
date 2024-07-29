@@ -21,14 +21,10 @@ import ModalController from '@/controllers/ModalController';
 import InviteDialog from './InviteDialog';
 
 export default function EditProjectDialog() {
-  const { project, removeInvite } = useProjectContext();
+  const { project, removeInvite, removeProject } = useProjectContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [inputData, setInputData] = useState<EditProjectInput | null>();
   const [versionIndex, setVersionIndex] = useState<number>(0);
-
-  const handleError = (title: string, description?: string) => {
-    ToastController.showErrorToast(title, description);
-  };
 
   const handleInvites = () => {
     ModalController.close();
@@ -77,6 +73,15 @@ export default function EditProjectDialog() {
     setVersionIndex((prev) => {
       if (step < 0) return Math.max(0, prev - 1);
       return Math.min(project.versions.length - 1, step + 1);
+    });
+  };
+
+  const handleProjectDeletion = () => {
+    AlertController.show({
+      title: 'Are you sure to delete this project?',
+      description:
+        'This cannot be reverted. Once deleted everything will be lost.',
+      callback: removeProject,
     });
   };
 
@@ -357,53 +362,6 @@ export default function EditProjectDialog() {
           ))}
         </div>
       </div>
-      <div
-        className={cn(
-          'flex flex-col w-full items-center border rounded-lg border-white/10 p-2',
-          baseClass
-        )}
-      >
-        <div className="flex justify-between w-full px-2">
-          <div className="flex items-center space-x-2">
-            <TimeScheduleIcon
-              className="text-white"
-              size={12}
-            />
-            <p className="prose text-white/60 text-xs font-medium text-center">
-              Outstanding invites
-            </p>
-          </div>
-          <SimpleButton
-            text="Invite"
-            iconPosition="left"
-            condensed
-            onClick={handleInvites}
-            icon={
-              <Mail01Icon
-                size={13}
-                className="text-white/60"
-              />
-            }
-          />
-        </div>
-        <div className="divider my-0" />
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {!inputData.openInvites.length && (
-            <p className="prose text-white/60 text-xs">No invites</p>
-          )}
-          {inputData.openInvites.map(({ email, id }) => (
-            <CollaboratorChip
-              key={id}
-              email={email}
-              onDelete={() =>
-                AlertController.show({
-                  callback: () => removeInvite(id),
-                })
-              }
-            />
-          ))}
-        </div>
-      </div>
 
       <button
         onClick={handleSubmit}
@@ -417,6 +375,19 @@ export default function EditProjectDialog() {
           </article>
         )}
       </button>
+      <SimpleButton
+        className="mt-4"
+        text="Delete Project"
+        iconPosition="left"
+        textClassName="text-error/60"
+        onClick={handleProjectDeletion}
+        icon={
+          <Delete01Icon
+            size={13}
+            className="text-error/60"
+          />
+        }
+      />
     </div>
   );
 }

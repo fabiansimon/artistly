@@ -53,6 +53,16 @@ export async function deleteShareable(id: string) {
   }
 }
 
+export async function deleteShareablesByProjectId(id: string) {
+  const { error } = await supabase.from(TABLE).delete().eq('project_id', id);
+
+  if (error) {
+    throw new Error(`Error deleting shareable by Project ID: ${error.message}`);
+  }
+
+  return true;
+}
+
 export async function fetchShareableById(id: string) {
   const { data, error } = await supabase
     .from(TABLE)

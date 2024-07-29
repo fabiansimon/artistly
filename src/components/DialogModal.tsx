@@ -44,7 +44,7 @@ function DialogModal({
         variants={
           isSmall
             ? {
-                visible: { translateY: 0 },
+                visible: { translateY: 0, scale: 1 },
                 hidden: { translateY: 1000 },
               }
             : { visible: { scale: 1 }, hidden: { scale: 0.7 } }

@@ -171,7 +171,7 @@ export async function joinCollabProject({ id }: { id: string }) {
     const res = await _axios.post(`/api/join/${id}`);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'getUserProjects' });
+    handleError({ error, callName: 'joinCollabProject' });
     throw error;
   }
 }
@@ -181,7 +181,7 @@ export async function openStripSession({ priceId }: { priceId: string }) {
     const res = await _axios.post(`/api/upgrade-plan/${priceId}`);
     return res.data;
   } catch (error) {
-    handleError({ error, callName: 'getUserProjects' });
+    handleError({ error, callName: 'openStripSession' });
     throw error;
   }
 }
@@ -191,7 +191,7 @@ export async function cancelSubscription() {
     await _axios.post('/api/cancel-plan');
     return true;
   } catch (error) {
-    handleError({ error, callName: 'getUserProjects' });
+    handleError({ error, callName: 'cancelSubscription' });
     throw error;
   }
 }
@@ -248,6 +248,16 @@ export async function deleteShareable(id: string) {
     return true;
   } catch (error) {
     handleError({ error, callName: 'deleteShareable' });
+    throw error;
+  }
+}
+
+export async function deleteProject(id: string) {
+  try {
+    await _axios.delete(`/api/delete-project/${id}`);
+    return true;
+  } catch (error) {
+    handleError({ error, callName: 'deleteProject' });
     throw error;
   }
 }

@@ -72,7 +72,8 @@ export default function WaveContainer({
     setTime(time);
   };
 
-  const waveClass = 'top-0 flex w-full left-0 items-end space-x-1';
+  const waveClass =
+    'top-0 flex w-full left-0 items-end space-x-1 justify-between';
 
   return (
     <div className="flex flex-grow w-full">
@@ -100,7 +101,7 @@ export default function WaveContainer({
                 key={index}
                 style={{ height: peak * AMPLIFY_BY }}
                 className={cn(
-                  'flex-grow bg-slate-50 rounded-full',
+                  'flex-grow bg-slate-50 rounded-full max-w-[1px] min-h-1',
                   'opacity-30'
                 )}
               />
@@ -114,7 +115,9 @@ export default function WaveContainer({
               <div
                 key={index}
                 style={{ height: peak * AMPLIFY_BY }}
-                className={cn('flex-grow bg-slate-50 rounded-full')}
+                className={cn(
+                  'flex-grow bg-slate-50 rounded-full max-w-[1px] min-h-1'
+                )}
               />
             ))}
           </div>

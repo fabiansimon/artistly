@@ -71,3 +71,13 @@ export async function deleteFeedback(id: string) {
     throw new Error(`Error deleting feedback: ${error.message}`);
   }
 }
+
+export async function deleteFeedbackByIds(ids: string[]) {
+  const { error } = await supabase.from(TABLE).delete().in('id', ids);
+
+  if (error) {
+    throw new Error(`Error deleting feedbacks: ${error.message}`);
+  }
+
+  return true;
+}

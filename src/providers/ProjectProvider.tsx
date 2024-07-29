@@ -5,6 +5,7 @@ import {
   createShareable,
   deleteFeedback,
   deleteInvite,
+  deleteProject,
   deleteShareable,
   sendInvites,
   uploadFeedback,
@@ -37,6 +38,7 @@ interface ProjectContextType {
   removeInvite: (id: string) => void;
   addInvites: (emails: string[]) => Promise<void>;
   removeShareable: () => Promise<void>;
+  removeProject: () => Promise<void>;
   generateShareable: ({
     onlyRecentVersion,
     unlimitedVisits,
@@ -286,6 +288,15 @@ export default function ProjectProvider({
     [project, _addShareable]
   );
 
+  const removeProject = useCallback(async () => {
+    if (!project?.id) return;
+    try {
+      await deleteProject(project.id);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [project]);
+
   const toggleCommentInput = useCallback((timestamp?: number) => {
     setCommentInput((prev) => ({
       isVisible: !prev.isVisible,
@@ -329,6 +340,7 @@ export default function ProjectProvider({
     removeInvite,
     addInvites,
     removeShareable,
+    removeProject,
     generateShareable,
   };
   return (
