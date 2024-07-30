@@ -12,7 +12,7 @@ export default class AlertController {
   }: {
     title?: string;
     description?: string;
-    callback?: (args?: any) => any | void;
+    callback?: (args?: any) => any | void | Promise<void>;
     buttonText?: string;
     destructive?: boolean;
     optimistic?: boolean;

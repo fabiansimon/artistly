@@ -93,6 +93,7 @@ function UserTile({
   removable?: boolean;
   className?: string;
 }) {
+  const { removeCollaboration } = useProjectContext();
   const { first_name, last_name, email, image_url } = user;
 
   const options: MenuOption[] = useMemo(
@@ -107,10 +108,15 @@ function UserTile({
         text: 'Remove',
         confirm: true,
         onClick: () =>
-          AlertController.show({ callback: () => console.log('he') }),
+          AlertController.show({
+            callback: () => {
+              console.log('hello');
+              removeCollaboration(user.id);
+            },
+          }),
       },
     ],
-    []
+    [removeCollaboration, user]
   );
 
   return (

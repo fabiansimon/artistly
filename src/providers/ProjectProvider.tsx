@@ -3,6 +3,7 @@
 import FeedbackInputModal from '@/components/FeedbackInputModal';
 import {
   createShareable,
+  deleteCollab,
   deleteFeedback,
   deleteInvite,
   deleteProject,
@@ -39,6 +40,7 @@ interface ProjectContextType {
   addInvites: (emails: string[]) => Promise<void>;
   removeShareable: () => Promise<void>;
   removeProject: () => Promise<void>;
+  removeCollaboration: (userId: string) => Promise<void>;
   generateShareable: ({
     onlyRecentVersion,
     unlimitedVisits,
@@ -223,6 +225,16 @@ export default function ProjectProvider({
     });
   }, []);
 
+  const _removeCollaborator = useCallback((userId: string) => {
+    setProject((prev) => {
+      if (!prev) return;
+      return {
+        ...prev,
+        collaborators: prev.collaborators.filter((c) => c.id !== userId),
+      };
+    });
+  }, []);
+
   const removeInvite = useCallback(
     async (id: string) => {
       if (!project) return;
@@ -297,6 +309,19 @@ export default function ProjectProvider({
     }
   }, [project]);
 
+  const removeCollaboration = useCallback(
+    async (userId: string) => {
+      if (!project?.collaborators) return;
+      try {
+        await deleteCollab(project.id, userId);
+        _removeCollaborator(userId);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [project, _removeCollaborator]
+  );
+
   const toggleCommentInput = useCallback((timestamp?: number) => {
     setCommentInput((prev) => ({
       isVisible: !prev.isVisible,
@@ -341,6 +366,7 @@ export default function ProjectProvider({
     addInvites,
     removeShareable,
     removeProject,
+    removeCollaboration,
     generateShareable,
   };
   return (

@@ -261,3 +261,13 @@ export async function deleteProject(id: string) {
     throw error;
   }
 }
+
+export async function deleteCollab(projectId: string, userId: string) {
+  try {
+    await _axios.post(`/api/remove-collab/${projectId}/${userId}`);
+    return true;
+  } catch (error) {
+    handleError({ error, callName: 'deleteCollab' });
+    throw error;
+  }
+}

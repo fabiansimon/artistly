@@ -58,6 +58,20 @@ export async function joinCollabProject(projectId: string, userId: string) {
   return data;
 }
 
+export async function removeCollaboration(projectId: string, userId: string) {
+  const { error } = await supabase
+    .from(TABLE)
+    .delete()
+    .eq('project_id', projectId)
+    .eq('user_id', userId);
+
+  if (error) {
+    throw new Error(`Error deleting collaboration: ${error.message}`);
+  }
+
+  return true;
+}
+
 export async function fetchCollaboratorsIdsByProjectId(projectId: string) {
   const { data, error } = await supabase
     .from(TABLE)
