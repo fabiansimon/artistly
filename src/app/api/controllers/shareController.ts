@@ -70,6 +70,7 @@ export async function fetchShareableById(id: string) {
     .eq('id', id)
     .single();
 
+  console.log(data);
   if (error)
     throw new Error(`Error fetching shareable by ID: ${error.message}`);
 

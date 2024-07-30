@@ -8,22 +8,17 @@ export async function storeFile({ file }: { file: File }) {
   const fileId = uuidv4();
   const contentType = file.type;
   const path = `uploads/${fileId}`;
-  const { data, error } = await supabase.storage
-    .from(bucket!)
-    .upload(path, buffer, {
-      contentType,
-    });
+  const { error } = await supabase.storage.from(bucket!).upload(path, buffer, {
+    contentType,
+  });
 
   if (error) {
     throw new Error(`Error uploading file: ${error.message}`);
   }
-  console.log(bucket);
-  console.log(data);
 
   const {
     data: { publicUrl: fileUrl },
   } = supabase.storage.from(bucket!).getPublicUrl(path);
 
-  console.log(fileUrl);
   return { fileUrl };
 }

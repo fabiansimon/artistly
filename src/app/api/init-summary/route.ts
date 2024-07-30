@@ -30,17 +30,20 @@ export async function GET(req: NextRequest) {
     );
     const users = await fetchUsersByIds(feedbackUsers);
 
-    const unsortedFeedback = projects.map((project) => {
-      const feedback = latestFeedback.get(project.id);
-      const creator = users.find(({ id }) => id === feedback?.creator_id);
-      return {
-        ...project,
-        feedback: {
-          ...feedback,
-          creator,
-        },
-      };
-    });
+    const unsortedFeedback = projects
+      .map((project) => {
+        const feedback = latestFeedback.get(project.id);
+        if (!feedback) return;
+        const creator = users.find(({ id }) => id === feedback?.creator_id);
+        return {
+          ...project,
+          feedback: {
+            ...feedback,
+            creator,
+          },
+        };
+      })
+      .filter(Boolean);
 
     const sortedFeedback = unsortedFeedback.sort((a, b) => {
       return (
