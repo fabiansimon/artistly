@@ -2,9 +2,11 @@
 
 import Container from '@/components/Container';
 import EmptyContainer from '@/components/EmptyContainer';
+import FloatingBar from '@/components/FloatingBar';
 import LoadingView from '@/components/LoadingView';
 import ProjectsSkeleton from '@/components/Skeletons/ProjectsSkeleton';
 import { route, ROUTES } from '@/constants/routes';
+import useWindowSize from '@/hooks/useWindowSize';
 import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Project } from '@/types';
@@ -20,15 +22,19 @@ export default function ProjectsListPage() {
     projects: { data, fetch, isLoading },
   } = useDataLayerContext();
 
+  const { isSmall } = useWindowSize();
   const router = useRouter();
 
   const { collabs, authored } = data.content;
   return (
     <Container
       isLoading={isLoading}
+      className="relative"
       skeleton={<ProjectsSkeleton />}
       onRefresh={fetch}
     >
+      {isSmall && <FloatingBar />}
+
       <div className="flex space-x-2 items-center mb-2">
         <Rocket01Icon
           className="text-white"

@@ -180,11 +180,11 @@ export interface Range {
 }
 
 export interface MenuOption {
-  text: string;
   icon: React.ReactNode;
+  onClick: (args?: any) => any | void;
   confirm?: boolean;
   ignore?: boolean;
-  onClick: (args?: any) => any | void;
+  text?: string;
   optimistic?: boolean;
 }
 

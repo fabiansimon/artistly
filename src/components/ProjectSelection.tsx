@@ -1,3 +1,5 @@
+import useWindowSize from '@/hooks/useWindowSize';
+import { cn } from '@/lib/utils';
 import { Project } from '@/types';
 
 export default function ProjectSelection({
@@ -7,11 +9,16 @@ export default function ProjectSelection({
   projects: Project[];
   onInput: (input?: string) => void;
 }) {
+  const { isSmall } = useWindowSize();
+
   return (
     <>
       <div
         onClick={() => onInput()}
-        className="flex flex-grow items-center justify-center w-full hover:bg-neutral-950/50 rounded-lg p-2 -m-2 cursor-pointer"
+        className={cn(
+          'flex flex-grow items-center justify-center w-full hover:bg-neutral-950/50 rounded-lg p-2 -m-2 cursor-pointer',
+          isSmall && 'pb-4'
+        )}
       >
         <article className="prose text-center">
           <h3 className="text-white text-sm">{'Create a new project'}</h3>
@@ -32,7 +39,7 @@ export default function ProjectSelection({
         </article>
         <select
           onChange={(e) => onInput(e.target.value)}
-          className="select text-xs text-center select-sm select-bordered bg-transparent w-full mt-4"
+          className="select text-xs text-center select-sm text-white select-bordered bg-transparent w-full mt-4"
         >
           <option
             disabled

@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
     }
 
     const latestFeedback = await fetchLatestFeedbackByProjectIds(projectIds);
-
     const feedbackUsers = Array.from(latestFeedback.values()).map(
       (feedback) => feedback.creator_id
     );

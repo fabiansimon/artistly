@@ -71,14 +71,14 @@ export default function VersionInput({
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
             size={18}
-            className="absolute left-4"
+            className="absolute text-white left-4"
           />
           <input
             onInput={({ currentTarget: { value } }) =>
               handleInput(InputType.TITLE, value)
             }
             type="text"
-            className="grow text-sm max-w-xs bg-transparent text-center"
+            className="grow text-sm text-white max-w-xs bg-transparent text-center"
             placeholder="v1.0"
             value={inputData.title}
           />
@@ -89,7 +89,7 @@ export default function VersionInput({
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
+          className="textarea text-sm text-white textarea-bordered bg-transparent w-full max-h-44"
           placeholder="Add some version notes (optional)"
         ></textarea>
       </div>

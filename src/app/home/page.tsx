@@ -27,7 +27,6 @@ export default function HomePage() {
   const { isSmall } = useWindowSize();
 
   const router = useRouter();
-
   return (
     <Container
       onRefresh={fetch}
@@ -121,11 +120,7 @@ function LastFeedbackCard({
   const {
     created_at,
     title,
-    feedback: {
-      creator: { image_url },
-      text,
-      created_at: feedback_created_at,
-    },
+    feedback: { creator, text, created_at: feedback_created_at },
   } = data;
   const { text: differenceText, unit } = getDateDifference(feedback_created_at);
 
@@ -162,7 +157,7 @@ function LastFeedbackCard({
       <div className="mt-2">
         <div className="flex space-x-2">
           <Avatar
-            src={image_url}
+            src={creator?.image_url}
             className="size-5"
           />
           <p className="text-xs text-white">{`"${text}"`}</p>

@@ -112,14 +112,14 @@ export default function ProjectInput({
         <label className="input input-bordered bg-transparent flex items-center  justify-center gap-2 w-full relative">
           <PencilEdit02Icon
             size={18}
-            className="absolute left-4"
+            className="absolute text-white left-4"
           />
           <input
             onInput={({ currentTarget: { value } }) =>
               handleInput(InputType.TITLE, value)
             }
             type="text"
-            className="grow text-sm max-w-xs bg-transparent text-center"
+            className="grow text-sm text-white max-w-xs bg-transparent text-center"
             placeholder="Name of song/project"
             value={inputData.title}
           />
@@ -130,13 +130,13 @@ export default function ProjectInput({
           onInput={({ currentTarget: { value } }) =>
             handleInput(InputType.DESCRIPTION, value)
           }
-          className="textarea text-sm textarea-bordered bg-transparent w-full max-h-44"
+          className="textarea text-sm text-white textarea-bordered bg-transparent w-full max-h-44"
           placeholder="Add some project notes (optional)"
         ></textarea>
 
         <div className="w-full flex flex-col space-y-1">
           <article className="prose text-left text-white">
-            <p className="text-white/60 text-sm">{'Invite collaborators'}</p>
+            <p className="text-white text-sm">{'Invite collaborators'}</p>
           </article>
           {inputData.emailList.size > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -163,14 +163,17 @@ export default function ProjectInput({
 
         <div className="flex gap-4 w-full flex-col md:flex-row">
           <label className="input input-bordered bg-transparent flex items-center gap-2 flex-grow">
-            <Mail01Icon size={16} />
+            <Mail01Icon
+              className="text-white"
+              size={16}
+            />
             <input
               onInput={({ currentTarget: { value } }) =>
                 handleInput(InputType.EMAIL, value)
               }
               value={inputData.email}
               type="text"
-              className="grow text-sm bg-transparent"
+              className="grow text-sm text-white bg-transparent"
               placeholder="Email"
             />
           </label>
