@@ -14,9 +14,10 @@ import {
   useContext,
   useEffect,
   useState,
+  ReactNode,
 } from 'react';
 
-enum mode {
+enum Mode {
   PROJECTS,
   PROJECT,
   SUMMARY,
@@ -25,8 +26,9 @@ enum mode {
 
 interface ContextData<T> {
   data: T;
-  fetch: (args?: any) => Promise<void>;
   isLoading: boolean;
+  fetch: (args?: any) => Promise<void>;
+  update?: (data: T) => void;
 }
 
 type NullableContextData<T> = Omit<ContextData<T>, 'data'> & { data: T | null };
@@ -45,9 +47,9 @@ const DataLayerContext = createContext<DataLayerContextType | undefined>(
 export default function DataLayerProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState<Set<mode>>(new Set<mode>());
+  const [isLoading, setIsLoading] = useState<Set<Mode>>(new Set<Mode>());
   const [project, setProject] = useState<Project | null>(null);
   const [summary, setSummary] = useState<InitSummary | null>(null);
   const [invites, setInvites] = useState<Invitation[] | null>(null);
@@ -61,7 +63,7 @@ export default function DataLayerProvider({
 
   const load = useCallback(
     async (
-      mode: mode,
+      mode: Mode,
       apiCall: () => Promise<any>,
       setData: (data: any) => void
     ) => {
@@ -93,7 +95,7 @@ export default function DataLayerProvider({
   const loadProjects = useCallback(
     ({ page = 1, limit = 10 } = {}) =>
       load(
-        mode.PROJECTS,
+        Mode.PROJECTS,
         () => getUserProjects({ pagination: { limit, page } }),
         ({ content, totalElements }) => setProjects({ content, totalElements })
       ),
@@ -103,7 +105,7 @@ export default function DataLayerProvider({
   const loadProject = useCallback(
     ({ id }: { id: string }) =>
       load(
-        mode.PROJECT,
+        Mode.PROJECT,
         () => fetchProject(id),
         (res) => setProject(res)
       ),
@@ -113,7 +115,7 @@ export default function DataLayerProvider({
   const loadSummary = useCallback(
     () =>
       load(
-        mode.SUMMARY,
+        Mode.SUMMARY,
         () => fetchInitSummary(),
         (res) => setSummary(res)
       ),
@@ -123,7 +125,7 @@ export default function DataLayerProvider({
   const loadInvitations = useCallback(
     () =>
       load(
-        mode.INVITES,
+        Mode.INVITES,
         () => fetchInvitations(),
         (res) => setInvites(res)
       ),
@@ -136,28 +138,30 @@ export default function DataLayerProvider({
     loadInvitations();
   }, [loadProjects, loadSummary, loadInvitations]);
 
-  const value = {
+  const value: DataLayerContextType = {
     projects: {
       data: projects,
       fetch: loadProjects,
-      isLoading: isLoading.has(mode.PROJECTS),
+      isLoading: isLoading.has(Mode.PROJECTS),
     },
     project: {
       data: project,
       fetch: loadProject,
-      isLoading: isLoading.has(mode.PROJECT),
+      isLoading: isLoading.has(Mode.PROJECT),
     },
     summary: {
       data: summary,
       fetch: loadSummary,
-      isLoading: isLoading.has(mode.SUMMARY),
+      isLoading: isLoading.has(Mode.SUMMARY),
     },
     invites: {
       data: invites,
       fetch: loadInvitations,
-      isLoading: isLoading.has(mode.INVITES),
+      isLoading: isLoading.has(Mode.INVITES),
+      update: setInvites,
     },
   };
+
   return (
     <DataLayerContext.Provider value={value}>
       {children}

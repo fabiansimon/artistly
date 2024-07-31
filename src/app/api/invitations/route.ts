@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    return NextResponse.json(res);
+    return NextResponse.json(Array(10).fill(res).flat());
   } catch (error: unknown) {
     console.log(error);
     return NextResponse.json({

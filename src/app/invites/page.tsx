@@ -3,11 +3,14 @@
 import Container from '@/components/Container';
 import EmptyContainer from '@/components/EmptyContainer';
 import ProjectsSkeleton from '@/components/Skeletons/ProjectsSkeleton';
-import { cn } from '@/lib/utils';
+import AlertController from '@/controllers/AlertController';
+import { cn, concatName } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
-import { Invite, Project } from '@/types';
+import { Project } from '@/types';
+import { motion } from 'framer-motion';
 import { Unlink01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function InvitesPage() {
   const {
@@ -15,6 +18,14 @@ export default function InvitesPage() {
   } = useDataLayerContext();
   8;
   const router = useRouter();
+
+  const handleInvite = (decision: boolean) => {
+    if (!decision)
+      return AlertController.show({
+        callback: () => console.log('Hello'),
+        buttonText: 'Delete',
+      });
+  };
 
   return (
     <Container
@@ -39,12 +50,15 @@ export default function InvitesPage() {
             className="items-start"
           />
         )}
-        {invites?.map(({ invite, project }) => (
-          <InviteTile
-            onClick={() => console.log('12')}
-            key={invite.id}
-            project={project}
-          />
+        {invites?.map(({ invite, project }, index) => (
+          <>
+            {index !== 0 && <div className="divider -my-1" />}
+            <InviteTile
+              key={invite.id}
+              project={project}
+              onClick={(decision) => handleInvite(decision)}
+            />
+          </>
         ))}
       </div>
     </Container>
@@ -53,29 +67,57 @@ export default function InvitesPage() {
 
 function InviteTile({
   project,
-  className,
   onClick,
+  className,
 }: {
   project: Project;
+  onClick: (decision: boolean) => void;
   className?: string;
-  onClick?: () => void;
 }) {
+  const [hovered, setHovered] = useState<boolean>(false);
+
   const { title, author, description } = project;
   return (
     <div
-      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className={cn(
-        'flex w-full cursor-pointer p-2 rounded-md justify-between hover:bg-neutral-800/60 transition-opacity duration-300',
+        'flex w-full h-14 p-2 rounded-md justify-between',
         className
       )}
     >
       <article className="prose">
-        <p className="text-sm font-medium text-white">{title}</p>
-        <p className="text-xs text-white/60 -mt-4">{author.first_name}</p>
+        <span className="flex space-x-2 -mt-4">
+          <p className="text-sm font-medium text-white">{title}</p>
+          <p className="text-xs text-white/60">{description}</p>
+        </span>
+        <p className="text-xs text-white/60 -mt-4">{`invited by ${concatName(
+          author.first_name,
+          author.last_name
+        )}`}</p>
       </article>
-      <div className="flex border-2 border-neutral-700/50 items-center justify-center rounded-md">
-        <p className="text-xs text-white/60 mx-2">{description}</p>
-      </div>
+      {hovered && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="flex items-center  justify-center rounded-md space-x-2"
+        >
+          <button
+            className="btn btn-error"
+            onClick={() => onClick(false)}
+          >
+            <p className="prose text-xs font-medium text-white">Decline</p>
+          </button>
+          <button
+            onClick={() => onClick(true)}
+            className="btn btn-success"
+          >
+            <p className="prose text-xs font-medium text-white">Accept</p>
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 }
