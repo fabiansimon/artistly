@@ -10,7 +10,6 @@ import {
   RestoreBinIcon,
   TimeScheduleIcon,
 } from 'hugeicons-react';
-import ToastController from '@/controllers/ToastController';
 import { _, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import CollaboratorChip from './CollaboratorChip';
@@ -35,17 +34,11 @@ export default function EditProjectDialog() {
 
   useEffect(() => {
     if (!project) return;
-    const {
-      authors,
-      collaborators,
-      openInvites,
-      description,
-      title,
-      versions,
-    } = project;
+    const { author, collaborators, openInvites, description, title, versions } =
+      project;
 
     setInputData({
-      authors,
+      author,
       openInvites,
       collaborators,
       description,
@@ -136,19 +129,14 @@ export default function EditProjectDialog() {
   };
 
   const currentVersion = inputData.versions[versionIndex];
-  const baseClass = 'bg-neutral-950/50 shadow shadow-black/10';
+  const baseClass = 'bg-neutral-900 shadow shadow-black/10';
 
   return (
     <div className="flex flex-col w-full max-w-screen-md items-center space-y-3">
-      <article className="prose mb-2">
-        <h3 className="text-white text-sm text-center">Edit Project</h3>
-        <p className="text-white/60 text-sm text-center">
-          Make sure your changes are correct. Once it's updated we cannot revert
-          it.
-        </p>
-      </article>
-
       {/* Title & Description */}
+      <p className="prose text-white text-xs font-medium">
+        Title & Description
+      </p>
       <div
         className={
           'flex flex-grow flex-col justify-center rounded-xl items-center space-y-4 w-full'
@@ -189,10 +177,61 @@ export default function EditProjectDialog() {
       </div>
       {/*  */}
 
-      {/* Versions */}
+      {/* Invite Container */}
+      <p className="prose text-white text-xs font-medium pt-2">Invitations</p>
       <div
         className={cn(
-          'flex flex-col items-center border rounded-lg border-white/10 px-2 py-4 space-y-3',
+          'flex flex-col w-full items-center border rounded-lg border-white/10 p-2',
+          baseClass
+        )}
+      >
+        <div className="flex justify-between w-full px-2">
+          <div className="flex items-center space-x-2">
+            <TimeScheduleIcon
+              className="text-white"
+              size={12}
+            />
+            <p className="prose text-white/60 text-xs font-medium text-center">
+              Outstanding invites
+            </p>
+          </div>
+          <SimpleButton
+            text="Invite"
+            iconPosition="left"
+            condensed
+            onClick={handleInvites}
+            icon={
+              <Mail01Icon
+                size={13}
+                className="text-white/60"
+              />
+            }
+          />
+        </div>
+        <div className="divider my-0" />
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {!inputData.openInvites.length && (
+            <p className="prose text-white/60 text-xs">No invites</p>
+          )}
+          {inputData.openInvites.map(({ email, id }) => (
+            <CollaboratorChip
+              key={id}
+              email={email}
+              onDelete={() =>
+                AlertController.show({
+                  callback: () => removeInvite(id),
+                })
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Versions */}
+      <p className="prose text-white text-xs pt-2 font-medium">Versions</p>
+      <div
+        className={cn(
+          'flex flex-col items-center  rounded-lg border-white/10 px-2 space-y-3',
           baseClass
         )}
       >
@@ -313,55 +352,6 @@ export default function EditProjectDialog() {
         </div>
       </div>
       {/*  */}
-
-      {/* Invite Container */}
-      <div
-        className={cn(
-          'flex flex-col w-full items-center border rounded-lg border-white/10 p-2',
-          baseClass
-        )}
-      >
-        <div className="flex justify-between w-full px-2">
-          <div className="flex items-center space-x-2">
-            <TimeScheduleIcon
-              className="text-white"
-              size={12}
-            />
-            <p className="prose text-white/60 text-xs font-medium text-center">
-              Outstanding invites
-            </p>
-          </div>
-          <SimpleButton
-            text="Invite"
-            iconPosition="left"
-            condensed
-            onClick={handleInvites}
-            icon={
-              <Mail01Icon
-                size={13}
-                className="text-white/60"
-              />
-            }
-          />
-        </div>
-        <div className="divider my-0" />
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {!inputData.openInvites.length && (
-            <p className="prose text-white/60 text-xs">No invites</p>
-          )}
-          {inputData.openInvites.map(({ email, id }) => (
-            <CollaboratorChip
-              key={id}
-              email={email}
-              onDelete={() =>
-                AlertController.show({
-                  callback: () => removeInvite(id),
-                })
-              }
-            />
-          ))}
-        </div>
-      </div>
 
       <button
         onClick={handleSubmit}

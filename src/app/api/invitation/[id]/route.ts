@@ -29,7 +29,7 @@ export async function GET(
 
     return NextResponse.json({
       ...project,
-      authors: [author],
+      author,
     });
   } catch (error: unknown) {
     console.error(error);

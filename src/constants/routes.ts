@@ -5,6 +5,7 @@ export const ROUTES = {
   join: 'join',
   listen: 'listen',
   profile: 'profile',
+  invites: 'invites',
   landing: '',
 };
 

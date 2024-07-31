@@ -38,6 +38,16 @@ export async function fetchProjectById(id: string) {
   return data;
 }
 
+export async function fetchProjectsByIds(ids: string[]) {
+  const { data, error } = await supabase.from(TABLE).select('*').in('id', ids);
+
+  if (error) {
+    throw new Error(`Error fetching projects by ID: ${error.message}`);
+  }
+
+  return data;
+}
+
 export async function fetchAuthorProjects(
   userId: string,
   pagination?: Pagination

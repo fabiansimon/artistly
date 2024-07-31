@@ -1,8 +1,13 @@
 'use client';
 
 import ToastController from '@/controllers/ToastController';
-import { fetchInitSummary, fetchProject, getUserProjects } from '@/lib/api';
-import { InitSummary, Paginated, Project, Projects, Version } from '@/types';
+import {
+  fetchInitSummary,
+  fetchInvitations,
+  fetchProject,
+  getUserProjects,
+} from '@/lib/api';
+import { InitSummary, Invitation, Paginated, Project, Projects } from '@/types';
 import {
   createContext,
   useCallback,
@@ -15,6 +20,7 @@ enum mode {
   PROJECTS,
   PROJECT,
   SUMMARY,
+  INVITES,
 }
 
 interface ContextData<T> {
@@ -29,6 +35,7 @@ interface DataLayerContextType {
   projects: ContextData<Paginated<Projects>>;
   project: NullableContextData<Project>;
   summary: NullableContextData<InitSummary>;
+  invites: NullableContextData<Invitation[]>;
 }
 
 const DataLayerContext = createContext<DataLayerContextType | undefined>(
@@ -43,6 +50,7 @@ export default function DataLayerProvider({
   const [isLoading, setIsLoading] = useState<Set<mode>>(new Set<mode>());
   const [project, setProject] = useState<Project | null>(null);
   const [summary, setSummary] = useState<InitSummary | null>(null);
+  const [invites, setInvites] = useState<Invitation[] | null>(null);
   const [projects, setProjects] = useState<Paginated<Projects>>({
     content: {
       collabs: [],
@@ -112,10 +120,21 @@ export default function DataLayerProvider({
     [load]
   );
 
+  const loadInvitations = useCallback(
+    () =>
+      load(
+        mode.INVITES,
+        () => fetchInvitations(),
+        (res) => setInvites(res)
+      ),
+    [load]
+  );
+
   useEffect(() => {
     loadProjects();
     loadSummary();
-  }, [loadProjects, loadSummary]);
+    loadInvitations();
+  }, [loadProjects, loadSummary, loadInvitations]);
 
   const value = {
     projects: {
@@ -132,6 +151,11 @@ export default function DataLayerProvider({
       data: summary,
       fetch: loadSummary,
       isLoading: isLoading.has(mode.SUMMARY),
+    },
+    invites: {
+      data: invites,
+      fetch: loadInvitations,
+      isLoading: isLoading.has(mode.INVITES),
     },
   };
   return (

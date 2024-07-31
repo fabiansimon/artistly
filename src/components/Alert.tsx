@@ -18,7 +18,7 @@ const DEFAULT_DESCRIPTION = 'This cannot be reverted.';
 interface AlertInfo {
   title?: string;
   description?: string;
-  callback?: (args?: any) => any | void;
+  callback?: (args?: any) => any | void | Promise<void>;
   buttonText?: string;
   optimistic?: boolean;
   destructive?: boolean;
@@ -54,6 +54,7 @@ function Alert(): JSX.Element {
       if (info?.callback) {
         !info.optimistic && setIsLoading(true);
         await info.callback();
+        console.log('hello', info.callback);
       }
     } finally {
       setIsLoading(false);
@@ -85,7 +86,7 @@ function Alert(): JSX.Element {
       }: {
         title?: string;
         description?: string;
-        callback?: (args?: any) => any | void;
+        callback?: (args?: any) => any | void | Promise<void>;
         buttonText?: string;
         optimistic?: boolean;
         destructive?: boolean;

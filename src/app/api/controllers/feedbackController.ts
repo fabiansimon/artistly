@@ -81,3 +81,25 @@ export async function deleteFeedbackByIds(ids: string[]) {
 
   return true;
 }
+
+export async function deleteFeedbackByUserIdInProject({
+  userId,
+  projectId,
+}: {
+  userId: string;
+  projectId: string;
+}) {
+  const { error } = await supabase
+    .from(TABLE)
+    .delete()
+    .eq('creator_id', userId)
+    .eq('project_id', projectId);
+
+  if (error) {
+    throw new Error(
+      `Error deleting feedback by User ID in Project: ${error.message}`
+    );
+  }
+
+  return true;
+}

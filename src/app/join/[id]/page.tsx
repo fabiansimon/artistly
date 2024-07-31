@@ -72,9 +72,7 @@ function InvitationCard({
           <span className="flex space-x-1">
             <p className="text-white text-sm">{title}</p>
             <p className="text-white/60 text-sm">{'by'}</p>
-            <p className="text-white text-sm">
-              {project.authors[0].first_name}
-            </p>
+            <p className="text-white text-sm">{project.author.first_name}</p>
           </span>
           <p className="text-white/60 text-sm">
             {getReadableDate(created_at, true)}

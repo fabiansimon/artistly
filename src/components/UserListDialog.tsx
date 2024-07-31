@@ -10,7 +10,6 @@ import {
 } from 'hugeicons-react';
 import DropDown from './Dropdown';
 import { useMemo } from 'react';
-import AlertController from '@/controllers/AlertController';
 import SimpleButton from './SimpleButton';
 import ModalController from '@/controllers/ModalController';
 import InviteDialog from './InviteDialog';
@@ -18,8 +17,8 @@ import InviteDialog from './InviteDialog';
 export default function UserListDialog() {
   const { project, isAuthor } = useProjectContext();
 
-  if (!project || !project.authors || !project.collaborators) return;
-  const { authors, collaborators } = project;
+  if (!project || !project.author || !project.collaborators) return;
+  const { author, collaborators } = project;
 
   const handleInvite = () => {
     ModalController.close();
@@ -39,14 +38,12 @@ export default function UserListDialog() {
             className="text-white"
             size={14}
           />
-          <p className="prose text-white text-xs font-medium">Authors</p>
+          <p className="prose text-white text-xs font-medium">Author</p>
         </div>
-        {authors.map((author) => (
-          <UserTile
-            key={author.id}
-            user={author}
-          />
-        ))}
+        <UserTile
+          key={author.id}
+          user={author}
+        />
         <div className="flex space-x-2 items-center pt-5">
           <UserGroupIcon
             className="text-white"
@@ -107,13 +104,7 @@ function UserTile({
         ),
         text: 'Remove',
         confirm: true,
-        onClick: () =>
-          AlertController.show({
-            callback: () => {
-              console.log('hello');
-              removeCollaboration(user.id);
-            },
-          }),
+        onClick: async () => await removeCollaboration(user.id),
       },
     ],
     [removeCollaboration, user]

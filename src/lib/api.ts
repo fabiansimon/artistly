@@ -264,8 +264,19 @@ export async function deleteProject(id: string) {
 
 export async function deleteCollab(projectId: string, userId: string) {
   try {
-    await _axios.post(`/api/remove-collab/${projectId}/${userId}`);
+    await _axios.delete(`/api/remove-collab/${projectId}/${userId}`);
     return true;
+  } catch (error) {
+    handleError({ error, callName: 'deleteCollab' });
+    throw error;
+  }
+}
+
+export async function fetchInvitations() {
+  try {
+    const res = await _axios.get('/api/invitations');
+    console.log(res.data);
+    return res.data;
   } catch (error) {
     handleError({ error, callName: 'deleteCollab' });
     throw error;

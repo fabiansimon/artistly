@@ -120,7 +120,7 @@ export interface Project {
   id: string;
   created_at: Date;
   creator_id: string;
-  authors: User[];
+  author: User;
   title: string;
   description: string;
   versions: Version[];
@@ -135,7 +135,7 @@ export type LeanProject = Omit<
   | 'creator_id'
   | 'collaborators'
   | 'description'
-  | 'authors'
+  | 'author'
   | 'openInvites'
 >;
 
@@ -186,6 +186,11 @@ export interface MenuOption {
   ignore?: boolean;
   text?: string;
   optimistic?: boolean;
+}
+
+export interface Invitation {
+  project: Project;
+  invite: Invite;
 }
 
 export interface Pagination {

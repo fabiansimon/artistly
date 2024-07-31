@@ -51,7 +51,7 @@ export async function GET(
       ...collaboratorsIds,
     ]);
 
-    const authors = users.filter((u) => u.id === project.creator_id);
+    const author = users.find((u) => u.id === project.creator_id);
     const collaborators = users.filter((u) => u.id !== project.creator_id);
 
     const openInvites = await fetchInvitesByProjectId(projectId);
@@ -59,7 +59,7 @@ export async function GET(
 
     const data: Project = {
       ...project,
-      authors,
+      author,
       versions,
       collaborators,
       openInvites,

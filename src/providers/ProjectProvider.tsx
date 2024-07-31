@@ -109,6 +109,16 @@ export default function ProjectProvider({
     });
   }, []);
 
+  const _removeFeedbackByUser = useCallback((id: string) => {
+    setVersion((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        feedback: prev.feedback.filter((f) => f.creator_id !== id),
+      };
+    });
+  }, []);
+
   const _removeFeedback = useCallback((id: string) => {
     setVersion((prev) => {
       if (!prev) return null;
@@ -255,6 +265,8 @@ export default function ProjectProvider({
     async (emails: string[]) => {
       if (!project) return;
       const invitees = JSON.stringify(Array.from(emails));
+      console.log('addInvites', invitees);
+
       try {
         const { invites } = await sendInvites(project.id, invitees);
         _addInvites(invites);
@@ -314,12 +326,13 @@ export default function ProjectProvider({
       if (!project?.collaborators) return;
       try {
         await deleteCollab(project.id, userId);
+        _removeFeedbackByUser(userId);
         _removeCollaborator(userId);
       } catch (error) {
         console.log(error);
       }
     },
-    [project, _removeCollaborator]
+    [project, _removeCollaborator, _removeFeedbackByUser]
   );
 
   const toggleCommentInput = useCallback((timestamp?: number) => {
@@ -339,9 +352,9 @@ export default function ProjectProvider({
   }, [time, version, file]);
 
   const users = useMemo(() => {
-    if (!project || !project.authors || !project.collaborators) return {};
+    if (!project || !project.author || !project.collaborators) return {};
     const map: { [id: string]: User } = {};
-    project.authors.forEach((u) => (map[u.id] = u));
+    map[project.author.id] = project.author;
     project.collaborators.forEach((u) => (map[u.id] = u));
     return map;
   }, [project]);

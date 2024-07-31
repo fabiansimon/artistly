@@ -1,4 +1,5 @@
 import { removeCollaboration } from '@/app/api/controllers/collabController';
+import { deleteFeedbackByUserIdInProject } from '@/app/api/controllers/feedbackController';
 import { fetchProjectById } from '@/app/api/controllers/projectController';
 import { getUserData } from '@/app/api/controllers/userController';
 import { NextRequest, NextResponse } from 'next/server';
@@ -20,7 +21,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await removeCollaboration(projectId, collaboratorId);
+    await Promise.all([
+      removeCollaboration(projectId, collaboratorId),
+      deleteFeedbackByUserIdInProject({
+        userId: collaboratorId,
+        projectId,
+      }),
+    ]);
 
     return NextResponse.json({ status: 200 });
   } catch (error) {

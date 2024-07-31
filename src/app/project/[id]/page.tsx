@@ -82,7 +82,6 @@ function ProjectPage() {
     );
 
   const empty = !file || !version;
-  console.log(isSmall);
 
   return (
     <Container

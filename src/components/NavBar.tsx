@@ -10,7 +10,9 @@ import {
   Home06Icon,
   Menu01Icon,
   MusicNote03Icon,
+  Rocket01Icon,
   Settings02Icon,
+  Unlink01Icon,
   UserIcon,
 } from 'hugeicons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -21,6 +23,7 @@ import { useUserContext } from '@/providers/UserProvider';
 import MembershipBadge from './MembershipBadge';
 import ModalController from '@/controllers/ModalController';
 import { motion } from 'framer-motion';
+import PremiumDialog from './PremiumDialog';
 
 function NavBar({ className }: { className?: string }) {
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -55,6 +58,16 @@ function NavBar({ className }: { className?: string }) {
             ),
           },
           {
+            title: 'Invites',
+            route: route(ROUTES.invites),
+            icon: (
+              <Unlink01Icon
+                className="text-white"
+                size={16}
+              />
+            ),
+          },
+          {
             title: 'Upload',
             icon: (
               <AddCircleIcon
@@ -70,17 +83,7 @@ function NavBar({ className }: { className?: string }) {
         title: 'Profile',
         options: [
           {
-            title: 'Settings',
-            icon: (
-              <Settings02Icon
-                className="text-white"
-                size={16}
-              />
-            ),
-            onClick: () => console.log('hello'),
-          },
-          {
-            title: 'Profile',
+            title: 'Account',
             icon: (
               <UserIcon
                 className="text-white"
@@ -88,6 +91,16 @@ function NavBar({ className }: { className?: string }) {
               />
             ),
             route: route(ROUTES.profile),
+          },
+          {
+            title: 'Membership',
+            icon: (
+              <Rocket01Icon
+                className="text-white"
+                size={16}
+              />
+            ),
+            onClick: () => ModalController.show(<PremiumDialog />),
           },
         ],
       },

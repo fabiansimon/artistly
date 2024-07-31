@@ -9,6 +9,8 @@ export async function createInvites(projectId: string, emails: string[]) {
     email,
   }));
 
+  console.log(invites);
+
   const { data, error } = await supabase.from(TABLE).insert(invites).select();
 
   if (error) {
@@ -41,6 +43,18 @@ export async function fetchInvitesByProjectId(projectId: string) {
 
   if (error && error.code !== 'PGRST116') {
     throw new Error(`Error checking for valid invite: ${error.message}`);
+  }
+
+  return data;
+}
+export async function fetchInvitesByEmail(email: string) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('email', email);
+
+  if (error && error.code !== 'PGRST116') {
+    throw new Error(`Error checking for invites by email: ${error.message}`);
   }
 
   return data;

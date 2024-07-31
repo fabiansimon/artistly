@@ -16,8 +16,8 @@ export default function CollaboratorContainer({
   const [hovered, setHovered] = useState<boolean>(false);
 
   const { project } = useProjectContext();
-  if (!project || !project.authors || !project.collaborators) return;
-  const { authors, collaborators } = project;
+  if (!project || !project.author || !project.collaborators) return;
+  const { author, collaborators } = project;
 
   return (
     <div
@@ -41,14 +41,11 @@ export default function CollaboratorContainer({
         onMouseLeave={() => setHovered(false)}
         onClick={() => setHovered(true)}
       >
-        {authors.map(({ image_url, id }) => (
-          <Avatar
-            key={id}
-            size={18}
-            src={image_url}
-            className="rounded-full"
-          />
-        ))}
+        <Avatar
+          size={18}
+          src={author.image_url}
+          className="rounded-full"
+        />
         {collaborators.map(({ image_url, id }) => (
           <Avatar
             key={id}
@@ -71,16 +68,13 @@ export default function CollaboratorContainer({
               size={15}
               className="text-white/60"
             />
-            <p className="prose text-xs text-white/60 font-medium">Authors</p>
+            <p className="prose text-xs text-white/60 font-medium">Author</p>
           </div>
           <div className="space-y-2">
-            {authors.map((user) => (
-              <UserTile
-                isAuthor
-                user={user}
-                key={user.id}
-              />
-            ))}
+            <UserTile
+              isAuthor
+              user={author}
+            />
           </div>
           <div className="divider my-2"></div>
           <div className="flex items-center mb-2 space-x-1">

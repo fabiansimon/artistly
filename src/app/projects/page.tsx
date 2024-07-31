@@ -3,18 +3,13 @@
 import Container from '@/components/Container';
 import EmptyContainer from '@/components/EmptyContainer';
 import FloatingBar from '@/components/FloatingBar';
-import LoadingView from '@/components/LoadingView';
 import ProjectsSkeleton from '@/components/Skeletons/ProjectsSkeleton';
 import { route, ROUTES } from '@/constants/routes';
 import useWindowSize from '@/hooks/useWindowSize';
 import { cn, getReadableDate, pluralize } from '@/lib/utils';
 import { useDataLayerContext } from '@/providers/DataLayerProvider';
 import { Project } from '@/types';
-import {
-  MusicNote01Icon,
-  Rocket01Icon,
-  SearchRemoveIcon,
-} from 'hugeicons-react';
+import { MusicNote01Icon, Rocket01Icon } from 'hugeicons-react';
 import { useRouter } from 'next/navigation';
 
 export default function ProjectsListPage() {
